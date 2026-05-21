@@ -12,6 +12,34 @@ class MailController extends Controller
     {
         $q      = trim((string) $request->query('q', ''));
         $status = $request->query('status');
+        $type   = $request->query('type', 'contact');
+
+        if ($type === 'newsletter') {
+            $query = DB::table('newsletter_subscribers');
+
+            if ($q !== '') {
+                $query->where('email', 'like', '%' . $q . '%');
+            }
+
+            $subscribers = $query
+                ->orderBy('subscribed_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->paginate(15)
+                ->withQueryString();
+
+            return view('admin.mails.index', [
+                'type'              => 'newsletter',
+                'subscribers'       => $subscribers,
+                'mails'             => null,
+                'unreadCount'       => DB::table('mails')->where('status', 0)->count(),
+                'newsletterCount'   => DB::table('newsletter_subscribers')->count(),
+                'filters'           => [
+                    'q'      => $q,
+                    'status' => $status,
+                    'type'   => 'newsletter',
+                ],
+            ]);
+        }
 
         $query = DB::table('mails');
 
@@ -32,16 +60,31 @@ class MailController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $unreadCount = DB::table('mails')->where('status', 0)->count();
-
         return view('admin.mails.index', [
-            'mails'       => $mails,
-            'unreadCount' => $unreadCount,
-            'filters'     => [
+            'type'            => 'contact',
+            'mails'           => $mails,
+            'subscribers'     => null,
+            'unreadCount'     => DB::table('mails')->where('status', 0)->count(),
+            'newsletterCount' => DB::table('newsletter_subscribers')->count(),
+            'filters'         => [
                 'q'      => $q,
                 'status' => $status,
+                'type'   => 'contact',
             ],
         ]);
+    }
+
+    public function destroyNewsletter($id)
+    {
+        $deleted = DB::table('newsletter_subscribers')->where('id', $id)->delete();
+
+        if (! $deleted) {
+            abort(404);
+        }
+
+        return redirect()
+            ->route('admin.mails.index', ['type' => 'newsletter'])
+            ->with('success', 'Newsletter subscriber removed.');
     }
 
     public function show($id)

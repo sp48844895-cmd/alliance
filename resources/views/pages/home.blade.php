@@ -12,6 +12,6 @@
 @include('sections.home.champions')
 @include('sections.home.events')
 @include('sections.home.hub')
-@include('sections.home.cta')
+@include('sections.home.newsletter')
 </main>
 @endsection

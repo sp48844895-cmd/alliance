@@ -93,8 +93,11 @@
                     </div>
 
                     <div class="p-4 flex-1 flex flex-col">
-                        <div class="flex items-center gap-2 mb-2">
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
                             <span class="pill pill-clay">{{ ucwords($r->m_type) }}</span>
+                            @if (isset($r->status) && (int)$r->status === 0)
+                                <span class="pill" style="background:var(--color-paper-2);color:var(--color-mute)">Draft</span>
+                            @endif
                             <span class="text-xs text-[var(--color-mute)] truncate">{{ $r->cat_name ?? '—' }}</span>
                         </div>
                         <h3 class="font-display text-base text-[var(--color-ink-2)] mt-1 leading-snug line-clamp-2">

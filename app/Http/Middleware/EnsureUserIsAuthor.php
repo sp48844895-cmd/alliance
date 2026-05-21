@@ -14,7 +14,7 @@ class EnsureUserIsAuthor
         $user = $request->user();
 
         if (! $user) {
-            return redirect()->route('login.show', 'author');
+            return $this->redirectGuest($request);
         }
 
         if (! ($user->is_active ?? true)) {
@@ -26,9 +26,19 @@ class EnsureUserIsAuthor
         }
 
         if (($user->type ?? '') !== 'author') {
-            abort(403);
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return $this->redirectGuest($request)
+                ->withErrors(['email' => 'Please sign in with an author account to access that page.']);
         }
 
         return $next($request);
+    }
+
+    private function redirectGuest(Request $request)
+    {
+        $request->session()->put('url.intended', $request->fullUrl());
+        return redirect()->guest(route('login.show', 'author'));
     }
 }

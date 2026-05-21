@@ -14,7 +14,7 @@ class EnsureUserIsAdmin
         $user = $request->user();
 
         if (! $user) {
-            return redirect()->route('login.show', 'admin');
+            return $this->redirectGuest($request);
         }
 
         if (! ($user->is_active ?? true)) {
@@ -26,9 +26,19 @@ class EnsureUserIsAdmin
         }
 
         if (($user->type ?? '') !== 'admin') {
-            abort(403);
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return $this->redirectGuest($request)
+                ->withErrors(['email' => 'Please sign in with an admin account to access that page.']);
         }
 
         return $next($request);
+    }
+
+    private function redirectGuest(Request $request)
+    {
+        $request->session()->put('url.intended', $request->fullUrl());
+        return redirect()->guest(route('login.show', 'admin'));
     }
 }

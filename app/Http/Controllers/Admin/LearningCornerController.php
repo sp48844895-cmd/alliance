@@ -82,6 +82,8 @@ class LearningCornerController extends Controller
             'link'    => 'required|url|max:500',
             'content' => 'nullable|string|max:500',
             'image'   => 'nullable|image|max:4096',
+            'date'    => 'required|date',
+            'status'  => 'required|in:0,1',
         ]);
 
         $user = auth()->user();
@@ -101,7 +103,8 @@ class LearningCornerController extends Controller
             'image'   => $filename,
             'm_type'  => $data['m_type'],
             'link'    => $data['link'],
-            'date'    => now()->toDateString(),
+            'date'    => $data['date'],
+            'status'  => (int) $data['status'],
         ]);
 
         $this->clearKnowledgeHubCache();
@@ -138,6 +141,8 @@ class LearningCornerController extends Controller
             'link'    => 'required|url|max:500',
             'content' => 'nullable|string|max:500',
             'image'   => 'nullable|image|max:4096',
+            'date'    => 'required|date',
+            'status'  => 'required|in:0,1',
         ]);
 
         $filename = $resource->image;
@@ -152,6 +157,8 @@ class LearningCornerController extends Controller
             'image'   => $filename,
             'm_type'  => $data['m_type'],
             'link'    => $data['link'],
+            'date'    => $data['date'],
+            'status'  => (int) $data['status'],
         ]);
 
         $this->clearKnowledgeHubCache();

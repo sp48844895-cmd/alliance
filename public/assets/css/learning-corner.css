@@ -1,19 +1,34 @@
 /* ============================================================
-   Learning Corner — Smart Tree Explorer
+   Learning Corner — Smart Tree Knowledge Explorer
    Design tokens from tokens.css are available globally.
    ============================================================ */
 
-/* ── Hero strip ─────────────────────────────────────────── */
+/* Guarantee hidden elements are truly hidden in this context */
+#lc-welcome[hidden],
+#lc-loading[hidden],
+#lc-category-detail[hidden],
+#lc-error[hidden],
+#lc-resource-empty[hidden],
+#lc-breadcrumb[hidden] {
+  display: none !important;
+}
+
+/* ── Page structure ──────────────────────────────────────── */
 .lc-main {
   display: flex;
   flex-direction: column;
   min-height: calc(100dvh - 120px);
+  background: var(--paper);
 }
 
+/* ── Hero strip ─────────────────────────────────────────── */
 .lc-hero {
-  padding: clamp(32px, 4vw, 56px) 0 clamp(24px, 3vw, 40px);
+  padding: clamp(28px, 3.5vw, 48px) 0 clamp(20px, 2.5vw, 36px);
   border-bottom: 1px solid var(--rule);
-  background: linear-gradient(135deg,rgba(93,44,181,0.04) 0%,rgba(50,55,240,0.03) 100%);
+  background:
+    radial-gradient(ellipse at 0% 100%, rgba(93,44,181,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 100% 0%, rgba(50,55,240,0.05) 0%, transparent 50%),
+    var(--paper);
 }
 
 .lc-hero__inner {
@@ -29,16 +44,16 @@
   align-items: center;
   gap: var(--s-2);
   font-family: var(--ff-mono);
-  font-size: var(--fs-xs);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--terracotta);
   margin-bottom: var(--s-3);
 }
 
 .lc-hero__title {
-  font-size: clamp(36px, 5vw, 68px);
+  font-size: clamp(32px, 4.5vw, 60px);
   margin-bottom: var(--s-3);
   line-height: 1.0;
 }
@@ -46,7 +61,7 @@
 .lc-hero__sub {
   color: var(--ink-soft);
   font-family: var(--ff-display);
-  font-size: clamp(15px, 1.2vw, 18px);
+  font-size: clamp(14px, 1.1vw, 17px);
   font-weight: 300;
   max-width: 52ch;
   margin: 0;
@@ -54,16 +69,17 @@
 
 .lc-hero__stats {
   display: flex;
-  gap: var(--s-4);
+  gap: var(--s-3);
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .lc-stat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 80px;
-  padding: var(--s-4) var(--s-5);
+  min-width: 76px;
+  padding: var(--s-3) var(--s-4);
   border: 1px solid var(--rule);
   border-radius: var(--radius-lg);
   background: var(--paper);
@@ -73,7 +89,7 @@
 
 .lc-stat b {
   font-family: var(--ff-display);
-  font-size: clamp(28px, 3vw, 42px);
+  font-size: clamp(24px, 2.5vw, 36px);
   font-weight: 400;
   line-height: 1;
   color: var(--terracotta);
@@ -81,27 +97,27 @@
 
 .lc-stat span {
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
   margin-top: var(--s-1);
 }
 
 .lc-stat__icon {
-  font-size: 22px;
+  font-size: 20px;
   color: var(--terracotta-l);
-  margin-bottom: var(--s-1);
+  margin-bottom: 2px;
 }
 
-/* ── Explorer layout ─────────────────────────────────────── */
+/* ── Explorer 2-column layout ────────────────────────────── */
 .lc-explorer {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  grid-template-rows: 1fr;
+  grid-template-columns: 290px 1fr;
   flex: 1;
   position: relative;
+  min-height: 0;
 }
 
 /* ── Sidebar ─────────────────────────────────────────────── */
@@ -112,7 +128,7 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--rule);
-  background: var(--paper);
+  background: #f7f5fc;   /* subtly different from content */
   overflow: hidden;
   z-index: 10;
   transition: transform var(--dur-3) var(--ease-out);
@@ -122,8 +138,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--s-4) var(--s-5);
-  border-bottom: 1px solid var(--rule);
+  padding: 14px var(--s-4);
+  background: var(--brand-grad);
   flex-shrink: 0;
 }
 
@@ -132,70 +148,74 @@
   align-items: center;
   gap: var(--s-2);
   font-family: var(--ff-mono);
-  font-size: var(--fs-xs);
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: rgba(255,255,255,0.85);
+}
+
+.lc-sidebar__title i {
+  font-size: 14px;
+  color: var(--paper);
 }
 
 .lc-sidebar__close {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255,255,255,0.25);
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--ink);
+  color: var(--paper);
   cursor: pointer;
   transition: background var(--dur-1) var(--ease-out);
 }
 
 .lc-sidebar__close:hover {
-  background: var(--paper-soft);
+  background: rgba(255,255,255,0.15);
 }
 
 /* ── Tree search ─────────────────────────────────────────── */
 .lc-tree-search {
   position: relative;
-  padding: var(--s-3) var(--s-4);
+  padding: var(--s-3) var(--s-3);
   flex-shrink: 0;
   border-bottom: 1px solid var(--rule);
+  background: var(--paper);
 }
 
 .lc-tree-search__icon {
   position: absolute;
-  left: 24px;
+  left: 22px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
   pointer-events: none;
 }
 
 .lc-tree-search__input {
   width: 100%;
-  height: 38px;
-  padding: 0 var(--s-4) 0 36px;
+  height: 34px;
+  padding: 0 var(--s-3) 0 32px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--paper-soft);
   color: var(--ink);
   font: inherit;
-  font-size: var(--fs-sm);
+  font-size: 13px;
   outline: none;
   transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
 
-.lc-tree-search__input::placeholder {
-  color: var(--muted);
-}
+.lc-tree-search__input::placeholder { color: var(--muted); }
 
 .lc-tree-search__input:focus {
   border-color: var(--terracotta);
-  box-shadow: 0 0 0 3px rgba(93, 44, 181, 0.1);
+  box-shadow: 0 0 0 3px rgba(93,44,181,0.1);
   background: var(--paper);
 }
 
@@ -203,21 +223,22 @@
 .lc-tree-controls {
   display: flex;
   gap: var(--s-2);
-  padding: var(--s-2) var(--s-4);
+  padding: var(--s-2) var(--s-3);
   flex-shrink: 0;
   border-bottom: 1px solid var(--rule);
+  background: var(--paper);
 }
 
 .lc-tree-ctrl-btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--s-1);
-  padding: 4px var(--s-3);
+  gap: 4px;
+  padding: 3px var(--s-2);
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: transparent;
   color: var(--muted);
-  font-size: var(--fs-xs);
+  font-size: 11px;
   font-family: var(--ff-body);
   cursor: pointer;
   transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
@@ -234,81 +255,68 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--s-3) 0 var(--s-6);
+  padding: var(--s-2) 0 var(--s-7);
   scrollbar-width: thin;
   scrollbar-color: var(--rule) transparent;
 }
 
-.lc-tree-nav::-webkit-scrollbar {
-  width: 4px;
-}
+.lc-tree-nav::-webkit-scrollbar { width: 3px; }
+.lc-tree-nav::-webkit-scrollbar-track { background: transparent; }
+.lc-tree-nav::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 2px; }
 
-.lc-tree-nav::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.lc-tree-nav::-webkit-scrollbar-thumb {
-  background: var(--rule);
-  border-radius: 2px;
-}
-
-/* ── Tree list & items ───────────────────────────────────── */
+/* ── Tree list ───────────────────────────────────────────── */
 .lc-tree-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.lc-tree-list--root > .lc-tree-item > .lc-tree-row {
-  border-top: 1px solid transparent;
-}
-
+/* ── Tree item ───────────────────────────────────────────── */
 .lc-tree-item {
   position: relative;
 }
 
-/* Connector line from parent to children */
-.lc-tree-item .lc-tree-children .lc-tree-item {
-  position: relative;
+/* Hidden items (from search) */
+.lc-tree-item.is-hidden {
+  display: none;
 }
 
-.lc-tree-item .lc-tree-children .lc-tree-item::before {
-  content: "";
-  position: absolute;
-  left: calc(var(--depth, 0) * 16px + 20px);
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: var(--rule);
-  pointer-events: none;
-}
-
-.lc-tree-item .lc-tree-children .lc-tree-item:last-child::before {
-  height: 22px;
-}
-
-.lc-tree-item .lc-tree-children .lc-tree-item .lc-tree-row::before {
-  content: "";
-  position: absolute;
-  left: calc(var(--depth, 0) * 16px + 20px);
-  top: 22px;
-  width: 12px;
-  height: 1px;
-  background: var(--rule);
-  pointer-events: none;
+/* ── Nested list: left-border = vertical spine ───────────── */
+/*
+   The <ul> inside each .lc-tree-children-inner is the tree branch.
+   Its border-left is the vertical spine line.
+   Its padding-left creates space for the horizontal connector tick.
+   margin-left offsets from the parent icon.
+*/
+.lc-tree-children-inner > .lc-tree-list {
+  margin-left: 20px;     /* distance from parent's left edge to this spine */
+  padding-left: 14px;    /* gap between spine and item content              */
+  border-left: 1.5px solid var(--rule);
 }
 
 /* ── Tree row ────────────────────────────────────────────── */
 .lc-tree-row {
+  position: relative;    /* anchor for ::before tick */
   display: flex;
   align-items: stretch;
-  position: relative;
-  padding-left: calc(var(--depth, 0) * 16px);
   transition: background var(--dur-1) var(--ease-out);
 }
 
 .lc-tree-row:hover {
-  background: var(--paper-soft);
+  background: rgba(93,44,181,0.04);
+}
+
+/* Horizontal connector tick from spine border to item content */
+.lc-tree-row--child::before {
+  content: "";
+  position: absolute;
+  left: -14px;           /* = negative of ul's padding-left */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;           /* spans the padding gap             */
+  height: 1.5px;
+  background: var(--rule);
+  pointer-events: none;
 }
 
 /* ── Tree button ─────────────────────────────────────────── */
@@ -317,17 +325,18 @@
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  padding: 9px var(--s-3) 9px var(--s-4);
+  padding: 8px var(--s-3) 8px var(--s-3);
   border: none;
   background: transparent;
   color: var(--ink-soft);
   font-family: var(--ff-body);
-  font-size: var(--fs-sm);
+  font-size: 13px;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
   transition: color var(--dur-1) var(--ease-out);
   min-width: 0;
+  position: relative;
 }
 
 .lc-tree-btn:focus-visible {
@@ -336,29 +345,45 @@
   border-radius: var(--radius-sm);
 }
 
+/* Active state */
 .lc-tree-btn.is-active {
   color: var(--terracotta);
-  background: rgba(93, 44, 181, 0.06);
   font-weight: 600;
+}
+
+.lc-tree-row:has(.lc-tree-btn.is-active) {
+  background: rgba(93,44,181,0.08);
+}
+
+/* Active left accent bar */
+.lc-tree-btn.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--terracotta);
+}
+
+/* ── Tree icon wrapper ───────────────────────────────────── */
+.lc-tree-icon-wrap {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: var(--paper-soft);
+  color: var(--terracotta-l);
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 
 .lc-tree-btn.is-active .lc-tree-icon-wrap {
   background: var(--brand-grad);
   color: var(--paper);
-}
-
-/* ── Tree icon ───────────────────────────────────────────── */
-.lc-tree-icon-wrap {
-  display: inline-grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
-  background: var(--paper-soft);
-  color: var(--terracotta-l);
-  font-size: 14px;
-  flex-shrink: 0;
-  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
 
 /* ── Tree label ──────────────────────────────────────────── */
@@ -375,29 +400,29 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 18px;
-  padding: 0 5px;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 4px;
   border-radius: 999px;
   background: var(--paper-deep);
   color: var(--muted);
   font-family: var(--ff-mono);
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 9px;
+  font-weight: 800;
   flex-shrink: 0;
   transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 
 .lc-tree-btn.is-active .lc-tree-badge {
-  background: rgba(93, 44, 181, 0.12);
+  background: rgba(93,44,181,0.15);
   color: var(--terracotta);
 }
 
-/* ── Tree toggle (expand button) ─────────────────────────── */
+/* ── Tree toggle (expand/collapse chevron) ───────────────── */
 .lc-tree-toggle {
   display: inline-grid;
   place-items: center;
-  width: 36px;
+  width: 32px;
   flex-shrink: 0;
   border: none;
   background: transparent;
@@ -424,31 +449,37 @@
   border-radius: var(--radius-sm);
 }
 
-/* ── Tree children (smooth expand via grid trick) ─────────── */
+/* ── Tree children: smooth expand via CSS grid trick ─────── */
+/*
+   The outer .lc-tree-children animates height via grid-template-rows.
+   The inner .lc-tree-children-inner must NOT have overflow:hidden so
+   the border-left spine connector lines are not clipped.
+*/
 .lc-tree-children {
   display: grid;
   grid-template-rows: 0fr;
+  overflow: hidden;                        /* clips during animation  */
   transition: grid-template-rows var(--dur-3) var(--ease-out);
 }
 
 .lc-tree-children.is-open {
   grid-template-rows: 1fr;
+  overflow: visible;                       /* show connector lines when open */
 }
 
 .lc-tree-children-inner {
-  overflow: hidden;
+  min-height: 0;                           /* required for 0fr to work      */
 }
 
-/* ── Tree search highlight ───────────────────────────────── */
-.lc-tree-item.is-hidden {
-  display: none;
-}
+/* Depth indentation is set via inline style --row-indent / --spine-x
+   in the Blade partial, so no additional selectors needed here. */
 
-.lc-tree-item.is-search-match .lc-tree-btn {
+/* ── Tree empty & search states ──────────────────────────── */
+.lc-tree-item.is-search-match .lc-tree-label {
   color: var(--terracotta);
+  font-weight: 600;
 }
 
-/* ── Tree empty state ────────────────────────────────────── */
 .lc-tree-empty {
   padding: var(--s-7) var(--s-5);
   text-align: center;
@@ -456,46 +487,47 @@
 }
 
 .lc-tree-empty i {
-  font-size: 40px;
-  opacity: 0.4;
+  font-size: 36px;
+  opacity: 0.35;
 }
 
 .lc-tree-empty p {
   margin: var(--s-3) 0 0;
-  font-size: var(--fs-sm);
+  font-size: 13px;
 }
 
 /* ── Content panel ───────────────────────────────────────── */
 .lc-content {
-  min-height: 100%;
-  padding: var(--s-6) var(--s-7);
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: var(--s-5) var(--s-6);
   background: var(--paper);
   overflow-y: auto;
 }
 
 /* ── Breadcrumb ──────────────────────────────────────────── */
 .lc-breadcrumb {
-  margin-bottom: var(--s-5);
+  margin-bottom: var(--s-4);
 }
 
 .lc-breadcrumb__list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-1);
+  gap: 2px;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .lc-breadcrumb__item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--s-1);
   font-family: var(--ff-mono);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -505,20 +537,25 @@
 }
 
 .lc-breadcrumb__item:not(:last-child)::after {
-  content: "/";
+  content: "›";
+  margin: 0 4px;
   color: var(--rule);
-  margin-left: var(--s-1);
+  font-size: 14px;
+  line-height: 1;
 }
 
 .lc-breadcrumb__link {
   color: inherit;
   text-decoration: none;
   cursor: pointer;
-  transition: color var(--dur-1) var(--ease-out);
+  border-radius: 3px;
+  padding: 2px 4px;
+  transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 
 .lc-breadcrumb__link:hover {
   color: var(--terracotta);
+  background: var(--paper-soft);
 }
 
 /* ── Welcome / initial state ─────────────────────────────── */
@@ -527,41 +564,41 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: var(--s-8) var(--s-5);
+  padding: var(--s-7) var(--s-5) var(--s-6);
 }
 
 .lc-welcome__icon {
   display: grid;
   place-items: center;
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   border-radius: var(--radius-lg);
   background: var(--brand-grad);
   color: var(--paper);
-  font-size: 32px;
+  font-size: 28px;
   margin-bottom: var(--s-5);
   box-shadow: var(--shadow-warm);
 }
 
 .lc-welcome__title {
-  font-size: clamp(28px, 3vw, 40px);
-  margin-bottom: var(--s-3);
+  font-size: clamp(24px, 2.5vw, 36px);
+  margin-bottom: var(--s-2);
 }
 
 .lc-welcome__sub {
   color: var(--muted);
-  font-size: var(--fs-md);
-  max-width: 46ch;
-  margin: 0 0 var(--s-7);
+  font-size: 15px;
+  max-width: 44ch;
+  margin: 0 0 var(--s-6);
 }
 
-/* ── Quick category cards (welcome state) ─────────────────── */
+/* ── Quick category cards (welcome) ──────────────────────── */
 .lc-quick-cats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: var(--s-3);
   width: 100%;
-  max-width: 900px;
+  max-width: 860px;
 }
 
 .lc-quick-cat-card {
@@ -569,7 +606,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--s-2);
-  padding: var(--s-4);
+  padding: var(--s-4) var(--s-3);
   border: 1px solid var(--rule);
   border-radius: var(--radius-lg);
   background: var(--paper);
@@ -583,7 +620,7 @@
 
 .lc-quick-cat-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(93, 44, 181, 0.35);
+  border-color: rgba(93,44,181,0.32);
   box-shadow: var(--shadow-2);
 }
 
@@ -595,18 +632,18 @@
 .lc-quick-cat-card__icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius);
   background: var(--brand-grad);
   color: var(--paper);
-  font-size: 18px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
 .lc-quick-cat-card__name {
   font-family: var(--ff-display);
-  font-size: var(--fs-lg);
+  font-size: 16px;
   font-weight: 500;
   color: var(--ink);
   line-height: 1.2;
@@ -614,9 +651,9 @@
 
 .lc-quick-cat-card__count {
   font-family: var(--ff-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--terracotta);
 }
@@ -624,18 +661,27 @@
 .lc-quick-cat-card__subs {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* ── Category detail header ──────────────────────────────── */
+/* ── Category detail panel ───────────────────────────────── */
+.lc-category-detail {
+  animation: lc-fade-in 0.22s var(--ease-out);
+}
+
+@keyframes lc-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .lc-cat-header {
-  margin-bottom: var(--s-6);
+  margin-bottom: var(--s-5);
   padding-bottom: var(--s-5);
   border-bottom: 1px solid var(--rule);
 }
@@ -650,18 +696,18 @@
 .lc-cat-header__icon {
   display: grid;
   place-items: center;
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius);
   background: var(--brand-grad);
   color: var(--paper);
-  font-size: 22px;
+  font-size: 20px;
   flex-shrink: 0;
   box-shadow: var(--shadow-warm);
 }
 
 .lc-cat-header__name {
-  font-size: clamp(26px, 3vw, 40px);
+  font-size: clamp(22px, 2.5vw, 36px);
   margin: 0;
   line-height: 1.05;
 }
@@ -683,26 +729,60 @@
   border: 1px solid var(--rule);
   color: var(--terracotta);
   font-family: var(--ff-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .lc-cat-header__desc {
   color: var(--ink-soft);
-  font-size: var(--fs-md);
+  font-size: 15px;
   max-width: 65ch;
   margin: var(--s-3) 0 0;
   font-family: var(--ff-display);
   font-weight: 300;
-  line-height: 1.55;
+  line-height: 1.6;
+}
+
+/* ── Sub-category chips ──────────────────────────────────── */
+.lc-subcats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-5);
+}
+
+.lc-subcat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper-soft);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.lc-subcat-chip i {
+  font-size: 11px;
+  color: var(--terracotta-l);
+}
+
+.lc-subcat-chip:hover {
+  border-color: var(--terracotta);
+  background: rgba(93,44,181,0.07);
+  color: var(--terracotta);
 }
 
 /* ── Resource grid ───────────────────────────────────────── */
 .lc-resource-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: var(--s-4);
 }
 
@@ -718,18 +798,20 @@
   transition: transform var(--dur-2) var(--ease-spring),
               border-color var(--dur-2) var(--ease-out),
               box-shadow var(--dur-2) var(--ease-out);
+  text-decoration: none;
+  color: inherit;
 }
 
 .lc-resource-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(93, 44, 181, 0.32);
+  border-color: rgba(93,44,181,0.3);
   box-shadow: var(--shadow-3);
 }
 
 .lc-resource-card__cover {
   display: grid;
   place-items: center;
-  min-height: 120px;
+  min-height: 110px;
   background: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.18), transparent 40%),
               var(--brand-grad);
   position: relative;
@@ -738,7 +820,7 @@
 
 .lc-resource-card__cover img {
   width: 100%;
-  height: 120px;
+  height: 110px;
   object-fit: cover;
   display: block;
 }
@@ -746,32 +828,32 @@
 .lc-resource-card__cover-label {
   display: inline-grid;
   place-items: center;
-  width: 62px;
-  height: 62px;
+  width: 54px;
+  height: 54px;
   border: 1.5px dashed rgba(250,248,255,0.5);
   border-radius: var(--radius-lg);
   color: var(--paper);
   font-family: var(--ff-display);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 500;
 }
 
 .lc-resource-card__type-badge {
   position: absolute;
-  top: var(--s-3);
-  left: var(--s-3);
+  top: var(--s-2);
+  left: var(--s-2);
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 10px;
+  padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(26, 22, 53, 0.54);
+  background: rgba(26,22,53,0.5);
   backdrop-filter: blur(6px);
   color: var(--paper);
   font-family: var(--ff-mono);
   font-size: 9px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -780,7 +862,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
-  padding: var(--s-4) var(--s-4) var(--s-4);
+  padding: var(--s-4);
 }
 
 .lc-resource-card__tags {
@@ -792,8 +874,8 @@
 .lc-resource-card__tag {
   display: inline-flex;
   align-items: center;
-  min-height: 22px;
-  padding: 0 var(--s-2);
+  min-height: 20px;
+  padding: 0 8px;
   border-radius: 999px;
   background: var(--paper-coral);
   color: var(--terracotta);
@@ -806,16 +888,16 @@
 
 .lc-resource-card__title {
   font-family: var(--ff-display);
-  font-size: clamp(17px, 1.4vw, 20px);
+  font-size: clamp(15px, 1.3vw, 18px);
   font-weight: 500;
   color: var(--ink);
-  line-height: 1.25;
+  line-height: 1.3;
   margin: 0;
 }
 
 .lc-resource-card__desc {
   color: var(--ink-soft);
-  font-size: var(--fs-sm);
+  font-size: 13px;
   line-height: 1.55;
   margin: 0;
   flex: 1;
@@ -847,13 +929,13 @@
 .lc-resource-card__link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 14px;
+  gap: 4px;
+  padding: 5px 12px;
   border-radius: 999px;
   background: var(--brand-grad);
   color: var(--paper);
   font-family: var(--ff-body);
-  font-size: var(--fs-xs);
+  font-size: 11px;
   font-weight: 600;
   text-decoration: none;
   transition: opacity var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
@@ -872,15 +954,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--s-9) var(--s-5);
+  padding: var(--s-8) var(--s-5);
   text-align: center;
   color: var(--muted);
 }
 
 .lc-resource-empty i,
 .lc-error i {
-  font-size: 48px;
-  opacity: 0.4;
+  font-size: 44px;
+  opacity: 0.35;
   margin-bottom: var(--s-4);
 }
 
@@ -890,20 +972,15 @@
   color: var(--ink);
 }
 
-.lc-resource-empty p,
-.lc-error p {
-  color: var(--muted);
-  max-width: 38ch;
-}
-
 .lc-btn-retry {
   margin-top: var(--s-4);
-  padding: 10px var(--s-5);
+  padding: 9px var(--s-5);
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--ff-body);
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
@@ -916,29 +993,34 @@
 
 /* ── Loading skeleton ────────────────────────────────────── */
 @keyframes lc-shimmer {
-  from { background-position: -600px 0; }
-  to   { background-position:  600px 0; }
+  from { background-position: -500px 0; }
+  to   { background-position:  500px 0; }
 }
 
 .lc-skeleton {
   border-radius: var(--radius-sm);
   background: linear-gradient(90deg,
     var(--paper-soft) 0%,
-    var(--paper-deep) 40%,
+    var(--paper-deep) 45%,
     var(--paper-soft) 80%
   );
-  background-size: 600px 100%;
-  animation: lc-shimmer 1.4s ease-in-out infinite;
+  background-size: 500px 100%;
+  animation: lc-shimmer 1.3s ease-in-out infinite;
 }
 
-.lc-skeleton--title  { height: 40px; width: 55%; margin-bottom: var(--s-3); }
-.lc-skeleton--sub    { height: 20px; width: 35%; margin-bottom: var(--s-7); }
-.lc-skeleton--cover  { height: 120px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
-.lc-skeleton--tag    { height: 18px; width: 60px; }
-.lc-skeleton--line   { height: 14px; width: 90%; margin-top: var(--s-2); }
-.lc-skeleton--short  { width: 60%; }
+.lc-loading {
+  padding: var(--s-5) 0;
+  animation: lc-fade-in 0.15s var(--ease-out);
+}
 
-.lc-loading__header { margin-bottom: var(--s-5); }
+.lc-skeleton--title  { height: 36px; width: 50%; margin-bottom: var(--s-3); }
+.lc-skeleton--sub    { height: 18px; width: 30%; margin-bottom: var(--s-6); }
+.lc-skeleton--cover  { height: 110px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+.lc-skeleton--tag    { height: 16px; width: 55px; }
+.lc-skeleton--line   { height: 13px; width: 88%; margin-top: var(--s-2); }
+.lc-skeleton--short  { width: 55%; }
+
+.lc-loading__header { margin-bottom: var(--s-4); }
 
 .lc-skeleton-card {
   border: 1px solid var(--rule);
@@ -946,9 +1028,7 @@
   overflow: hidden;
 }
 
-.lc-skeleton-card__body {
-  padding: var(--s-4);
-}
+.lc-skeleton-card__body { padding: var(--s-4); }
 
 /* ── Floating action button (mobile) ─────────────────────── */
 .lc-sidebar-fab {
@@ -960,119 +1040,76 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
-  padding: 12px var(--s-5);
+  padding: 11px var(--s-5);
   border: none;
   border-radius: 999px;
   background: var(--brand-grad);
   color: var(--paper);
   font-family: var(--ff-body);
-  font-size: var(--fs-sm);
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   box-shadow: var(--shadow-3);
   transition: transform var(--dur-2) var(--ease-spring), opacity var(--dur-2) var(--ease-out);
 }
 
-.lc-sidebar-fab:hover {
-  transform: translateX(-50%) translateY(-2px);
-}
+.lc-sidebar-fab:hover { transform: translateX(-50%) translateY(-2px); }
 
 /* ── Mobile backdrop ─────────────────────────────────────── */
 .lc-sidebar-backdrop {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(26, 22, 53, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(26,22,53,0.52);
+  backdrop-filter: blur(3px);
   z-index: 40;
   opacity: 0;
+  pointer-events: none;
   transition: opacity var(--dur-3) var(--ease-out);
 }
 
 .lc-sidebar-backdrop.is-visible {
   opacity: 1;
+  pointer-events: all;
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1280px) {
-  .lc-explorer {
-    grid-template-columns: 270px 1fr;
-  }
+  .lc-explorer { grid-template-columns: 260px 1fr; }
 }
 
 @media (max-width: 1023px) {
-  .lc-explorer {
-    grid-template-columns: 1fr;
-  }
+  .lc-explorer { grid-template-columns: 1fr; }
 
   .lc-sidebar {
     position: fixed;
-    left: 0;
-    top: 0;
-    width: min(320px, 90vw);
+    left: 0; top: 0;
+    width: min(300px, 88vw);
     height: 100dvh;
     z-index: 50;
     transform: translateX(-100%);
     box-shadow: var(--shadow-3);
   }
 
-  .lc-sidebar.is-open {
-    transform: translateX(0);
-  }
+  .lc-sidebar.is-open { transform: translateX(0); }
+  .lc-sidebar__close  { display: inline-flex; }
+  .lc-sidebar-fab     { display: inline-flex; }
+  .lc-sidebar-backdrop{ display: block; }
 
-  .lc-sidebar__close {
-    display: inline-flex;
-  }
-
-  .lc-sidebar-fab {
-    display: inline-flex;
-  }
-
-  .lc-sidebar-backdrop {
-    display: block;
-  }
-
-  .lc-content {
-    padding: var(--s-5) var(--s-5);
-  }
+  .lc-content { padding: var(--s-4) var(--s-4); min-height: auto; }
 }
 
 @media (max-width: 720px) {
-  .lc-hero__inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .lc-hero__stats {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .lc-resource-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .lc-quick-cats {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
+  .lc-hero__inner    { flex-direction: column; align-items: flex-start; }
+  .lc-hero__stats    { width: 100%; }
+  .lc-resource-grid  { grid-template-columns: 1fr; }
+  .lc-quick-cats     { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lc-tree-children {
-    transition: none;
-  }
-
-  .lc-tree-toggle svg {
-    transition: none;
-  }
-
-  .lc-resource-card,
-  .lc-quick-cat-card {
-    transition: none;
-  }
-
-  .lc-skeleton {
-    animation: none;
-    background: var(--paper-soft);
-  }
+  .lc-tree-children { transition: none; }
+  .lc-tree-toggle svg { transition: none; }
+  .lc-resource-card, .lc-quick-cat-card { transition: none; }
+  .lc-skeleton { animation: none; background: var(--paper-soft); }
+  .lc-category-detail { animation: none; }
 }

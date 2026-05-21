@@ -4,10 +4,15 @@
         ? asset('uploads/learning/' . $resource->image)
         : '';
     $types           = ['book', 'posters', 'mobile kunji', 'video'];
+    $currentStatus   = old('status', $isEdit ? $resource->status : 1);
+    $currentDate     = old('date', $isEdit ? $resource->date : now()->toDateString());
 @endphp
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+    {{-- Left column: main fields --}}
     <div class="lg:col-span-2 space-y-5">
+
         <div class="card p-5">
             <label class="label" for="title">Title</label>
             <input type="text" name="title" id="title" class="input" required maxlength="255"
@@ -20,12 +25,24 @@
             <label class="label" for="content">Short description</label>
             <textarea name="content" id="content" rows="4" class="textarea" maxlength="500"
                       placeholder="Brief summary of the resource…">{{ old('content', $isEdit ? $resource->content : '') }}</textarea>
-            <p class="help">Up to 500 characters.</p>
+            <p class="help">Up to 500 characters. This appears on the detail page.</p>
             @error('content') <p class="err">{{ $message }}</p> @enderror
         </div>
+
+        <div class="card p-5">
+            <label class="label" for="link">Resource link</label>
+            <input type="url" name="link" id="link" class="input" required maxlength="500"
+                   value="{{ old('link', $isEdit ? $resource->link : '') }}"
+                   placeholder="https://drive.google.com/… or https://youtube.com/…">
+            <p class="help">Google Drive, YouTube, PDF host, or any direct URL.</p>
+            @error('link') <p class="err">{{ $message }}</p> @enderror
+        </div>
+
     </div>
 
+    {{-- Right column: meta + image --}}
     <div class="space-y-5">
+
         <div class="card p-5">
             <label class="label" for="cat_id">Category</label>
             <select name="cat_id" id="cat_id" class="select" required>
@@ -55,12 +72,28 @@
         </div>
 
         <div class="card p-5">
-            <label class="label" for="link">External link</label>
-            <input type="url" name="link" id="link" class="input" required maxlength="500"
-                   value="{{ old('link', $isEdit ? $resource->link : '') }}"
-                   placeholder="https://…">
-            <p class="help">Google Drive, YouTube, PDF host etc.</p>
-            @error('link') <p class="err">{{ $message }}</p> @enderror
+            <label class="label" for="date">Date</label>
+            <input type="date" name="date" id="date" class="input" required
+                   value="{{ $currentDate }}">
+            @error('date') <p class="err">{{ $message }}</p> @enderror
+        </div>
+
+        <div class="card p-5">
+            <label class="label">Status</label>
+            <div class="flex items-center gap-4 mt-1">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="status" value="1" class="accent-[var(--color-clay-700)]"
+                           {{ (string) $currentStatus === '1' ? 'checked' : '' }}>
+                    <span class="text-sm font-medium text-[var(--color-ink-2)]">Published</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="status" value="0" class="accent-[var(--color-clay-700)]"
+                           {{ (string) $currentStatus === '0' ? 'checked' : '' }}>
+                    <span class="text-sm font-medium text-[var(--color-mute)]">Draft</span>
+                </label>
+            </div>
+            <p class="help mt-2">Draft resources are hidden from the public site.</p>
+            @error('status') <p class="err">{{ $message }}</p> @enderror
         </div>
 
         <div class="card p-5">
@@ -76,9 +109,10 @@
             </div>
             <input type="file" name="image" id="image" accept="image/*"
                    class="input" data-image-preview="#lcPreview">
-            <p class="help">Optional. Max 4 MB.</p>
+            <p class="help">Optional. Max 4 MB. Shown as card thumbnail.</p>
             @error('image') <p class="err">{{ $message }}</p> @enderror
         </div>
+
     </div>
 </div>
 

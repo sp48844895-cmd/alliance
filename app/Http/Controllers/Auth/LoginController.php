@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\TurnstileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -90,6 +91,10 @@ class LoginController extends Controller
 
     public function index()
     {
+        if (Auth::check()) {
+            return $this->redirectAuthenticated(Auth::user()->type ?? null);
+        }
+
         return view('auth.login-hub', [
             'portals' => $this->portalsForHub(),
         ]);
@@ -99,6 +104,10 @@ class LoginController extends Controller
     {
         $type = $this->resolveType($type);
         abort_unless(isset(self::TYPES[$type]), 404);
+
+        if (Auth::check() && (Auth::user()->type ?? null) === $type) {
+            return $this->redirectAuthenticated($type);
+        }
 
         return view('auth.login', [
             'type'              => $type,
@@ -124,7 +133,7 @@ class LoginController extends Controller
             $seconds = RateLimiter::availableIn($rateLimiterKey);
             return back()
                 ->withErrors(['email' => "Too many login attempts. Please try again in {$seconds} seconds."])
-                ->onlyInput('email');
+                ->onlyInput('email', 'remember');
         }
 
         $rules = [
@@ -136,7 +145,7 @@ class LoginController extends Controller
             if ($this->turnstile->isMisconfigured()) {
                 return back()
                     ->withErrors(['cf-turnstile-response' => 'Turnstile is enabled but not configured. Contact the site administrator.'])
-                    ->onlyInput('email');
+                    ->onlyInput('email', 'remember');
             }
 
             $rules['cf-turnstile-response'] = 'required|string';
@@ -148,7 +157,7 @@ class LoginController extends Controller
             RateLimiter::hit($rateLimiterKey, 900);
             return back()
                 ->withErrors(['cf-turnstile-response' => 'Please complete the security check.'])
-                ->onlyInput('email');
+                ->onlyInput('email', 'remember');
         }
 
         $user = DB::table('users')
@@ -163,13 +172,19 @@ class LoginController extends Controller
             RateLimiter::hit($rateLimiterKey, 900);
             return back()
                 ->withErrors(['email' => 'These credentials do not match our records.'])
-                ->onlyInput('email');
+                ->onlyInput('email', 'remember');
         }
 
         RateLimiter::clear($rateLimiterKey);
 
-        Auth::loginUsingId((int) $user->id, $request->boolean('remember'));
+        $remember = $request->boolean('remember');
+
+        Auth::loginUsingId((int) $user->id, $remember);
         $request->session()->regenerate();
+
+        if ($remember) {
+            $this->capRememberCookieLifetime();
+        }
 
         DB::table('users')->where('id', $user->id)->update([
             'last_login_at' => now(),
@@ -177,6 +192,37 @@ class LoginController extends Controller
         ]);
 
         return redirect()->intended(route($config['redirect']));
+    }
+
+    private function capRememberCookieLifetime(): void
+    {
+        /** @var \Illuminate\Auth\SessionGuard $guard */
+        $guard   = Auth::guard();
+        $name    = $guard->getRecallerName();
+        $queued  = Cookie::queued($name);
+        $minutes = (int) env('AUTH_REMEMBER_DAYS', 30) * 24 * 60;
+
+        if (! $queued) {
+            return;
+        }
+
+        Cookie::queue(
+            $name,
+            $queued->getValue(),
+            $minutes,
+            $queued->getPath(),
+            $queued->getDomain(),
+            $queued->isSecure(),
+            $queued->isHttpOnly(),
+            $queued->isRaw(),
+            $queued->getSameSite()
+        );
+    }
+
+    private function redirectAuthenticated(?string $type)
+    {
+        $route = self::TYPES[$type]['redirect'] ?? 'home';
+        return redirect()->route($route);
     }
 
     private function resolveType(string $type): string

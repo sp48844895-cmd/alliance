@@ -38,7 +38,7 @@
         ['heading' => 'Community', 'links' => [
             ['route' => 'admin.memberships.index', 'icon' => 'bi-people',     'label' => 'Memberships',  'wildcard' => 'admin.memberships.*'],
             ['route' => 'admin.contact-messages.index', 'icon' => 'bi-chat-dots', 'label' => 'Contact Messages', 'wildcard' => 'admin.contact-messages.*'],
-            ['route' => 'admin.mails.index',       'icon' => 'bi-envelope',   'label' => 'Contact Mail', 'wildcard' => 'admin.mails.*'],
+            ['route' => 'admin.mails.index',       'icon' => 'bi-envelope',   'label' => 'Mails & Newsletter', 'wildcard' => 'admin.mails.*'],
         ]],
         ['heading' => 'Geography', 'links' => [
             ['route' => 'admin.districts.index', 'icon' => 'bi-map',          'label' => 'Districts', 'wildcard' => 'admin.districts.*'],

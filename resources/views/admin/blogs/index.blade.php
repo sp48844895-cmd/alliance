@@ -70,37 +70,37 @@
         </div>
     @else
         <div class="card overflow-hidden">
-            <table class="table w-full table-fixed">
+            <table class="table w-full table-fixed [&_tbody_td]:align-top [&_tbody_td]:py-4">
                 <thead>
                     <tr>
                         <th class="w-14">Image</th>
-                        <th>Title</th>
+                        <th class="w-[11rem] lg:w-[12rem]">Title</th>
                         <th class="w-28 hidden sm:table-cell">Category</th>
-                        <th class="w-28 hidden lg:table-cell">Author</th>
+                        <th class="w-24 hidden lg:table-cell">Author</th>
                         <th class="w-24">Status</th>
                         <th class="w-14 hidden lg:table-cell">Views</th>
-                        <th class="w-24 hidden sm:table-cell">Updated</th>
+                        <th class="w-28 hidden sm:table-cell">Updated</th>
                         <th class="w-32 text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($blogs as $b)
                         <tr>
-                            <td>
+                            <td class="align-middle">
                                 <x-admin-image
                                     :filename="$b->image"
                                     folder="storage/story"
                                     class="w-10 h-10 rounded-lg object-cover border border-[var(--color-line)]"
                                     icon="bi-journal-richtext" />
                             </td>
-                            <td class="max-w-0">
-                                <a href="{{ route('admin.blogs.edit', $b->id) }}" class="font-semibold text-[var(--color-ink-2)] hover:text-[var(--color-clay-600)] truncate block">
+                            <td class="w-[11rem] lg:w-[12rem] max-w-0">
+                                <a href="{{ route('admin.blogs.edit', $b->id) }}" class="font-semibold text-[var(--color-ink-2)] hover:text-[var(--color-clay-600)] line-clamp-2 block leading-snug break-words">
                                     {{ $b->title }}
                                 </a>
                             </td>
                             <td class="hidden sm:table-cell max-w-0">
                                 @if($b->category_name)
-                                    <span class="pill pill-clay truncate max-w-full inline-block">
+                                    <span class="pill pill-clay line-clamp-2 max-w-full inline-block leading-snug">
                                         {{ $b->category_name }}
                                     </span>
                                 @else
@@ -108,7 +108,7 @@
                                 @endif
                             </td>
                             <td class="hidden lg:table-cell max-w-0">
-                                <span class="text-sm text-[var(--color-ink-2)] truncate block">{{ $b->admin ?: '—' }}</span>
+                                <span class="text-sm text-[var(--color-ink-2)] line-clamp-2 block leading-snug break-words">{{ $b->admin ?: '—' }}</span>
                             </td>
                             <td>
                                 <x-admin.status-pill
@@ -119,8 +119,8 @@
                             <td class="hidden lg:table-cell">
                                 <span class="font-mono text-xs text-[var(--color-mute)]">{{ $b->views ?: '0' }}</span>
                             </td>
-                            <td class="hidden sm:table-cell">
-                                <span class="text-xs text-[var(--color-mute)]">{{ \Illuminate\Support\Carbon::parse($b->date_updated)->format('d M Y') }}</span>
+                            <td class="hidden sm:table-cell whitespace-nowrap">
+                                <span class="text-xs text-[var(--color-mute)] whitespace-nowrap">{{ \Illuminate\Support\Carbon::parse($b->date_updated)->format('d M Y') }}</span>
                             </td>
                             <td>
                                 <div class="flex items-center justify-end gap-1">

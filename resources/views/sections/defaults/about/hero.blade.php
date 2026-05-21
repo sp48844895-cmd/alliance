@@ -44,51 +44,12 @@
           </p>
         </details>
 
-        {{--
-        <div class="hero-cta fade-up" data-delay="4">
-          <a class="btn btn-primary" href="#ab-app-h">
-            See our approach
-            <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          </a>
-          <a class="btn btn-ghost" href="{{ route('contact') }}">Join the alliance</a>
-        </div>
-        --}}
-
-        {{--
-        <ul class="ab-hero-facts fade-up" data-delay="5" aria-label="Quick facts about the alliance">
-          <li>
-            <span class="ab-fact-num">2018</span>
-            <span class="ab-fact-lbl">Founded</span>
-          </li>
-          <li>
-            <span class="ab-fact-num">33</span>
-            <span class="ab-fact-lbl">Districts reached</span>
-          </li>
-          <li>
-            <span class="ab-fact-num">7</span>
-            <span class="ab-fact-lbl">PVTG groups</span>
-          </li>
-          <li>
-            <span class="ab-fact-num">5,194<span class="ab-fact-plus">+</span></span>
-            <span class="ab-fact-lbl">Members</span>
-          </li>
-        </ul>
-        --}}
       </div>
 
       <div class="ab-hero-art fade-up" data-delay="3" aria-hidden="true">
         <div class="ab-hero-panel ab-hero-panel--1" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/banner/1714379202.png');"></div>
         <div class="ab-hero-panel ab-hero-panel--2" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/696641b1e3114.png');"></div>
         <div class="ab-hero-panel ab-hero-panel--3" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/69b2a3de375ea.png');"></div>
-        {{--
-        <div class="ab-hero-stamp">
-          <span class="kicker">Since 2018</span>
-          <strong>An alliance, <em>not</em> an organisation.</strong>
-        </div>
-        <div class="ab-hero-tape">
-          <span>Volunteers</span><i>·</i><span>NGOs</span><i>·</i><span>Academia</span><i>·</i><span>Government</span>
-        </div>
-        --}}
       </div>
     </div>
   </div>

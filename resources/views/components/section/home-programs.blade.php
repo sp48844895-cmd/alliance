@@ -1,7 +1,6 @@
 @props([
     'section' => [],
     'programs' => null,
-    'insights' => null,
 ])
 
 @php
@@ -64,8 +63,6 @@
                 </article>
             @endforeach
         </div>
-
-        <x-section.insights-grid :insights="$insights" />
     </div>
 @elseif (!empty($cmsCards))
     <div class="container-x">

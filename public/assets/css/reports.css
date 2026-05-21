@@ -2,42 +2,10 @@
   padding-bottom: var(--s-9);
 }
 
-.reports-panel {
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-2);
-}
-
-.reports-panel__header {
-  display: grid;
-  gap: var(--s-5);
-  align-items: end;
-  padding: var(--s-5);
-  background: linear-gradient(135deg, var(--paper-soft), rgba(250, 248, 255, 0.94));
-  border-bottom: 1px solid var(--rule);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-
-.reports-panel__header h2 {
-  margin-top: var(--s-3);
-  margin-bottom: 0;
-}
-
-.reports-panel__header p {
-  margin-bottom: 0;
-  color: var(--ink-soft);
-  font-family: var(--ff-display);
-  font-size: clamp(18px, 1.45vw, 22px);
-  line-height: 1.55;
-  font-weight: 300;
-}
-
 .reports-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--s-5);
-  padding: var(--s-5);
 }
 
 .report-card {
@@ -102,6 +70,10 @@
     #fff;
 }
 
+.report-card__cover {
+  position: relative;
+}
+
 .report-card__cover img {
   display: block;
   width: 100%;
@@ -111,6 +83,28 @@
   object-fit: contain;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-2);
+}
+
+.report-card__cover-flag {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(10, 8, 24, 0.82);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .report-card__fallback {
@@ -189,14 +183,8 @@
 }
 
 @media (min-width: 900px) {
-  .reports-panel__header {
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-    padding: var(--s-6);
-  }
-
   .reports-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    padding: var(--s-6);
   }
 
   .report-card__footer {
@@ -207,13 +195,6 @@
 @media (min-width: 1180px) {
   .report-card__footer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 420px) {
-  .reports-panel__header,
-  .reports-grid {
-    padding: var(--s-4);
   }
 }
 

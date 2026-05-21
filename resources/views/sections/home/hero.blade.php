@@ -50,6 +50,8 @@
 
         <p class="hero-lede fade-up" data-delay="3">{!! $s['lede_html'] ?? 'ChhattisgarhABC is a community platform where <b>youth, professionals, civil society and government</b> come together to share experiences and understand <em>Social &amp; Behaviour Change Communication</em> across Chhattisgarh.' !!}</p>
 
+        {{-- Hero CTAs (Explore work / Join the alliance) hidden as per request --}}
+        {{--
         <div class="hero-cta fade-up" data-delay="4">
           @foreach ($s['ctas'] ?? [['label' => 'Explore work', 'class' => 'btn btn-primary', 'link' => ['type' => 'route', 'name' => 'campaigns'], 'show_arrow' => true], ['label' => 'Join the alliance', 'class' => 'btn btn-ghost', 'link' => ['type' => 'route', 'name' => 'get-involved']]] as $cta)
           @php $link = $cta['link'] ?? []; $ctaUrl = match ($link['type'] ?? 'route') { 'route' => route($link['name'] ?? 'home'), 'anchor' => $link['hash'] ?? '#', default => $link['url'] ?? '#' }; @endphp
@@ -61,6 +63,7 @@
           </a>
           @endforeach
         </div>
+        --}}
 
       </div>
 

@@ -2,6 +2,5 @@
     <x-section.home-programs
         :section="$pageSections['programs'] ?? []"
         :programs="$homePrograms ?? null"
-        :insights="$homeInsights ?? null"
     />
 </section>

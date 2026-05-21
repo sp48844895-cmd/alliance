@@ -181,12 +181,9 @@ class PageController extends Controller
             ->pluck('total', 'cat_id');
 
         $categoryTree = $this->buildLcTree($allCats, $counts);
-        $totalResources = (int) DB::table('learning_corner')->count();
 
         return $this->pageView('pages.learning-corner', [
-            'categoryTree'   => $categoryTree,
-            'totalResources' => $totalResources,
-            'totalCategories' => $allCats->count(),
+            'categoryTree' => $categoryTree,
         ]);
     }
 
@@ -204,6 +201,7 @@ class PageController extends Controller
             ->join('learning_cat', 'learning_corner.cat_id', '=', 'learning_cat.id')
             ->whereIn('learning_corner.cat_id', $allCatIds)
             ->where('learning_cat.status', 1)
+            ->where('learning_corner.status', 1)
             ->orderByDesc('learning_corner.date')
             ->orderByDesc('learning_corner.id')
             ->get([
@@ -320,6 +318,9 @@ class PageController extends Controller
                     $report['download_exists'] = $download !== '' && file_exists(public_path($download));
                     $report['preview_url'] = $report['preview_exists'] ? asset($preview) : '#reports-title';
                     $report['download_url'] = $report['download_exists'] ? asset($download) : '#reports-title';
+                    $report['flipbook_slug'] = '';
+                    $report['flipbook_pages'] = 0;
+                    $report['has_flipbook'] = false;
 
                     return $report;
                 })
@@ -333,12 +334,71 @@ class PageController extends Controller
         ]);
     }
 
+    public function magazine(string $slug)
+    {
+        $report = DB::table('reports')
+            ->where('status', 1)
+            ->where('flipbook_slug', $slug)
+            ->first();
+
+        abort_unless($report, 404);
+
+        $pagesDir = public_path('report-flipbooks/' . $slug . '/pages');
+        abort_unless(is_dir($pagesDir), 404);
+
+        $total = (int) ($report->flipbook_pages ?? 0);
+        if ($total <= 0) {
+            abort(404);
+        }
+
+        $pages = [];
+        for ($i = 1; $i <= $total; $i++) {
+            $relative = 'report-flipbooks/' . $slug . '/pages/' . $i . '.jpg';
+            if (file_exists(public_path($relative))) {
+                $pages[] = asset($relative);
+            }
+        }
+
+        abort_if($pages === [], 404);
+
+        return view('pages.magazine-viewer', [
+            'magazineTitle' => $report->title,
+            'magazineType' => $report->type ?: 'Report',
+            'magazineSlug' => $slug,
+            'magazinePages' => $pages,
+            'magazineDownload' => $report->download_path && file_exists(public_path(ltrim($report->download_path, '/')))
+                ? asset(ltrim($report->download_path, '/'))
+                : null,
+        ]);
+    }
+
     public function newsletterSubscribe(Request $request)
     {
         $request->validate([
             'email' => 'required|email|max:191',
         ]);
 
-        return back()->with('status', 'Thanks for subscribing! We will be in touch.');
+        $email = strtolower(trim((string) $request->input('email')));
+        $exists = DB::table('newsletter_subscribers')->where('email', $email)->exists();
+
+        if (! $exists) {
+            DB::table('newsletter_subscribers')->insert([
+                'email'         => $email,
+                'ip_address'    => $request->ip(),
+                'subscribed_at' => now(),
+            ]);
+        }
+
+        $refererPath = parse_url((string) $request->headers->get('referer', ''), PHP_URL_PATH) ?: '';
+        $homePath = parse_url(route('home'), PHP_URL_PATH) ?: '/';
+        $redirect = $refererPath === $homePath
+            ? redirect()->route('home')->withFragment('newsletter')
+            : back();
+
+        $message = $exists
+            ? 'You are already subscribed to our newsletter.'
+            : 'Thanks for subscribing! We will be in touch.';
+
+        return $redirect->with('status', $message);
     }
 }

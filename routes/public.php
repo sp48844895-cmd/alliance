@@ -23,6 +23,7 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.subm
 Route::get('/learning-corner', [PageController::class, 'learningCorner'])->name('learning-corner');
 Route::get('/learning-corner/cat/{id}', [PageController::class, 'learningCornerCategoryAjax'])->name('learning-corner.cat')->whereNumber('id');
 Route::get('/reports', [PageController::class, 'reports'])->name('reports');
+Route::get('/magazine/{slug}', [PageController::class, 'magazine'])->name('magazine')->where('slug', '[a-z0-9\-]+');
 Route::post('/newsletter', [PageController::class, 'newsletterSubscribe'])->name('newsletter.subscribe');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');

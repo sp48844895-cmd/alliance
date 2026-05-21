@@ -114,8 +114,8 @@
                 @endif
 
                 <label class="flex items-center gap-2 text-xs text-[var(--color-mute)]">
-                    <input type="checkbox" name="remember" value="1" class="rounded border-[var(--color-line-2)] text-[var(--color-clay-500)] focus:ring-[var(--color-clay-500)]">
-                    Keep me signed in on this device
+                    <input type="checkbox" name="remember" value="1" {{ old('remember') ? 'checked' : '' }} class="rounded border-[var(--color-line-2)] text-[var(--color-clay-500)] focus:ring-[var(--color-clay-500)]">
+                    Keep me signed in for 30 days on this device
                 </label>
 
                 <button type="submit" class="btn btn-primary w-full !py-3" @if($turnstileMisconfigured) disabled @endif>

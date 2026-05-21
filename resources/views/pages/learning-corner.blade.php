@@ -10,34 +10,6 @@
 @section('content')
 <main id="main" class="lc-main">
 
-  {{-- ── Page hero strip ─────────────────────────────────── --}}
-  <div class="lc-hero">
-    <div class="container-x lc-hero__inner">
-      <div class="lc-hero__copy">
-        <span class="lc-eyebrow">
-          <i class="bi bi-mortarboard-fill" aria-hidden="true"></i>
-          Learning Corner
-        </span>
-        <h1 class="lc-hero__title">Knowledge <em>explorer.</em></h1>
-        <p class="lc-hero__sub">Browse SBC themes, books, videos, posters and training modules — organised so your team can find and use them in minutes.</p>
-      </div>
-      <div class="lc-hero__stats">
-        <div class="lc-stat">
-          <b>{{ $totalCategories }}</b>
-          <span>Themes</span>
-        </div>
-        <div class="lc-stat">
-          <b>{{ $totalResources }}</b>
-          <span>Resources</span>
-        </div>
-        <div class="lc-stat">
-          <i class="bi bi-tree-fill lc-stat__icon" aria-hidden="true"></i>
-          <span>Nested tree</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
   {{-- ── Explorer: sidebar + content ─────────────────────── --}}
   <div class="lc-explorer" id="lc-explorer">
 
@@ -148,7 +120,7 @@
         </div>
 
         {{-- Loading skeleton (hidden by default) --}}
-        <div class="lc-loading" id="lc-loading" hidden>
+        <div class="lc-loading" id="lc-loading" hidden style="display:none">
           <div class="lc-loading__header">
             <div class="lc-skeleton lc-skeleton--title"></div>
             <div class="lc-skeleton lc-skeleton--sub"></div>
@@ -168,7 +140,7 @@
         </div>
 
         {{-- Category detail (JS-populated) --}}
-        <div class="lc-category-detail" id="lc-category-detail" hidden>
+        <div class="lc-category-detail" id="lc-category-detail" hidden style="display:none">
 
           <div class="lc-cat-header" id="lc-cat-header">
             {{-- Populated by JS --}}
@@ -180,7 +152,7 @@
           </div>
 
           {{-- Empty state --}}
-          <div class="lc-resource-empty" id="lc-resource-empty" hidden>
+          <div class="lc-resource-empty" id="lc-resource-empty" hidden style="display:none">
             <i class="bi bi-inbox" aria-hidden="true"></i>
             <h3>No resources yet</h3>
             <p>This topic doesn't have any learning material uploaded yet.</p>
@@ -189,7 +161,7 @@
         </div>
 
         {{-- Error state (hidden by default) --}}
-        <div class="lc-error" id="lc-error" hidden>
+        <div class="lc-error" id="lc-error" hidden style="display:none">
           <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
           <h3>Something went wrong</h3>
           <p>Could not load the resources. Please try again.</p>

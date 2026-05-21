@@ -112,6 +112,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/contact-messages/{id}', [ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
 
     Route::get('/mails', [MailController::class, 'index'])->name('mails.index');
+    Route::delete('/newsletter-subscribers/{id}', [MailController::class, 'destroyNewsletter'])->name('newsletter-subscribers.destroy');
     Route::get('/mails/{id}', [MailController::class, 'show'])->name('mails.show');
     Route::post('/mails/{id}/toggle-read', [MailController::class, 'toggleRead'])->name('mails.toggleRead');
     Route::post('/mails/{id}/replies', [MailController::class, 'storeReply'])->name('mails.replies.store');

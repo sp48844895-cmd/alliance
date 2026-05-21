@@ -64,20 +64,6 @@
     });
   }
 
-  // — Newsletter form (decorative) —
-  document.querySelectorAll('.newsletter').forEach(form => {
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const input = form.querySelector('input');
-      const btn   = form.querySelector('button');
-      if (!input.value) return;
-      btn.textContent = 'Thanks ✓';
-      btn.disabled = true;
-      input.value = '';
-      setTimeout(() => { btn.textContent = 'Subscribe'; btn.disabled = false; }, 2400);
-    });
-  });
-
   // — Set current year in footer —
   document.querySelectorAll('[data-year]').forEach(el => {
     el.textContent = new Date().getFullYear();
