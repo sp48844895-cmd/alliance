@@ -1,24 +1,22 @@
 FROM php:8.2-fpm
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl unzip libpq-dev libonig-dev libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip
+    git curl unzip libpq-dev libonig-dev libzip-dev zip nginx \
+    && docker-php-ext-install pdo pdo_mysql mbstring zip \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy app files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN cp .env.example .env \
+    && composer install --no-dev --optimize-autoloader \
+    && php artisan key:generate --force
 
-# Laravel setup
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+COPY docker/nginx-default.conf /etc/nginx/sites-available/default
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
 
-CMD ["php-fpm"]
+CMD ["/start.sh"]
