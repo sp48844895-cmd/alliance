@@ -9,11 +9,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+
 COPY . .
 
 RUN cp .env.example .env \
-    && composer install --no-dev --optimize-autoloader \
-    && php artisan key:generate --force
+    && composer dump-autoload --optimize --no-interaction
 
 RUN chmod -R 775 storage bootstrap/cache
 

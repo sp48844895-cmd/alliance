@@ -1,6 +1,8 @@
 .git
 .env
-.env.*
+.env.backup
+.env.production
+.env.local
 node_modules
 vendor
 storage/logs/*
