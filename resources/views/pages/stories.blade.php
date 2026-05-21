@@ -1,0 +1,184 @@
+@extends('layouts.app')
+
+@section('title', $pageContent['meta_title'] ?? 'Impact Stories · ChhattisgarhABC')
+@section('meta_description', $pageContent['meta_description'] ?? 'Champions of Change, Stories from the Field, Case Studies and Voices from across Chhattisgarh — the slow, stubborn arc of behaviour becoming habit, told by the people who lived it.')
+
+@php
+  $filters = $storyFilters ?? ($pageSections['filters'] ?? []);
+  $storyGrid = $pageSections['story_grid'] ?? [];
+  $storyPaginator = $storyPaginator ?? null;
+  $storyCards = $storyPaginator ? $storyPaginator->items() : ($storyCards ?? ($storyGrid['cards'] ?? []));
+  $recentSection = $pageSections['recent'] ?? [];
+  $videos = $pageSections['videos'] ?? [];
+@endphp
+
+@section('content')
+<main id="main">
+
+<section class="st-filters" aria-label="Filter stories by category, district and date range">
+  <div class="container-x">
+    <div class="st-filters-row">
+      <div class="st-filters-block">
+        <label class="st-filters-lbl" for="st-filter-category"><b>Category</b></label>
+        <div class="st-select">
+          <select id="st-filter-category" data-st-filter="category">
+            @foreach ($filters['categories'] ?? [] as $category)
+              <option value="{{ $category['value'] }}">{{ $category['label'] }}</option>
+            @endforeach
+          </select>
+          <svg class="st-select-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="st-filters-block">
+        <label class="st-filters-lbl" for="st-filter-district"><b>District</b></label>
+        <div class="st-select">
+          <select id="st-filter-district" data-st-filter="district">
+            @foreach ($filters['districts'] ?? [] as $district)
+              <option value="{{ $district['value'] }}">{{ $district['label'] }}</option>
+            @endforeach
+          </select>
+          <svg class="st-select-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="st-filters-block">
+        <label class="st-filters-lbl" for="st-filter-from"><b>From</b></label>
+        <div class="st-date">
+          <input id="st-filter-from" type="date" data-st-date="from" aria-label="Filter stories from date">
+        </div>
+      </div>
+
+      <div class="st-filters-block">
+        <label class="st-filters-lbl" for="st-filter-to"><b>To</b></label>
+        <div class="st-date">
+          <input id="st-filter-to" type="date" data-st-date="to" aria-label="Filter stories to date">
+        </div>
+      </div>
+
+      <div class="st-filters-meta">
+        <span class="st-filters-count" aria-live="polite"><b data-st-count>{{ $filters['count'] ?? ($storyPaginator->total() ?? count($storyCards)) }}</b> stories</span>
+        <button type="button" class="st-filters-reset" data-st-reset>Reset</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="st-grid container-x" id="st-grid" aria-labelledby="st-grid-h">
+  <h2 id="st-grid-h" class="sr-only">Story grid</h2>
+
+  <div class="st-grid-empty" data-st-empty hidden>
+    <span class="chapter"><b>{{ $storyGrid['empty']['chapter'] ?? '—' }}</b> · {{ $storyGrid['empty']['chapter_suffix'] ?? 'No stories yet' }}</span>
+    <p>{{ $storyGrid['empty']['text'] ?? '' }} <button type="button" class="st-link" data-st-reset>reset all filters</button>.</p>
+  </div>
+
+  <div class="st-grid-wrap" data-st-list>
+    @foreach ($storyCards as $card)
+      <article class="{{ $card['classes'] }}" data-aos="fade-up" @if (!empty($card['aos_delay'])) data-aos-delay="{{ $card['aos_delay'] }}" @endif data-category="{{ $card['category'] }}" data-theme="{{ $card['theme'] }}" data-district="{{ $card['district'] }}" data-date="{{ $card['date'] }}">
+        <a class="st-card-link" href="{{ $card['url'] }}">
+          <div class="st-card-img" style="background-image:url('{{ $card['image'] }}');">
+            <span class="st-card-cat">{{ $card['cat_label'] }}</span>
+          </div>
+        <div class="st-card-body">
+          <span class="st-card-meta">{!! $card['meta'] !!}</span>
+          <h3 class="st-card-title">{!! $card['title'] !!}</h3>
+          <p class="st-card-lede">{{ $card['lede'] }}</p>
+          @if (!empty($card['tags']))
+            <div class="st-card-tags">
+              @foreach ($card['tags'] as $tag)
+                <span class="st-card-tag">{{ $tag }}</span>
+              @endforeach
+            </div>
+          @endif
+        </div>
+        </a>
+      </article>
+    @endforeach
+  </div>
+
+  @if ($storyPaginator)
+    <x-pagination :paginator="$storyPaginator" noun="stories" prefix="st-pagination" />
+  @endif
+</section>
+
+@if (!empty($recentStories))
+<section class="st-recent" aria-labelledby="st-recent-h">
+  <div class="container-x">
+    <div class="st-recent-shell" data-aos="fade-up">
+      <div class="st-recent-head">
+        <div>
+          <span class="chapter"><b>{{ $recentSection['chapter'] ?? '04' }}</b> · Recent Stories</span>
+          <h2 id="st-recent-h">{{ $recentSection['title'] ?? 'Recent stories' }}</h2>
+        </div>
+        <p>{{ $recentSection['description'] ?? '' }}</p>
+      </div>
+
+      <div class="st-recent-grid">
+        @foreach ($recentStories as $recentStory)
+          <article class="st-recent-item">
+            <time class="st-recent-date" datetime="{{ $recentStory['date_iso'] }}">
+              <strong>{{ $recentStory['day'] }}</strong>
+              <span>{{ $recentStory['month'] }}</span>
+            </time>
+
+            <div class="st-recent-copy">
+              <a href="{{ $recentStory['url'] }}">{{ $recentStory['title'] }}</a>
+              <ul>
+                <li>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+                  {{ $recentStory['author'] }}
+                </li>
+                <li>{{ $recentStory['category'] }}</li>
+              </ul>
+            </div>
+          </article>
+        @endforeach
+      </div>
+    </div>
+  </div>
+</section>
+@endif
+
+<section class="st-videos" id="st-videos" aria-labelledby="st-videos-h">
+  <div class="container-x">
+    <div class="st-videos-head">
+      <span class="chapter"><b>{{ $videos['chapter'] ?? '05' }}</b> · Video testimonials</span>
+      <h2 id="st-videos-h" data-aos="fade-up">{!! $videos['title'] ?? '' !!}</h2>
+      <p class="st-videos-sub" data-aos="fade-up" data-aos-delay="100">
+        {{ $videos['subtitle'] ?? '' }}
+      </p>
+    </div>
+
+    <div class="st-videos-grid" data-st-videos>
+      @foreach ($videos['items'] ?? [] as $video)
+        <button type="button" class="st-video" data-video-id="{{ $video['video_id'] }}" data-video-title="{{ $video['title'] }}" data-aos="fade-up" @if (!empty($video['aos_delay'])) data-aos-delay="{{ $video['aos_delay'] }}" @endif>
+          <div class="st-video-poster" style="background-image:url('{{ $video['poster'] }}');">
+            <span class="st-video-play" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+            <span class="st-video-len">{{ $video['length'] }}</span>
+          </div>
+          <div class="st-video-body">
+            <span class="st-video-cat">{{ $video['category'] }}</span>
+            <h3>{!! $video['heading'] !!}</h3>
+            <p>{{ $video['description'] }}</p>
+          </div>
+        </button>
+      @endforeach
+    </div>
+  </div>
+</section>
+
+<div class="st-modal" data-st-modal hidden role="dialog" aria-modal="true" aria-labelledby="st-modal-title">
+  <div class="st-modal-backdrop" data-st-modal-close></div>
+  <div class="st-modal-dialog" role="document">
+    <button type="button" class="st-modal-close" data-st-modal-close aria-label="Close video">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <h3 id="st-modal-title" class="st-modal-title" data-st-modal-title>Loading…</h3>
+    <div class="st-modal-frame" data-st-modal-frame></div>
+  </div>
+</div>
+
+</main>
+@endsection
