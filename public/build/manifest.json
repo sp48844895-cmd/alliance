@@ -1,0 +1,38 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-C0oRcwvn.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/admin-datatables.js": {
+    "file": "assets/admin-datatables-BbNH-U8Q.js",
+    "name": "admin-datatables",
+    "src": "resources/js/admin-datatables.js",
+    "isDynamicEntry": true,
+    "css": [
+      "assets/admin-datatables-BISpOW3S.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-tTxcmQ6C.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/admin-datatables.js"
+    ],
+    "css": [
+      "assets/app-CWk7dGur.css"
+    ]
+  },
+  "resources/js/rich-editor.js": {
+    "file": "assets/rich-editor-CPsadOuA.js",
+    "name": "rich-editor",
+    "src": "resources/js/rich-editor.js",
+    "isEntry": true
+  }
+}
