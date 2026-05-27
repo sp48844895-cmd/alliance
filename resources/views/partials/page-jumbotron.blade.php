@@ -2,33 +2,7 @@
   $pageJumbotron = null;
   $jumbotronSection = $pageSections['jumbotron'] ?? null;
 
-  if (request()->routeIs('stories.show') && isset($story)) {
-      $pageJumbotron = [
-          'eyebrow' => 'Story detail',
-          'title' => $story['title'],
-          'lede' => $story['lede'],
-          'image' => $story['hero_image'],
-          'icon' => 'story',
-          'highlights' => [
-              ['label' => 'Theme', 'value' => $story['theme']],
-              ['label' => 'District', 'value' => $story['district']],
-              ['label' => 'Published', 'value' => $story['published_label']],
-          ],
-      ];
-  } elseif (request()->routeIs('events.show') && isset($event)) {
-      $pageJumbotron = [
-          'eyebrow' => 'Event detail',
-          'title' => $event['title'],
-          'lede' => $event['summary'],
-          'image' => $event['image_url'],
-          'icon' => 'calendar',
-          'highlights' => [
-              ['label' => 'Status', 'value' => $event['status']],
-              ['label' => 'Date', 'value' => $event['date_label']],
-              ['label' => 'Location', 'value' => $event['location']],
-          ],
-      ];
-  } elseif (request()->routeIs('login.*') && isset($config)) {
+  if (request()->routeIs('login.*') && isset($config)) {
       $pageJumbotron = [
           'eyebrow' => 'Access portal',
           'title' => 'Log in as ' . $config['label'],
@@ -71,15 +45,16 @@
 @if ($pageJumbotron)
   @php
     $featuredHighlight = $pageJumbotron['highlights'][0] ?? null;
+    $jumbotronTitleIsHeading = ! request()->routeIs('events.show');
     $featuredHighlightIcon = $pageJumbotron['icon'] ?? match (true) {
         request()->routeIs('about') => 'target',
         request()->routeIs('campaigns') => 'campaign',
         request()->routeIs('stories*') => 'story',
         request()->routeIs('events*') => 'calendar',
-        request()->routeIs('knowledge-hub'),
-        request()->routeIs('resources'),
+        request()->routeIs('programs') => 'target',
+        request()->routeIs('resources') => 'book',
         request()->routeIs('learning-corner') => 'book',
-        request()->routeIs('get-involved'),
+        request()->routeIs('get-involved') => 'users',
         request()->routeIs('members') => 'users',
         request()->routeIs('contact') => 'mail',
         request()->routeIs('reports') => 'chart',
@@ -87,12 +62,16 @@
         default => 'spark',
     };
   @endphp
-  <section class="page-jumbotron" aria-labelledby="page-jumbotron-title" style="--page-jumbotron-image: url('{{ $pageJumbotron['image'] }}');">
+  <section class="page-jumbotron" @if ($jumbotronTitleIsHeading) aria-labelledby="page-jumbotron-title" @else aria-label="{{ $pageJumbotron['title'] }}" @endif style="--page-jumbotron-image: url('{{ $pageJumbotron['image'] }}');">
     <div class="container-x">
       <div class="page-jumbotron__grid">
         <div class="page-jumbotron__copy">
           <span class="page-jumbotron__eyebrow">{{ $pageJumbotron['eyebrow'] }}</span>
-          <h1 id="page-jumbotron-title" class="page-jumbotron__title">{{ $pageJumbotron['title'] }}</h1>
+          @if ($jumbotronTitleIsHeading)
+            <h1 id="page-jumbotron-title" class="page-jumbotron__title">{{ $pageJumbotron['title'] }}</h1>
+          @else
+            <p id="page-jumbotron-title" class="page-jumbotron__title">{{ $pageJumbotron['title'] }}</p>
+          @endif
         </div>
 
         <aside class="page-jumbotron__aside" aria-label="Page highlights">

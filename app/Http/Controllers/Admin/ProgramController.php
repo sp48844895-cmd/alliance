@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesUploadedMedia;
 use App\Http\Controllers\Concerns\TogglesRecordStatus;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProgramController extends Controller
 {
+    use HandlesUploadedMedia;
     use TogglesRecordStatus;
 
     public function index(Request $request)
@@ -29,7 +32,7 @@ class ProgramController extends Controller
             $query->where('status', (int) $status);
         }
 
-        $programs = $query->orderBy('sort_order')->orderBy('id')->paginate(15)->withQueryString();
+        $programs = $query->orderBy('sort_order')->orderBy('id')->get();
 
         return view('admin.programs.index', compact('programs', 'q', 'status'));
     }
@@ -46,22 +49,31 @@ class ProgramController extends Controller
             'tag'        => 'nullable|max:150',
             'short_desc' => 'required',
             'full_desc'  => 'nullable',
+            'image'      => 'nullable|image',
             'card_style' => 'required|in:featured,default,teal,ochre,leaf',
             'sort_order' => 'nullable|integer|min:0',
             'status'     => 'required|in:0,1',
         ]);
+
+        $image = '';
+        if ($request->hasFile('image')) {
+            $image = $this->storeUploadedFile('program', $request->file('image'));
+        }
 
         DB::table('programs')->insert([
             'title'      => $request->title,
             'tag'        => $request->tag ?? '',
             'short_desc' => $request->short_desc,
             'full_desc'  => $request->full_desc ?? '',
+            'image'      => $image,
             'card_style' => $request->card_style,
             'sort_order' => (int) ($request->sort_order ?? 0),
             'status'     => (int) $request->status,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        Cache::forget('home.programs');
 
         return redirect()->route('admin.programs.index')->with('success', 'Program created successfully.');
     }
@@ -88,28 +100,40 @@ class ProgramController extends Controller
             'tag'        => 'nullable|max:150',
             'short_desc' => 'required',
             'full_desc'  => 'nullable',
+            'image'      => 'nullable|image',
             'card_style' => 'required|in:featured,default,teal,ochre,leaf',
             'sort_order' => 'nullable|integer|min:0',
             'status'     => 'required|in:0,1',
         ]);
+
+        $image = (string) ($program->image ?? '');
+        if ($request->hasFile('image')) {
+            $image = $this->replaceUploadedFile('program', $request->file('image'), $image);
+        }
 
         DB::table('programs')->where('id', $id)->update([
             'title'      => $request->title,
             'tag'        => $request->tag ?? '',
             'short_desc' => $request->short_desc,
             'full_desc'  => $request->full_desc ?? '',
+            'image'      => $image,
             'card_style' => $request->card_style,
             'sort_order' => (int) ($request->sort_order ?? 0),
             'status'     => (int) $request->status,
             'updated_at' => now(),
         ]);
 
+        Cache::forget('home.programs');
+
         return redirect()->route('admin.programs.index')->with('success', 'Program updated successfully.');
     }
 
     public function toggleStatus($id)
     {
-        return $this->toggleRecordStatus('programs', $id, 'status', ['updated_at' => now()], 'Program status updated.');
+        $response = $this->toggleRecordStatus('programs', $id, 'status', ['updated_at' => now()], 'Program status updated.');
+        Cache::forget('home.programs');
+
+        return $response;
     }
 
     public function destroy($id)
@@ -119,7 +143,9 @@ class ProgramController extends Controller
             abort(404);
         }
 
+        $this->deleteUploadedFile('program', (string) ($program->image ?? ''));
         DB::table('programs')->where('id', $id)->delete();
+        Cache::forget('home.programs');
 
         return redirect()->route('admin.programs.index')->with('success', 'Program deleted.');
     }

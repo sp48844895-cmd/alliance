@@ -18,7 +18,7 @@
             <h2 class="font-display text-2xl text-white font-medium leading-snug tracking-tight mb-1">
                 Welcome back, <em class="not-italic text-white/90">{{ auth()->user()->fname ?? 'Admin' }}</em>.
             </h2>
-            <p class="text-white/65 text-sm max-w-lg">Here is what is happening across the platform today.</p>
+            <p class="text-white/65 text-sm max-w-lg">Here is what is happening on the platform today.</p>
         </div>
         <a href="{{ route('home') }}" target="_blank" rel="noopener" class="shrink-0 hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/15 hover:bg-white/25 border border-white/25 text-white text-sm font-semibold transition">
             <i class="bi bi-box-arrow-up-right text-xs"></i>
@@ -28,65 +28,72 @@
 
     <div class="stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div class="stat">
-            <div class="stat-label">Total Stories</div>
+            <div class="stat-label">Stories</div>
             <div class="stat-num mt-2">{{ number_format($stats['blogs_total']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">All posts in system</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">All posts in the system</div>
         </div>
 
         <div class="stat">
-            <div class="stat-label">Published Stories</div>
+            <div class="stat-label">Published</div>
             <div class="stat-num mt-2">{{ number_format($stats['blogs_published']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">Live on the site</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Live on the website</div>
         </div>
 
         <div class="stat">
-            <div class="stat-label">Total Events</div>
+            <div class="stat-label">Events</div>
             <div class="stat-num mt-2">{{ number_format($stats['events_total']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">Across all districts</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Listed across districts</div>
         </div>
 
         <div class="stat">
-            <div class="stat-label">Memberships</div>
+            <div class="stat-label">Members</div>
             <div class="stat-num mt-2">{{ number_format($stats['memberships_total']) }}</div>
             <div class="text-xs text-[var(--color-mute)] mt-1">Registered members</div>
         </div>
 
         <div class="stat">
-            <div class="stat-label">Unread Contacts</div>
+            <div class="stat-label">Unread contacts</div>
             <div class="stat-num mt-2">{{ number_format($stats['unread_contacts']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">Awaiting reply</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Waiting for a reply</div>
         </div>
 
         <div class="stat">
             <div class="stat-label">Categories</div>
             <div class="stat-num mt-2">{{ number_format($stats['categories_total']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">Content taxonomy</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Story categories</div>
         </div>
 
         <div class="stat">
-            <div class="stat-label">Learning Resources</div>
+            <div class="stat-label">Learning hub</div>
             <div class="stat-num mt-2">{{ number_format($stats['learning_total']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">Knowledge hub items</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Resources in the corner</div>
         </div>
 
         <div class="stat">
             <div class="stat-label">Drafts</div>
             <div class="stat-num mt-2">{{ number_format($stats['blogs_total'] - $stats['blogs_published']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">Unpublished stories</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Not yet published</div>
         </div>
 
         @if(($stats['pending_stories'] ?? 0) > 0)
         <a href="{{ route('admin.stories.index', ['approval_status' => 'pending']) }}" class="stat ring-2 ring-[var(--color-clay-200)] hover:ring-[var(--color-clay-400)] transition">
-            <div class="stat-label">Stories to review</div>
+            <div class="stat-label">Needs review</div>
             <div class="stat-num mt-2 text-[var(--color-clay-600)]">{{ number_format($stats['pending_stories']) }}</div>
             <div class="text-xs text-[var(--color-mute)] mt-1">Author submissions awaiting approval</div>
         </a>
         @endif
         @if(($stats['new_contact_msgs'] ?? 0) > 0)
         <a href="{{ route('admin.contact-messages.index', ['status' => 'new']) }}" class="stat ring-2 ring-[var(--color-river-200)] hover:ring-[var(--color-river-400)] transition">
-            <div class="stat-label">New contact messages</div>
+            <div class="stat-label">New enquiries</div>
             <div class="stat-num mt-2 text-[var(--color-river-600)]">{{ number_format($stats['new_contact_msgs']) }}</div>
-            <div class="text-xs text-[var(--color-mute)] mt-1">From the contact form</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Volunteer, NGO and general messages</div>
+        </a>
+        @endif
+        @if(($stats['new_applications'] ?? 0) > 0)
+        <a href="{{ route('admin.registrations.index', ['status' => 'new']) }}" class="stat ring-2 ring-[var(--color-clay-200)] hover:ring-[var(--color-clay-400)] transition">
+            <div class="stat-label">New applications</div>
+            <div class="stat-num mt-2 text-[var(--color-clay-600)]">{{ number_format($stats['new_applications']) }}</div>
+            <div class="text-xs text-[var(--color-mute)] mt-1">Intern and fellowship sign-ups</div>
         </a>
         @endif
     </div>
@@ -95,8 +102,8 @@
         <div class="card p-5 lg:p-6">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h2 class="font-display text-lg text-[var(--color-ink-2)]">Recent Stories</h2>
-                    <p class="text-xs text-[var(--color-mute)] mt-0.5">Latest posts added to the platform</p>
+                    <h2 class="font-display text-lg text-[var(--color-ink-2)]">Latest stories</h2>
+                    <p class="text-xs text-[var(--color-mute)] mt-0.5">Recently added posts</p>
                 </div>
                 <a href="{{ route('admin.blogs.index') }}" class="btn btn-ghost btn-sm">
                     <span>View all</span>
@@ -108,7 +115,7 @@
                 <div class="py-10 text-center">
                     <i class="bi bi-journal-richtext text-3xl text-[var(--color-mute-2)]"></i>
                     <div class="font-display text-base mt-3">No stories yet</div>
-                    <div class="text-sm text-[var(--color-mute)] mt-1">Create your first story to see it here.</div>
+                    <div class="text-sm text-[var(--color-mute)] mt-1">Your first story will show up here.</div>
                 </div>
             @else
                 <ul class="divide-y divide-[var(--color-line)]">
@@ -144,8 +151,8 @@
         <div class="card p-5 lg:p-6">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h2 class="font-display text-lg text-[var(--color-ink-2)]">Recent Members</h2>
-                    <p class="text-xs text-[var(--color-mute)] mt-0.5">Newest membership signups</p>
+                    <h2 class="font-display text-lg text-[var(--color-ink-2)]">Latest members</h2>
+                    <p class="text-xs text-[var(--color-mute)] mt-0.5">Recent membership sign-ups</p>
                 </div>
                 <a href="{{ route('admin.memberships.index') }}" class="btn btn-ghost btn-sm">
                     <span>View all</span>
@@ -157,7 +164,7 @@
                 <div class="py-10 text-center">
                     <i class="bi bi-people text-3xl text-[var(--color-mute-2)]"></i>
                     <div class="font-display text-base mt-3">No members yet</div>
-                    <div class="text-sm text-[var(--color-mute)] mt-1">Approved registrations will appear here.</div>
+                    <div class="text-sm text-[var(--color-mute)] mt-1">New sign-ups will appear here.</div>
                 </div>
             @else
                 <ul class="divide-y divide-[var(--color-line)]">
@@ -176,7 +183,7 @@
                                 <div class="text-sm font-semibold text-[var(--color-ink-2)] truncate">{{ $m->name }}</div>
                                 <div class="flex flex-wrap items-center gap-2 mt-1.5">
                                     <span class="pill {{ $typeClass }}">{{ $type }}</span>
-                                    <span class="font-mono text-[11px] text-[var(--color-mute)]">{{ $m->code }}</span>
+                                    <span class="font-mono text-xs text-[var(--color-mute)]">{{ $m->code }}</span>
                                 </div>
                             </div>
                             <div class="text-xs text-[var(--color-mute-2)] shrink-0 mt-1">

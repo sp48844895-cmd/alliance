@@ -23,7 +23,7 @@ class SettingsController extends Controller
             'title'       => 'required|string|max:255',
             'footer'      => 'nullable|string|max:255',
             'postdisplay' => 'required|integer|between:1,100',
-            'logo'        => 'nullable|image|max:4096',
+            'logo'        => 'nullable|image',
         ]);
 
         $site = DB::table('site')->where('id', 1)->first();

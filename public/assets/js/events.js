@@ -1,32 +1,31 @@
 /* ============================================================
-   events.js — dynamic calendar, timeline filter + highlight,
+   events.js — dynamic calendar, upcoming/past tabs,
                 gallery lightbox with keyboard nav
    ============================================================ */
 
 (() => {
 
-  /* ── 1. Timeline filter (All / Upcoming / Past) ─────────── */
-  const tlList = document.querySelector('[data-tl-list]');
-  if (tlList) {
-    const items   = Array.from(tlList.querySelectorAll('.ev-tl-item'));
-    const todayEl = tlList.querySelector('.ev-tl-today');
-    const chips   = Array.from(document.querySelectorAll('.ev-tl-chip[data-filter]'));
+  /* ── 1. Upcoming / Past tabs ─────────────────────────────── */
+  const panel = document.getElementById('ev-events-panel');
+  if (panel) {
+    const tabs   = Array.from(panel.querySelectorAll('.ev-events-tab[data-tab]'));
+    const panes  = Array.from(panel.querySelectorAll('[data-tab-panel]'));
 
-    const applyFilter = (filter) => {
-      items.forEach(it => {
-        it.classList.toggle('is-hidden', filter !== 'all' && it.dataset.status !== filter);
+    const activateTab = (tabName) => {
+      tabs.forEach(tab => {
+        const active = tab.dataset.tab === tabName;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
       });
-      if (todayEl) todayEl.style.display = filter === 'all' ? '' : 'none';
+      panes.forEach(pane => {
+        const active = pane.dataset.tabPanel === tabName;
+        pane.classList.toggle('is-active', active);
+        pane.hidden = !active;
+      });
     };
 
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => {
-          c.classList.toggle('is-active', c === chip);
-          c.setAttribute('aria-selected', String(c === chip));
-        });
-        applyFilter(chip.dataset.filter);
-      });
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => activateTab(tab.dataset.tab));
     });
   }
 
@@ -41,7 +40,7 @@
   const footCount = document.getElementById('ev-cal-foot-count');
   const prevBtn   = document.getElementById('ev-cal-prev');
   const nextBtn   = document.getElementById('ev-cal-next');
-  const tl        = document.querySelector('.ev-tl');
+  const eventsPanel = document.getElementById('ev-events-panel');
 
   const WD_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -63,7 +62,8 @@
       .then(r => r.json())
       .then(data => { cache[key] = data; cb(data); })
       .catch(() => {
-        gridEl.querySelector('.ev-cal-loading').textContent = 'Could not load calendar.';
+        const loading = gridEl.querySelector('.ev-cal-loading');
+        if (loading) loading.textContent = 'Could not load calendar.';
       });
   }
 
@@ -86,12 +86,10 @@
     const total  = data.days_in_month;
     const today  = data.today;
 
-    /* rebuild grid — keep day-of-week headers */
     let html = WD_LABELS.map(d =>
       `<div class="ev-cal-wd" role="columnheader">${d}</div>`
     ).join('');
 
-    /* leading blank cells */
     for (let i = 0; i < offset; i++) {
       html += '<div class="ev-cal-d ev-cal-d--out" aria-hidden="true"></div>';
     }
@@ -112,7 +110,6 @@
       html += `<div class="${cls}"${attrs}><span>${day}</span></div>`;
     }
 
-    /* trailing blank cells to complete last row */
     const filled   = offset + total;
     const trailing = filled % 7 !== 0 ? 7 - (filled % 7) : 0;
     for (let i = 0; i < trailing; i++) {
@@ -121,7 +118,6 @@
 
     gridEl.innerHTML = html;
 
-    /* wire up click → timeline highlight */
     gridEl.querySelectorAll('.ev-cal-d--has[data-date]').forEach(cell => {
       cell.addEventListener('click', () => highlightDate(cell.dataset.date));
       cell.addEventListener('keydown', e => {
@@ -131,25 +127,34 @@
   }
 
   function highlightDate(date) {
-    /* toggle active state on calendar cells */
     gridEl.querySelectorAll('.ev-cal-d--has').forEach(c => {
       c.classList.toggle('is-active', c.dataset.date === date);
     });
 
-    if (!tl) return;
+    if (!eventsPanel) return;
 
-    /* find matching timeline item */
-    const target = tl.querySelector(`.ev-tl-item[data-date="${date}"]`);
-    if (!target) return;
+    const card = eventsPanel.querySelector(`.ev-event-card[data-date="${date}"]`);
+    if (!card) return;
 
-    tl.querySelectorAll('.ev-tl-item.is-flash').forEach(el => el.classList.remove('is-flash'));
-    target.classList.add('is-flash');
+    const pane = card.closest('[data-tab-panel]');
+    const tabName = pane ? pane.dataset.tabPanel : null;
 
-    const tlRect   = tl.getBoundingClientRect();
-    const itemRect = target.getBoundingClientRect();
-    tl.scrollTo({ top: tl.scrollTop + (itemRect.top - tlRect.top) - 80, behavior: 'smooth' });
+    if (tabName) {
+      const tabBtn = eventsPanel.querySelector(`.ev-events-tab[data-tab="${tabName}"]`);
+      if (tabBtn) tabBtn.click();
+    }
 
-    setTimeout(() => target.classList.remove('is-flash'), 2200);
+    eventsPanel.querySelectorAll('.ev-event-card.is-flash').forEach(el => el.classList.remove('is-flash'));
+    card.classList.add('is-flash');
+
+    const panelRect = eventsPanel.getBoundingClientRect();
+    const cardRect  = card.getBoundingClientRect();
+    eventsPanel.scrollTo({
+      top: eventsPanel.scrollTop + (cardRect.top - panelRect.top) - 24,
+      behavior: 'smooth',
+    });
+
+    setTimeout(() => card.classList.remove('is-flash'), 2200);
   }
 
   function loadMonth(year, month) {
@@ -168,7 +173,6 @@
     loadMonth(curYear, curMonth);
   });
 
-  /* initial load */
   loadMonth(curYear, curMonth);
 
 

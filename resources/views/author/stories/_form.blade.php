@@ -21,8 +21,9 @@
                 </div>
 
                 <div>
-                    <label class="label" for="content">Content</label>
-                    <textarea id="content" name="content" rows="12" class="textarea" placeholder="Write your story..." required>{{ $contentVal }}</textarea>
+                    <label class="label" for="story-content">Content</label>
+                    <textarea id="story-content" name="content" data-rich-editor rows="12" class="textarea min-h-[280px]" placeholder="Write your story...">{{ $contentVal }}</textarea>
+                    <p class="help mt-2">Use headings, lists, and links. Your formatting is kept after admin approval.</p>
                     @error('content') <p class="err">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -57,7 +58,7 @@
                 @endif
                 <input id="image" type="file" name="image" accept="image/*" class="input">
                 @error('image') <p class="err">{{ $message }}</p> @enderror
-                <p class="help mt-2">JPG, PNG or WebP, max 4 MB.</p>
+                <p class="help mt-2">JPG, PNG or WebP.</p>
             </div>
 
             <div class="card p-4 bg-[var(--color-paper-2)] border border-[var(--color-line)]">

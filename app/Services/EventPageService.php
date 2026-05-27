@@ -74,26 +74,66 @@ class EventPageService
         ];
     }
 
+    public function upcomingCard(): ?array
+    {
+        $event = $this->publishedEvents()
+            ->filter(fn ($event) => $event->parsed_date->isFuture() || $event->parsed_date->isToday())
+            ->sortBy(fn ($event) => $event->parsed_date->timestamp)
+            ->first();
+
+        return $event ? $this->formatEventCard($event) : null;
+    }
+
     public function pastCards(): array
     {
         return $this->publishedEvents()
             ->filter(fn ($event) => $event->parsed_date->isPast() && ! $event->parsed_date->isToday())
+            ->sortByDesc(fn ($event) => $event->parsed_date->timestamp)
             ->values()
-            ->map(function ($event, $index) {
-                $date = $event->parsed_date;
-
-                return [
-                    'image' => $this->imageUrl((string) $event->event_image),
-                    'meta' => $date->format('M d, Y').' · '.($event->location ?: 'Chhattisgarh').' · Event',
-                    'title' => $event->event_name,
-                    'description' => Str::limit($event->summary, 220),
-                    'stats' => [],
-                    'aos_delay' => $index > 0 ? (string) ($index * 100) : null,
-                    'url' => route('events.show', $this->slugForRow($event)),
-                    'link_text' => 'View event →',
-                ];
-            })
+            ->map(fn ($event, $index) => array_merge(
+                $this->formatEventCard($event),
+                ['aos_delay' => $index > 0 ? (string) ($index * 100) : null]
+            ))
             ->all();
+    }
+
+    private function formatEventCard(object $event): array
+    {
+        $date = $event->parsed_date;
+        $tagType = $this->eventTagType($event);
+
+        return [
+            'image' => $this->imageUrl((string) $event->event_image),
+            'title' => $event->event_name,
+            'date' => $date->format('Y-m-d'),
+            'date_label' => $date->format('M d, Y'),
+            'day' => $date->format('d'),
+            'month' => strtoupper($date->format('M')),
+            'mode' => $this->eventMode($event),
+            'tag' => $this->eventTag($event),
+            'tag_type' => $tagType,
+            'url' => route('events.show', $this->slugForRow($event)),
+            'link_text' => ($date->isFuture() || $date->isToday()) ? 'Register →' : 'View event →',
+        ];
+    }
+
+    private function eventMode(object $event): string
+    {
+        $haystack = strtolower(
+            (string) ($event->googlemap ?? '').' '.
+            (string) ($event->location ?? '').' '.
+            (string) ($event->description ?? '')
+        );
+
+        $onlineMarkers = ['zoom', 'webinar', 'fb.me', 'meet.google', 'teams.microsoft', 'virtual', 'online', 'live stream', 'livestream'];
+
+        foreach ($onlineMarkers as $marker) {
+            if (str_contains($haystack, $marker)) {
+                return 'Online';
+            }
+        }
+
+        return 'Offline';
     }
 
     public function galleryTiles(): array
@@ -271,8 +311,6 @@ class EventPageService
 
     private function formatHomeTile(object $event, int $index): array
     {
-        $delays = [0, 80, 160, 220, 280];
-
         return [
             'tile_class' => 'tile tile-'.($index + 1),
             'image' => $this->imageUrl((string) $event->event_image),
@@ -280,7 +318,6 @@ class EventPageService
             'title' => $event->event_name,
             'description' => Str::limit($event->summary, $this->homeTileDescriptionLimit($index)),
             'url' => route('events.show', $this->slugForRow($event)),
-            'aos_delay' => $delays[$index] ?? 0,
         ];
     }
 
@@ -296,9 +333,18 @@ class EventPageService
         };
     }
 
+    private function cleanEventText(string $value): string
+    {
+        $text = str_replace(['&nbsp;', '&#160;', "\xc2\xa0"], ' ', $value);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace('/\s+/u', ' ', strip_tags($text)) ?? '';
+
+        return trim($text);
+    }
+
     private function hydrateEvent(object $row): object
     {
-        $summary = trim(strip_tags(html_entity_decode((string) $row->description, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+        $summary = $this->cleanEventText((string) $row->description);
 
         if ($summary === '') {
             $summary = 'A public alliance event designed to bring practitioners, volunteers and partner organisations together for grounded learning and community action.';

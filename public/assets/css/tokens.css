@@ -38,22 +38,60 @@
                   #faf8ff;
 
   /* — Type — */
-  --ff-display: "Fraunces", "Source Serif 4", Georgia, serif;
-  --ff-body:    "Manrope", "DM Sans", system-ui, sans-serif;
-  --ff-hand:    "Caveat", "Comic Sans MS", cursive;
-  --ff-mono:    "JetBrains Mono", ui-monospace, monospace;
+  --ff-display: "Roboto", system-ui, sans-serif;
+  --ff-body:    "Roboto", system-ui, sans-serif;
+  --ff-hand:    "Roboto", system-ui, sans-serif;
+  --ff-mono:    "Roboto", system-ui, sans-serif;
 
-  /* fluid type scale — clamp(min, vw, max) */
-  --fs-xxs: clamp(11px, 0.7vw, 12px);
-  --fs-xs:  clamp(12px, 0.8vw, 13px);
-  --fs-sm:  clamp(14px, 0.95vw, 15px);
-  --fs-md:  clamp(16px, 1.05vw, 17px);
-  --fs-lg:  clamp(18px, 1.25vw, 20px);
-  --fs-xl:  clamp(22px, 1.7vw, 26px);
-  --fs-2xl: clamp(28px, 2.5vw, 36px);
-  --fs-3xl: clamp(38px, 4vw, 56px);
-  --fs-4xl: clamp(52px, 6.2vw, 92px);
-  --fs-5xl: clamp(64px, 8vw, 124px);
+  /* Type scale — 4 sizes only (small · body · heading · display) */
+  --fs-small:   clamp(12px, 0.85vw, 14px);
+  --fs-body:    clamp(16px, 1.05vw, 18px);
+  --fs-heading: clamp(24px, 2.2vw, 36px);
+  --fs-display: clamp(40px, 5vw, 72px);
+
+  /* Legacy aliases → 4-size scale (keep existing CSS working) */
+  --fs-xxs:        var(--fs-small);
+  --fs-xs:         var(--fs-small);
+  --fs-sm:         var(--fs-small);
+  --fs-md:         var(--fs-body);
+  --fs-lg:         var(--fs-body);
+  --fs-xl:         var(--fs-heading);
+  --fs-2xl:        var(--fs-heading);
+  --fs-3xl:        var(--fs-heading);
+  --fs-4xl:        var(--fs-display);
+  --fs-5xl:        var(--fs-display);
+  --fs-base:       var(--fs-body);
+  --fs-lede:       var(--fs-body);
+  --fs-subheading: var(--fs-heading);
+  --fs-stat:       var(--fs-heading);
+  --fs-hero:       var(--fs-display);
+  --fs-hero-tight: var(--fs-display);
+  --fs-cta:        var(--fs-body);
+  --fs-prose:      var(--fs-body);
+  --lh-prose:      1.7;
+
+  /* font weights */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* line heights */
+  --lh-tight:    1.05;
+  --lh-snug:     1.2;
+  --lh-normal:   1.5;
+  --lh-relaxed:  1.65;
+  --lh-loose:    1.75;
+
+  /* letter spacing */
+  --ls-tighter:  -0.03em;
+  --ls-tight:    -0.02em;
+  --ls-display:  -0.01em;
+  --ls-heading:  -0.015em;
+  --ls-normal:   0;
+  --ls-wide:     0.05em;
+  --ls-caps:     0.18em;
 
   /* — Spacing (4pt grid) — */
   --s-1:  4px;

@@ -50,7 +50,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: var(--fs-small);
   font-weight: 600;
   text-decoration: none;
   transition: background 0.2s ease, border-color 0.2s ease;
@@ -68,8 +68,8 @@ body {
 
 .magazine-bar__title h1 {
   margin: 2px 0 0;
-  font-family: var(--ff-display), serif;
-  font-size: clamp(15px, 1.4vw, 18px);
+  font-family: var(--ff-display), sans-serif;
+  font-size: var(--fs-body);
   font-weight: 600;
   letter-spacing: -0.01em;
   color: #fff;
@@ -81,7 +81,7 @@ body {
 .magazine-bar__type {
   display: inline-block;
   font-family: var(--ff-mono), monospace;
-  font-size: 10px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -105,7 +105,7 @@ body {
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.9);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--fs-small);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -238,7 +238,7 @@ body {
   align-items: center;
   gap: 6px;
   font-family: var(--ff-mono), monospace;
-  font-size: 13px;
+  font-size: var(--fs-small);
   font-weight: 700;
   color: rgba(255, 255, 255, 0.75);
 }
@@ -301,7 +301,7 @@ body {
   .magazine-bar__back span { display: none; }
   .magazine-bar__back { padding: 8px; }
 
-  .magazine-bar__title h1 { font-size: 14px; }
+  .magazine-bar__title h1 { font-size: var(--fs-body); }
 
   .magazine-bar__action span { display: none; }
   .magazine-bar__action { padding: 8px; width: 36px; height: 36px; justify-content: center; }
@@ -325,6 +325,6 @@ body {
 }
 
 @media (max-width: 420px) {
-  .magazine-bar__title h1 { font-size: 13px; }
-  .magazine-bar__type { font-size: 9px; }
+  .magazine-bar__title h1 { font-size: var(--fs-small); }
+  .magazine-bar__type { font-size: var(--fs-small); }
 }

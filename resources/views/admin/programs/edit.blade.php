@@ -4,7 +4,7 @@
 @section('page_title', 'Edit Program')
 @section('breadcrumb')
     <a href="{{ route('admin.programs.index') }}">Programs</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="text-[var(--color-ink-2)]">Edit</span>
 @endsection
 

@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <a href="{{ route('admin.stories.index') }}">Stories</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span>Review</span>
 @endsection
 
@@ -14,6 +14,23 @@
         $status = $story->approval_status ?? 'pending';
         $authorName = trim(($story->fname ?? '') . ' ' . ($story->lname ?? ''));
         $thumb = $story->thumbnail_path ?? '';
+        $roleLabels = [
+            'volunteer' => 'Individual Volunteer',
+            'intern' => 'Intern',
+            'ngo' => 'CSO / NGO / Firm / Organization',
+            'admin' => 'Admin',
+            'fellow' => 'Fellow',
+        ];
+        $rolePills = [
+            'volunteer' => 'pill-leaf',
+            'intern' => 'pill-amber',
+            'ngo' => 'pill-clay',
+            'admin' => 'pill-mute',
+            'fellow' => 'pill-river',
+        ];
+        $authorType = $story->author_type ?? '';
+        $roleLabel = $roleLabels[$authorType] ?? ($authorType !== '' ? ucfirst($authorType) : 'Unknown');
+        $rolePill = $rolePills[$authorType] ?? 'pill-mute';
     @endphp
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -35,7 +52,7 @@
                 @if($thumb && !str_starts_with($thumb, 'http'))
                     <img src="{{ asset($thumb) }}" alt="" class="w-full max-h-80 object-cover rounded-lg border border-[var(--color-line)] mb-5">
                 @endif
-                <div class="prose prose-sm max-w-none text-[var(--color-ink-2)] whitespace-pre-wrap">{!! nl2br(e($story->content)) !!}</div>
+                <div class="story-html-content text-[var(--color-ink-2)]">{!! \App\Support\StoryContent::sanitize($story->content) !!}</div>
                 @if($story->tag)
                     <p class="text-sm text-[var(--color-mute)] mt-4">Tags: {{ $story->tag }}</p>
                 @endif
@@ -45,9 +62,19 @@
         <div class="space-y-5">
             <div class="card p-5">
                 <h3 class="font-display text-base mb-3">Submitted by</h3>
-                <p class="text-sm font-semibold">{{ $authorName !== '' ? $authorName : 'Unknown' }}</p>
-                <p class="text-xs text-[var(--color-mute)]">{{ $story->email ?? '' }}</p>
-                <p class="text-xs text-[var(--color-mute)] mt-2">{{ \Illuminate\Support\Carbon::parse($story->created_at)->format('d M Y, h:i A') }}</p>
+                <p class="text-sm font-semibold text-[var(--color-ink-2)]">{{ $authorName !== '' ? $authorName : 'Unknown' }}</p>
+                @if(!empty($story->email))
+                    <a href="mailto:{{ $story->email }}" class="text-xs text-[var(--color-mute)] hover:text-[var(--color-clay-600)] block mt-1 break-all">
+                        {{ $story->email }}
+                    </a>
+                @endif
+                @if(!empty($story->author_username))
+                    <p class="text-xs text-[var(--color-mute-2)] font-mono mt-1">{{ '@' . $story->author_username }}</p>
+                @endif
+                <span class="pill {{ $rolePill }} mt-2">{{ $roleLabel }}</span>
+                <p class="text-xs text-[var(--color-mute)] mt-3 pt-3 border-t border-[var(--color-line)]">
+                    Submitted {{ \Illuminate\Support\Carbon::parse($story->created_at)->format('d M Y, h:i A') }}
+                </p>
             </div>
 
             @if($status === 'rejected' && !empty($story->rejection_note))

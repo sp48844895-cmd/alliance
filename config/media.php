@@ -7,9 +7,10 @@ return [
 
     'presets' => [
         'story' => [
-            'folders' => ['storage/story', 'uploads/blogs'],
+            'folders' => ['storage/story', 'uploads/story', 'uploads/blogs', 'uploads/stories'],
             'upload_folder' => 'storage/story',
             'fallback' => $legacyBase.'/images/home/1.jpg',
+            'remote_pattern' => $legacyBase.'/stories/uploads/story/{file}',
         ],
         'event' => [
             'folders' => ['storage/event', 'uploads/events'],
@@ -41,6 +42,11 @@ return [
             'folders' => ['uploads/learning'],
             'upload_folder' => 'uploads/learning',
             'fallback' => '',
+        ],
+        'program' => [
+            'folders' => ['storage/programs', 'uploads/programs'],
+            'upload_folder' => 'storage/programs',
+            'fallback' => $legacyBase.'/images/home/1.jpg',
         ],
         'user' => [
             'folders' => ['uploads/users'],

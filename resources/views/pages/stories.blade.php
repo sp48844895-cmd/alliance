@@ -8,7 +8,6 @@
   $storyGrid = $pageSections['story_grid'] ?? [];
   $storyPaginator = $storyPaginator ?? null;
   $storyCards = $storyPaginator ? $storyPaginator->items() : ($storyCards ?? ($storyGrid['cards'] ?? []));
-  $recentSection = $pageSections['recent'] ?? [];
   $videos = $pageSections['videos'] ?? [];
 @endphp
 
@@ -77,21 +76,28 @@
       <article class="{{ $card['classes'] }}" data-aos="fade-up" @if (!empty($card['aos_delay'])) data-aos-delay="{{ $card['aos_delay'] }}" @endif data-category="{{ $card['category'] }}" data-theme="{{ $card['theme'] }}" data-district="{{ $card['district'] }}" data-date="{{ $card['date'] }}">
         <a class="st-card-link" href="{{ $card['url'] }}">
           <div class="st-card-img" style="background-image:url('{{ $card['image'] }}');">
-            <span class="st-card-cat">{{ $card['cat_label'] }}</span>
+            @if (!empty($card['cat_label']))
+              <span class="st-card-cat">{{ $card['cat_label'] }}</span>
+            @endif
+            @if (!empty($card['location']))
+              <span class="st-card-location">{{ $card['location'] }}</span>
+            @endif
           </div>
         <div class="st-card-body">
-          <span class="st-card-meta">{!! $card['meta'] !!}</span>
           <h3 class="st-card-title">{!! $card['title'] !!}</h3>
-          <p class="st-card-lede">{{ $card['lede'] }}</p>
-          @if (!empty($card['tags']))
-            <div class="st-card-tags">
-              @foreach ($card['tags'] as $tag)
-                <span class="st-card-tag">{{ $tag }}</span>
-              @endforeach
-            </div>
+          @if (!empty($card['author']))
+            <p class="st-card-authored">{{ $card['authored_by'] ?? 'Authored by '.$card['author'] }}</p>
           @endif
+          <p class="st-card-lede">{{ $card['lede'] }}</p>
         </div>
         </a>
+        <div class="st-card-foot">
+          <x-story-share
+            :url="$card['share_url'] ?? $card['url']"
+            :title="$card['share_title'] ?? strip_tags($card['title'])"
+            :hashtags="$card['share_hashtags'] ?? '#SBCMatters'"
+          />
+        </div>
       </article>
     @endforeach
   </div>
@@ -100,44 +106,6 @@
     <x-pagination :paginator="$storyPaginator" noun="stories" prefix="st-pagination" />
   @endif
 </section>
-
-@if (!empty($recentStories))
-<section class="st-recent" aria-labelledby="st-recent-h">
-  <div class="container-x">
-    <div class="st-recent-shell" data-aos="fade-up">
-      <div class="st-recent-head">
-        <div>
-          <span class="chapter"><b>{{ $recentSection['chapter'] ?? '04' }}</b> · Recent Stories</span>
-          <h2 id="st-recent-h">{{ $recentSection['title'] ?? 'Recent stories' }}</h2>
-        </div>
-        <p>{{ $recentSection['description'] ?? '' }}</p>
-      </div>
-
-      <div class="st-recent-grid">
-        @foreach ($recentStories as $recentStory)
-          <article class="st-recent-item">
-            <time class="st-recent-date" datetime="{{ $recentStory['date_iso'] }}">
-              <strong>{{ $recentStory['day'] }}</strong>
-              <span>{{ $recentStory['month'] }}</span>
-            </time>
-
-            <div class="st-recent-copy">
-              <a href="{{ $recentStory['url'] }}">{{ $recentStory['title'] }}</a>
-              <ul>
-                <li>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-                  {{ $recentStory['author'] }}
-                </li>
-                <li>{{ $recentStory['category'] }}</li>
-              </ul>
-            </div>
-          </article>
-        @endforeach
-      </div>
-    </div>
-  </div>
-</section>
-@endif
 
 <section class="st-videos" id="st-videos" aria-labelledby="st-videos-h">
   <div class="container-x">

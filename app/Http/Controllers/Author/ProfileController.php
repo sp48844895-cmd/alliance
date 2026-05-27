@@ -12,7 +12,7 @@ class ProfileController extends Controller
 {
     public function edit()
     {
-        $user = DB::table('users')->where('id', (int) auth()->id())->where('type', 'author')->first();
+        $user = DB::table('users')->where('id', (int) auth()->id())->first();
         abort_unless($user, 404);
 
         return view('author.profile.edit', compact('user'));
@@ -21,7 +21,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $userId = (int) auth()->id();
-        $user = DB::table('users')->where('id', $userId)->where('type', 'author')->first();
+        $user = DB::table('users')->where('id', $userId)->first();
         abort_unless($user, 404);
 
         $data = $request->validate([
@@ -31,7 +31,7 @@ class ProfileController extends Controller
             'email'    => 'required|email|max:100|unique:users,email,' . $userId,
             'bio'      => 'nullable|string|max:1000',
             'password' => 'nullable|string|min:8|confirmed',
-            'image'    => 'nullable|image|max:4096',
+            'image'    => 'nullable|image',
             'delete_image' => 'nullable|in:1',
         ]);
 

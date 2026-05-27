@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <a href="{{ route('admin.users.index') }}">Users</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span>New</span>
 @endsection
 
@@ -18,12 +18,11 @@
 
 @php
     $types = [
-        'admin'        => 'Admin',
-        'author'       => 'Author',
-        'volunteer'    => 'Volunteer',
-        'intern'       => 'Intern',
-        'professional' => 'Professional',
-        'ngo'          => 'NGO',
+        'admin'     => 'Admin',
+        'volunteer' => 'Individual Volunteer',
+        'intern'    => 'Intern',
+        'fellow'    => 'Fellow',
+        'ngo'       => 'CSO / NGO / Firm / Organization',
     ];
 @endphp
 
@@ -101,7 +100,7 @@
                             <label class="label" for="type">Portal type <span class="text-[var(--color-flame)]">*</span></label>
                             <select id="type" name="type" required class="select">
                                 @foreach ($types as $key => $label)
-                                    <option value="{{ $key }}" @selected(old('type', 'author') === $key)>{{ $label }}</option>
+                                    <option value="{{ $key }}" @selected(old('type', 'volunteer') === $key)>{{ $label }}</option>
                                 @endforeach
                             </select>
                             @error('type') <p class="err">{{ $message }}</p> @enderror
@@ -128,7 +127,7 @@
                     <input type="file" name="image" id="image" accept="image/*"
                            class="input"
                            data-image-preview="#avatarPreview">
-                    <p class="help">Square image recommended. Max 4 MB.</p>
+                    <p class="help">Square image recommended.</p>
                     @error('image') <p class="err">{{ $message }}</p> @enderror
                 </div>
             </div>

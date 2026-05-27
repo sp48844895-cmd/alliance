@@ -8,16 +8,19 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
+    <x-rich-editor-styles />
 </head>
 <body class="grain min-h-screen">
 
 @php
+    $portalType = auth()->user()->type ?? 'volunteer';
+    $portalLabel = \App\Support\StoryContributor::portalLabel($portalType);
     $sections = [
         ['heading' => 'Overview', 'links' => [
             ['route' => 'author.dashboard', 'icon' => 'bi-grid-1x2', 'label' => 'Dashboard'],
@@ -27,8 +30,17 @@
         ]],
         ['heading' => 'Stories', 'links' => [
             ['route' => 'author.stories.index', 'icon' => 'bi-journal-text', 'label' => 'My stories', 'wildcard' => 'author.stories.*'],
+            ['route' => 'author.stories.create', 'icon' => 'bi-plus-lg', 'label' => 'New story'],
         ]],
     ];
+    if ($portalType === 'intern') {
+        array_unshift($sections, [
+            'heading' => 'Intern',
+            'links' => [
+                ['route' => 'intern.dashboard', 'icon' => 'bi-mortarboard', 'label' => 'Work log'],
+            ],
+        ]);
+    }
 @endphp
 
 <div class="flex min-h-screen">
@@ -44,7 +56,7 @@
                 </div>
                 <div class="min-w-0">
                     <div class="font-display text-base leading-tight text-[var(--color-ink-2)] font-medium">Alliance for<br>Behavior Change</div>
-                    <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--color-mute-2)] mt-0.5">Chhattisgarh · Author</div>
+                    <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--color-mute-2)] mt-0.5">Chhattisgarh · {{ $portalLabel }}</div>
                 </div>
             </a>
         </div>
@@ -96,7 +108,7 @@
                 </button>
                 <div class="flex-1 min-w-0">
                     <div class="breadcrumb">
-                        <a href="{{ route('author.dashboard') }}">Author</a>
+                        <a href="{{ route('author.dashboard') }}">Stories</a>
                         @hasSection('breadcrumb')
                             <i class="bi bi-chevron-right text-[10px]"></i>
                             @yield('breadcrumb')
@@ -142,6 +154,7 @@
     </div>
 </div>
 
+<x-rich-editor-scripts />
 @stack('scripts')
 </body>
 </html>

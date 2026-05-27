@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\StoryContributor;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,16 +22,23 @@ class EnsureUserIsAuthor
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
-            return redirect()->route('login.show', 'author')
+
+            return redirect()->route('login.show', 'volunteer')
                 ->withErrors(['email' => 'Your account has been suspended.']);
         }
 
-        if (($user->type ?? '') !== 'author') {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            return $this->redirectGuest($request)
-                ->withErrors(['email' => 'Please sign in with an author account to access that page.']);
+        $type = $user->type ?? '';
+
+        if (! StoryContributor::canAccess($type)) {
+            if ($type === 'admin') {
+                return redirect()
+                    ->route('admin.dashboard')
+                    ->with('error', 'Use the admin panel to manage stories.');
+            }
+
+            return redirect()
+                ->route('home')
+                ->with('error', 'Your account does not have access to the story portal.');
         }
 
         return $next($request);
@@ -39,6 +47,7 @@ class EnsureUserIsAuthor
     private function redirectGuest(Request $request)
     {
         $request->session()->put('url.intended', $request->fullUrl());
-        return redirect()->guest(route('login.show', 'author'));
+
+        return redirect()->guest(route('login.show', 'volunteer'));
     }
 }

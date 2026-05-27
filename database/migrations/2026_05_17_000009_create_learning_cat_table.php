@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('learning_cat', function (Blueprint $table) {
             $table->increments('id');
             $table->string('cat_name', 255);
-            $table->string('cat_icon', 255)->default('fa-solid fa-book');
+            $table->string('cat_icon', 255)->default('icon-folder');
             $table->tinyInteger('status')->default(1)->comment('1=Active, 0=Inactive');
             $table->dateTime('created_at')->useCurrent();
             $table->string('admin_name', 255)->default('');

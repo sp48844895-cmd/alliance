@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Concerns\HandlesUploadedMedia;
 use App\Http\Controllers\Concerns\TogglesRecordStatus;
 use App\Http\Controllers\Controller;
+use App\Support\StoryContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -46,8 +47,7 @@ class BlogController extends Controller
 
         $blogs = $query->orderBy('blog.date_updated', 'desc')
             ->orderBy('blog.id', 'desc')
-            ->paginate(15)
-            ->withQueryString();
+            ->get();
 
         $categories = DB::table('categories')
             ->select('id', 'category_name')
@@ -117,8 +117,15 @@ class BlogController extends Controller
             'location' => 'nullable|string|max:100',
             'status'  => 'required|in:0,1',
             'rate'    => 'nullable|integer|between:0,5',
-            'image'   => 'nullable|image|max:4096',
+            'image'   => 'nullable|image',
         ]);
+
+        $content = StoryContent::sanitize($data['content']);
+        if (StoryContent::isEmpty($content)) {
+            return back()
+                ->withErrors(['content' => 'Please add story content.'])
+                ->withInput();
+        }
 
         $user = auth()->user();
         $authorName = trim(($user->fname ?? '') . ' ' . ($user->lname ?? ''));
@@ -131,7 +138,7 @@ class BlogController extends Controller
         DB::table('blog')->insert([
             'cat_id'       => (int) $data['cat_id'],
             'title'        => $data['title'],
-            'content'      => $data['content'],
+            'content'      => $content,
             'tag'          => $data['tag'] ?? '',
             'location'     => $data['location'] ?? '',
             'admin'        => $authorName !== '' ? $authorName : ($user->fname ?? 'Admin'),
@@ -182,7 +189,7 @@ class BlogController extends Controller
             'location'      => 'nullable|string|max:100',
             'status'        => 'required|in:0,1',
             'rate'          => 'nullable|integer|between:0,5',
-            'image'         => 'nullable|image|max:4096',
+            'image'         => 'nullable|image',
             'delete_image'  => 'nullable|boolean',
         ]);
 
@@ -197,10 +204,17 @@ class BlogController extends Controller
             $filename = $this->replaceUploadedFile('story', $request->file('image'), $filename);
         }
 
+        $content = StoryContent::sanitize($data['content']);
+        if (StoryContent::isEmpty($content)) {
+            return back()
+                ->withErrors(['content' => 'Please add story content.'])
+                ->withInput();
+        }
+
         DB::table('blog')->where('id', $id)->update([
             'cat_id'       => (int) $data['cat_id'],
             'title'        => $data['title'],
-            'content'      => $data['content'],
+            'content'      => $content,
             'tag'          => $data['tag'] ?? '',
             'location'     => $data['location'] ?? '',
             'status'       => (int) $data['status'],

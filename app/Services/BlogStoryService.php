@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Support\StoryContent;
 use Illuminate\Support\Str;
 
 class BlogStoryService
@@ -18,6 +19,17 @@ class BlogStoryService
     public function publishedCount(): int
     {
         return Cache::remember('blog.published_count', 300, fn () => (int) DB::table('blog')->where('status', 1)->count());
+    }
+
+    public function clearPublishedCache(): void
+    {
+        Cache::forget('blog.published_count');
+        Cache::forget('blog.filters');
+
+        foreach ([6, 12, 20] as $limit) {
+            Cache::forget('blog.recent.sidebar.'.$limit);
+            Cache::forget('blog.recent.home.'.$limit);
+        }
     }
 
     public function filters(): array
@@ -40,11 +52,30 @@ class BlogStoryService
                 ];
             }
 
+            $districtOptions = [['value' => 'all', 'label' => 'All districts']];
+
+            foreach ($this->districtNames() as $name) {
+                $label = Str::title(strtolower(trim($name)));
+                $districtOptions[] = [
+                    'value' => Str::slug($label),
+                    'label' => $label,
+                ];
+            }
+
+            usort($districtOptions, function (array $a, array $b) {
+                if ($a['value'] === 'all') {
+                    return -1;
+                }
+                if ($b['value'] === 'all') {
+                    return 1;
+                }
+
+                return strcasecmp($a['label'], $b['label']);
+            });
+
             return [
                 'categories' => $categoryOptions,
-                'districts' => [
-                    ['value' => 'all', 'label' => 'All districts'],
-                ],
+                'districts' => $districtOptions,
                 'count' => $this->publishedCount(),
             ];
         });
@@ -101,6 +132,7 @@ class BlogStoryService
                 'blog.title',
                 'blog.content',
                 'blog.tag',
+                'blog.location',
                 'blog.image',
                 'blog.admin',
                 'blog.date_created',
@@ -122,6 +154,7 @@ class BlogStoryService
                     'blog.title',
                     'blog.content',
                     'blog.tag',
+                    'blog.location',
                     'blog.image',
                     'blog.admin',
                     'blog.date_created',
@@ -143,6 +176,7 @@ class BlogStoryService
                 'blog.title',
                 'blog.content',
                 'blog.tag',
+                'blog.location',
                 'blog.image',
                 'blog.admin',
                 'blog.date_created',
@@ -192,59 +226,87 @@ class BlogStoryService
         return $related;
     }
 
+    public function recentForStorySidebar(int $exceptId = 0, int $limit = 5): array
+    {
+        $query = $this->publishedQuery();
+
+        if ($exceptId > 0) {
+            $query->where('blog.id', '!=', $exceptId);
+        }
+
+        return $query
+            ->limit($limit)
+            ->get([
+                'blog.id',
+                'blog.title',
+                'blog.date_created',
+                'categories.category_name',
+                'blog.admin',
+                'users.email as author_email',
+            ])
+            ->map(fn ($row) => $this->formatRecent($row))
+            ->all();
+    }
+
     public function formatStoryForDetail(object $row): array
     {
         $publishedDate = Carbon::parse($row->date_created);
-        $content = trim(strip_tags(html_entity_decode((string) $row->content, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
-        $lede = Str::limit($content !== '' ? $content : $row->title, 180);
-        $readMinutes = max(3, (int) ceil(str_word_count($content) / 180));
+        $bodyHtml = StoryContent::sanitize((string) $row->content);
+        $plainText = $this->cleanStoryText($bodyHtml !== '' ? strip_tags($bodyHtml) : (string) $row->content);
         $author = $this->authorName($row);
         $tags = $this->tagList((string) $row->tag);
 
-        return [
+        return array_merge([
+            'id' => (int) $row->id,
             'slug' => $this->slugForRow($row),
             'category' => $row->category_name,
-            'theme' => $tags[0] ?? $row->category_name,
-            'district' => 'Chhattisgarh',
-            'published_label' => $publishedDate->format('F Y'),
-            'read_time' => $readMinutes.'-min read',
+            'published_label' => $publishedDate->format('d M Y'),
             'title' => $row->title,
-            'lede' => $lede,
+            'lede' => Str::limit($plainText !== '' ? $plainText : $row->title, 180),
             'hero_image' => $this->imageUrl((string) $row->image),
             'author' => $author,
-            'author_initials' => $this->authorInitials($author),
-            'author_role' => 'Story archive',
-            'hero_caption' => $row->category_name,
-            'why_it_matters' => $lede,
-            'intro' => $content !== '' ? $content : $lede,
-            'highlights' => [
-                'Published in '.$row->category_name.'.',
-                'Added on '.$publishedDate->format('d M Y').'.',
-            ],
-            'stats' => [
-                ['value' => $publishedDate->format('d M'), 'label' => 'Published'],
-                ['value' => $readMinutes.' min', 'label' => 'Estimated read'],
-                ['value' => $row->category_name, 'label' => 'Category'],
-            ],
-            'quote' => [
-                'text' => $lede,
-                'cite' => $author,
-            ],
-            'sections' => [
-                [
-                    'title' => $row->title,
-                    'paragraphs' => [$content !== '' ? $content : $lede],
-                ],
-            ],
-            'timeline' => [
-                [
-                    'label' => $publishedDate->format('M Y'),
-                    'title' => 'Published',
-                    'text' => 'This story was added to the public archive.',
-                ],
-            ],
+            'body_html' => $bodyHtml,
+            'content' => $bodyHtml,
             'related_slugs' => [],
-        ];
+        ], $this->sharePayload($row, $tags));
+    }
+
+    private function cleanStoryText(string $value): string
+    {
+        $text = str_replace(['&nbsp;', '&#160;', "\xc2\xa0"], ' ', $value);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace('/\s+/u', ' ', strip_tags($text)) ?? '';
+
+        return trim($text);
+    }
+
+    private function buildStoryExcerpt(string $plainText, string $fallbackTitle, int $limit = 180): string
+    {
+        if ($plainText === '') {
+            return $fallbackTitle;
+        }
+
+        $sentences = preg_split('/(?<=[.!?])\s+/u', $plainText, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $firstUseful = '';
+
+        foreach ($sentences as $sentence) {
+            $sentence = trim($sentence);
+
+            if ($sentence === '') {
+                continue;
+            }
+
+            if (preg_match('/redirects here|disambiguation/i', $sentence)) {
+                continue;
+            }
+
+            $firstUseful = $sentence;
+            break;
+        }
+
+        $source = $firstUseful !== '' ? $firstUseful : $plainText;
+
+        return Str::limit($source, $limit);
     }
 
     private function formatCard(object $row, int $index): array
@@ -252,26 +314,27 @@ class BlogStoryService
         $content = trim(strip_tags(html_entity_decode((string) $row->content, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
         $lede = Str::limit($content !== '' ? $content : $row->title, 140);
         $date = Carbon::parse($row->date_created);
-        $readMinutes = max(3, (int) ceil(str_word_count($content) / 180));
         $author = $this->authorName($row);
         $tags = $this->tagList((string) $row->tag);
         $themeSlug = ! empty($tags) ? Str::slug($tags[0]) : $this->categoryValue($row->category_name);
+        $location = $this->formatLocationLabel($this->storyLocation($row));
 
-        return [
+        return array_merge([
             'classes' => $this->cardClass($index),
             'aos_delay' => $index % 4 === 0 ? null : (string) (($index % 4) * 60),
             'category' => $this->categoryValue($row->category_name),
             'theme' => $themeSlug,
-            'district' => 'all',
+            'district' => $location !== '' ? Str::slug($location) : 'all',
             'date' => $date->format('Y-m-d'),
             'image' => $this->imageUrl((string) $row->image),
-            'cat_label' => $row->category_name,
-            'meta' => e($author).' &nbsp;·&nbsp; '.$readMinutes.'-min read',
+            'cat_label' => $this->categoryLabel($row->category_name),
+            'location' => $location,
+            'author' => $author,
+            'authored_by' => 'Authored by '.$author,
             'title' => e($row->title),
             'lede' => $lede,
-            'tags' => $tags,
             'url' => route('stories.show', $this->slugForRow($row)),
-        ];
+        ], $this->sharePayload($row, $tags));
     }
 
     private function formatRecent(object $row): array
@@ -295,16 +358,40 @@ class BlogStoryService
         $content = trim(strip_tags(html_entity_decode((string) $row->content, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
         $blurb = Str::limit($content !== '' ? $content : $row->title, 160);
         $date = Carbon::parse($row->date_created);
+        $location = $this->formatLocationLabel($this->storyLocation($row));
+        $author = $this->authorName($row);
+        $tags = $this->tagList((string) $row->tag);
 
-        return [
+        return array_merge([
             'image' => $this->imageUrl((string) $row->image),
-            'pill' => $date->format('j F Y'),
+            'location' => $location,
+            'pill' => $location,
             'pill_style' => null,
-            'where' => 'Filed: '.Str::title(strtolower($this->storyLocation($row))),
+            'where' => $date->format('j F Y'),
+            'author' => $author,
+            'authored_by' => 'Authored by '.$author,
             'title' => $row->title,
             'blurb' => $blurb,
             'url' => route('stories.show', $this->slugForRow($row)),
-        ];
+        ], $this->sharePayload($row, $tags));
+    }
+
+    private function formatLocationLabel(string $location): string
+    {
+        $location = trim($location);
+        if ($location === '') {
+            return '';
+        }
+
+        $location = preg_replace('/^(?:field|filed)\s*:?\s*/i', '', $location);
+        $location = preg_replace('/\bchhattisgarh\b/i', '', $location);
+        $location = trim(preg_replace('/\s{2,}/', ' ', $location) ?? '');
+
+        if ($location === '') {
+            return '';
+        }
+
+        return Str::title(strtolower($location));
     }
 
     private function storyLocation(object $row): string
@@ -361,6 +448,21 @@ class BlogStoryService
         return Str::slug($name);
     }
 
+    private function categoryLabel(string $name): string
+    {
+        $name = trim($name);
+        if ($name === '') {
+            return '';
+        }
+        if (str_starts_with($name, '#')) {
+            return $name;
+        }
+
+        $label = Str::title(strtolower($name));
+
+        return str_replace(' And ', ' and ', $label);
+    }
+
     private function imageUrl(string $image): string
     {
         return MediaUrl::resolve('story', $image);
@@ -406,57 +508,29 @@ class BlogStoryService
     private function formatArchivedStoryRow(object $story): array
     {
         $publishedDate = Carbon::parse($story->created_at);
-        $content = trim(strip_tags((string) $story->content));
-        $lede = Str::limit($content !== '' ? $content : $story->title, 180);
-        $readMinutes = max(3, (int) ceil(str_word_count($content) / 180));
+        $bodyHtml = StoryContent::sanitize((string) $story->content);
+        $plainText = $this->cleanStoryText($bodyHtml !== '' ? strip_tags($bodyHtml) : (string) $story->content);
         $author = ! empty($story->author_email)
             ? Str::before($story->author_email, '@')
             : 'ChhattisgarhABC';
+        $tags = $this->tagList((string) ($story->tag ?? ''));
 
-        return [
+        return array_merge([
+            'id' => (int) $story->id,
             'slug' => $story->slug,
             'category' => $story->category,
-            'theme' => ! empty($story->tag) ? $story->tag : $story->category,
-            'district' => 'Chhattisgarh',
-            'published_label' => $publishedDate->format('F Y'),
-            'read_time' => $readMinutes.'-min read',
+            'published_label' => $publishedDate->format('d M Y'),
             'title' => $story->title,
-            'lede' => $lede,
+            'lede' => Str::limit($plainText !== '' ? $plainText : $story->title, 180),
             'hero_image' => MediaUrl::resolve('story', (string) ($story->thumbnail_path ?? '')),
             'author' => $author,
-            'author_initials' => $this->authorInitials($author),
-            'author_role' => 'Story archive',
-            'hero_caption' => 'Recent story from the ChhattisgarhABC archive.',
-            'why_it_matters' => $lede,
-            'intro' => $content !== '' ? $content : $lede,
-            'highlights' => [
-                'Published in '.$story->category.'.',
-                'Added to the public story archive on '.$publishedDate->format('d M Y').'.',
-            ],
-            'stats' => [
-                ['value' => $publishedDate->format('d M'), 'label' => 'Published'],
-                ['value' => $readMinutes.' min', 'label' => 'Estimated read'],
-                ['value' => 'Story', 'label' => 'Archive type'],
-            ],
-            'quote' => [
-                'text' => $lede,
-                'cite' => 'ChhattisgarhABC story archive',
-            ],
-            'sections' => [
-                [
-                    'title' => 'Story note',
-                    'paragraphs' => [$content !== '' ? $content : $lede],
-                ],
-            ],
-            'timeline' => [
-                [
-                    'label' => $publishedDate->format('M Y'),
-                    'title' => 'Published in the archive',
-                    'text' => 'This story was added for readers following behaviour-change work across Chhattisgarh.',
-                ],
-            ],
+            'body_html' => $bodyHtml,
+            'content' => $bodyHtml,
             'related_slugs' => [],
-        ];
+            'share_url' => route('stories.show', $story->slug),
+            'share_title' => (string) $story->title,
+            'share_hashtags' => $this->shareHashtags($tags),
+        ]);
     }
 
     private function archivedStoriesTableExists(): bool
@@ -490,15 +564,41 @@ class BlogStoryService
 
     private function authorName(object $row): string
     {
+        if (! empty($row->admin)) {
+            return trim((string) $row->admin);
+        }
+
         if (! empty($row->author_email)) {
             return Str::before($row->author_email, '@');
         }
 
-        if (! empty($row->admin)) {
-            return $row->admin;
+        return 'ChhattisgarhABC';
+    }
+
+    private function shareHashtags(array $tags): string
+    {
+        $hashtags = ['#SBCMatters'];
+
+        foreach ($tags as $tag) {
+            $clean = ltrim(trim((string) $tag), '#');
+            $slug = preg_replace('/[^a-zA-Z0-9]/', '', $clean);
+            if ($slug !== '' && strcasecmp($slug, 'SBCMatters') !== 0) {
+                $hashtags[] = '#'.$clean;
+            }
         }
 
-        return 'ChhattisgarhABC';
+        return implode(' ', array_values(array_unique($hashtags)));
+    }
+
+    private function sharePayload(object $row, array $tags): array
+    {
+        $slug = $this->slugForRow($row);
+
+        return [
+            'share_url' => route('stories.show', $slug),
+            'share_title' => (string) $row->title,
+            'share_hashtags' => $this->shareHashtags($tags),
+        ];
     }
 
     private function authorInitials(string $author): string

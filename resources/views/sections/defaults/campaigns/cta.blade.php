@@ -12,12 +12,12 @@
           <span>Pick the campaign that resonates &amp; join a field circle</span>
           <svg class="arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
-        <a href="{{ route('knowledge-hub') }}" class="cmp-cta-path">
+        <a href="{{ route('learning-corner') }}" class="cmp-cta-path">
           <b>Use our IEC openly</b>
           <span>All posters, scripts &amp; toolkits are open-licensed</span>
           <svg class="arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
-        <a href="{{ route('knowledge-hub') }}" class="cmp-cta-path">
+        <a href="{{ route('learning-corner') }}" class="cmp-cta-path">
           <b>Study the impact data</b>
           <span>Audit reports, mid-lines &amp; verified outcomes</span>
           <svg class="arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>

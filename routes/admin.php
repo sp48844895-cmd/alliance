@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\LearningCornerController;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\ProgramController;
+use App\Http\Controllers\Admin\ProgramRegistrationController;
 use App\Http\Controllers\Admin\SbcPoolMemberController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\StoryController as AdminStoryController;
@@ -104,6 +105,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/memberships/{id}/edit', [MembershipController::class, 'edit'])->name('memberships.edit');
     Route::put('/memberships/{id}', [MembershipController::class, 'update'])->name('memberships.update');
     Route::delete('/memberships/{id}', [MembershipController::class, 'destroy'])->name('memberships.destroy');
+
+    Route::get('/registrations', [ProgramRegistrationController::class, 'index'])->name('registrations.index');
+    Route::get('/registrations/{id}', [ProgramRegistrationController::class, 'show'])->name('registrations.show');
+    Route::put('/registrations/{id}/status', [ProgramRegistrationController::class, 'updateStatus'])->name('registrations.updateStatus');
+    Route::delete('/registrations/{id}', [ProgramRegistrationController::class, 'destroy'])->name('registrations.destroy');
 
     Route::get('/contact-messages', [ContactMessageController::class, 'index'])->name('contact-messages.index');
     Route::get('/contact-messages/{id}', [ContactMessageController::class, 'show'])->name('contact-messages.show');

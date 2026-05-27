@@ -13,7 +13,7 @@
             <span class="chapter"><b>{{ $chapterNum }}</b>@if ($chapterLabel !== '') · {{ $chapterLabel }}@endif</span>
         @endif
         @if ($headingHtml !== '')
-            <h2 @if ($headingId) id="{{ $headingId }}" @endif>{!! $headingHtml !!}</h2>
+            <h2 @if ($headingId) id="{{ $headingId }}" @endif class="type-section-title">{!! $headingHtml !!}</h2>
         @endif
     </div>
     @if ($sideText !== '')

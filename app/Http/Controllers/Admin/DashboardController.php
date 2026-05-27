@@ -30,6 +30,14 @@ class DashboardController extends Controller
                 // contact_messages table not yet migrated
             }
 
+            $newApplications = 0;
+            try {
+                $newApplications = (int) DB::table('program_registrations')
+                    ->where('status', 'new')
+                    ->count();
+            } catch (\Exception $e) {
+            }
+
             return [
                 'blogs_total'       => (int) DB::table('blog')->count(),
                 'blogs_published'   => (int) DB::table('blog')->where('status', 1)->count(),
@@ -37,6 +45,7 @@ class DashboardController extends Controller
                 'memberships_total' => (int) DB::table('membership')->count(),
                 'unread_contacts'   => (int) DB::table('mails')->where('status', 0)->count(),
                 'new_contact_msgs'  => $contactMsgs,
+                'new_applications'  => $newApplications,
                 'categories_total'  => (int) DB::table('categories')->count(),
                 'learning_total'    => (int) DB::table('learning_corner')->count(),
                 'pending_stories'   => $pendingStories,

@@ -8,10 +8,21 @@ use Illuminate\Support\Facades\DB;
 
 class ContactMessageController extends Controller
 {
+    public static function pathwayLabels(): array
+    {
+        return [
+            'volunteer' => 'Volunteer',
+            'partner'   => 'NGO / Partner',
+            'intern'    => 'Intern',
+            'fellow'    => 'Fellowship',
+        ];
+    }
+
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q', ''));
         $status = $request->query('status');
+        $pathway = $request->query('pathway');
         $dateFrom = $request->query('date_from');
         $dateTo = $request->query('date_to');
 
@@ -30,6 +41,10 @@ class ContactMessageController extends Controller
             $query->where('status', $status);
         }
 
+        if ($pathway !== null && $pathway !== '' && isset(self::pathwayLabels()[$pathway])) {
+            $query->where('pathway', $pathway);
+        }
+
         if ($dateFrom !== null && $dateFrom !== '') {
             $query->whereDate('created_at', '>=', $dateFrom);
         }
@@ -41,8 +56,7 @@ class ContactMessageController extends Controller
         $messages = $query
             ->orderByDesc('created_at')
             ->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
+            ->get();
 
         $stats = [
             'new'     => (int) DB::table('contact_messages')->where('status', 'new')->count(),
@@ -54,9 +68,11 @@ class ContactMessageController extends Controller
         return view('admin.contact-messages.index', [
             'messages' => $messages,
             'stats'    => $stats,
+            'pathwayLabels' => self::pathwayLabels(),
             'filters'  => [
                 'q'         => $q,
                 'status'    => $status,
+                'pathway'   => $pathway,
                 'date_from' => $dateFrom,
                 'date_to'   => $dateTo,
             ],
@@ -79,16 +95,32 @@ class ContactMessageController extends Controller
         return view('admin.contact-messages.show', compact('message'));
     }
 
-    public function markRead($id)
+    public function markRead(Request $request, $id)
     {
         $this->updateStatus($id, 'read', 'Message marked as read.');
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'message' => 'Marked as read',
+                'statusHtml' => '<span class="pill pill-mute">Read</span>',
+                'rowClass' => false,
+            ]);
+        }
 
         return redirect()->back();
     }
 
-    public function markReplied($id)
+    public function markReplied(Request $request, $id)
     {
         $this->updateStatus($id, 'replied', 'Message marked as replied.');
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'message' => 'Marked as replied',
+                'statusHtml' => '<span class="pill pill-leaf">Replied</span>',
+                'rowClass' => false,
+            ]);
+        }
 
         return redirect()->back();
     }

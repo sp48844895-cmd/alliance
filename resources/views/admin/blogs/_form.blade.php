@@ -32,10 +32,10 @@
                 </div>
 
                 <div>
-                    <label class="label" for="content">Content</label>
-                    <textarea id="content" name="content" rows="12" class="textarea" placeholder="Write the story content...">{{ $contentVal }}</textarea>
+                    <label class="label" for="blog-content">Content</label>
+                    <textarea id="blog-content" name="content" data-rich-editor rows="12" class="textarea min-h-[280px]" placeholder="Write the story content...">{{ $contentVal }}</textarea>
                     @error('content') <p class="err">{{ $message }}</p> @enderror
-                    <p class="help">Supports plain text and basic HTML.</p>
+                    <p class="help mt-2">Use headings, lists, and links. Formatting is saved with the story.</p>
                 </div>
             </div>
         </div>
@@ -78,10 +78,10 @@
                     <label class="label" for="tag">Tags</label>
                     <input id="tag" type="text" name="tag" value="{{ $tagVal }}" class="input" placeholder="climate, health, women">
                     @error('tag') <p class="err">{{ $message }}</p> @enderror
-                    <p class="help">Comma-separated list of tags.</p>
+                    <p class="help">Used for social sharing only — not shown on story cards.</p>
                 </div>
                 <div>
-                    <label class="label" for="location">Filed location</label>
+                    <label class="label" for="location">District / city</label>
                     <select id="location" name="location" class="select">
                         <option value="">Auto-detect from title/content</option>
                         @foreach ($districts ?? [] as $district)
@@ -91,7 +91,7 @@
                         @endforeach
                     </select>
                     @error('location') <p class="err">{{ $message }}</p> @enderror
-                    <p class="help">Shown on the homepage as “Filed: …”.</p>
+                    <p class="help">Shown as a location badge on story cards (e.g. Bilaspur, Jashpur).</p>
                 </div>
             </div>
 
@@ -112,7 +112,7 @@
                     <label class="label" for="image">{{ $isEdit && $currentImage ? 'Replace image' : 'Upload image' }}</label>
                     <input id="image" type="file" name="image" accept="image/*" data-image-preview="#blogPreview" class="input">
                     @error('image') <p class="err">{{ $message }}</p> @enderror
-                    <p class="help">JPG, PNG or WebP, max 4 MB.</p>
+                    <p class="help">JPG, PNG or WebP.</p>
                     <img id="blogPreview" src="" alt="" class="hidden mt-3 w-full h-auto object-cover rounded-lg border border-[var(--color-line)]">
                 </div>
             </div>

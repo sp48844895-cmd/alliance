@@ -8,12 +8,13 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,30..100,0..1;1,9..144,300..700,30..100,0..1&family=Manrope:wght@400;500;600;700&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
+    <x-rich-editor-styles />
 </head>
 <body class="admin-panel grain min-h-screen">
 
@@ -24,29 +25,30 @@
         ]],
         ['heading' => 'Content', 'links' => [
             ['route' => 'admin.blogs.index',      'icon' => 'bi-journal-richtext', 'label' => 'Stories',          'wildcard' => 'admin.blogs.*'],
-            ['route' => 'admin.stories.index',    'icon' => 'bi-book',             'label' => 'Story approvals', 'wildcard' => 'admin.stories.*'],
+            ['route' => 'admin.stories.index',    'icon' => 'bi-book',             'label' => 'Author submissions', 'wildcard' => 'admin.stories.*'],
             ['route' => 'admin.categories.index', 'icon' => 'bi-tags',             'label' => 'Categories',     'wildcard' => 'admin.categories.*'],
             ['route' => 'admin.events.index',     'icon' => 'bi-calendar-event',   'label' => 'Events',         'wildcard' => 'admin.events.*'],
             ['route' => 'admin.programs.index',   'icon' => 'bi-layout-text-window', 'label' => 'Programs',     'wildcard' => 'admin.programs.*'],
             ['route' => 'admin.banners.index',    'icon' => 'bi-image',            'label' => 'Banners',        'wildcard' => 'admin.banners.*'],
-            ['route' => 'admin.sbc-pool.index',   'icon' => 'bi-person-badge',     'label' => 'SBC Resource Pool', 'wildcard' => 'admin.sbc-pool.*'],
+            ['route' => 'admin.sbc-pool.index',   'icon' => 'bi-person-badge',     'label' => 'SBC pool', 'wildcard' => 'admin.sbc-pool.*'],
         ]],
         ['heading' => 'Learning', 'links' => [
-            ['route' => 'admin.learning-cats.index',     'icon' => 'bi-bookmark-star', 'label' => 'Learning Categories', 'wildcard' => 'admin.learning-cats.*'],
-            ['route' => 'admin.learning-corner.index',   'icon' => 'bi-collection',    'label' => 'Learning Corner',     'wildcard' => 'admin.learning-corner.*'],
+            ['route' => 'admin.learning-cats.index',     'icon' => 'bi-bookmark-star', 'label' => 'Learning categories', 'wildcard' => 'admin.learning-cats.*'],
+            ['route' => 'admin.learning-corner.index',   'icon' => 'bi-collection',    'label' => 'Learning resources',     'wildcard' => 'admin.learning-corner.*'],
         ]],
         ['heading' => 'Community', 'links' => [
-            ['route' => 'admin.memberships.index', 'icon' => 'bi-people',     'label' => 'Memberships',  'wildcard' => 'admin.memberships.*'],
-            ['route' => 'admin.contact-messages.index', 'icon' => 'bi-chat-dots', 'label' => 'Contact Messages', 'wildcard' => 'admin.contact-messages.*'],
-            ['route' => 'admin.mails.index',       'icon' => 'bi-envelope',   'label' => 'Mails & Newsletter', 'wildcard' => 'admin.mails.*'],
+            ['route' => 'admin.memberships.index', 'icon' => 'bi-people',     'label' => 'Members',  'wildcard' => 'admin.memberships.*'],
+            ['route' => 'admin.registrations.index', 'icon' => 'bi-person-lines-fill', 'label' => 'Join applications', 'wildcard' => 'admin.registrations.*'],
+            ['route' => 'admin.contact-messages.index', 'icon' => 'bi-chat-dots', 'label' => 'Contact inbox', 'wildcard' => 'admin.contact-messages.*'],
+            ['route' => 'admin.mails.index',       'icon' => 'bi-envelope',   'label' => 'Mail & newsletter', 'wildcard' => 'admin.mails.*'],
         ]],
         ['heading' => 'Geography', 'links' => [
             ['route' => 'admin.districts.index', 'icon' => 'bi-map',          'label' => 'Districts', 'wildcard' => 'admin.districts.*'],
             ['route' => 'admin.blocks.index',    'icon' => 'bi-geo-alt',      'label' => 'Blocks',    'wildcard' => 'admin.blocks.*'],
         ]],
-        ['heading' => 'Configuration', 'links' => [
-            ['route' => 'admin.settings.edit', 'icon' => 'bi-gear',          'label' => 'Site Settings', 'wildcard' => 'admin.settings.*'],
-            ['route' => 'admin.users.index',   'icon' => 'bi-shield-lock',   'label' => 'Users',         'wildcard' => 'admin.users.*'],
+        ['heading' => 'Settings', 'links' => [
+            ['route' => 'admin.settings.edit', 'icon' => 'bi-gear',          'label' => 'Site settings', 'wildcard' => 'admin.settings.*'],
+            ['route' => 'admin.users.index',   'icon' => 'bi-shield-lock',   'label' => 'Admin users',         'wildcard' => 'admin.users.*'],
         ]],
     ];
 @endphp
@@ -136,6 +138,15 @@
         </header>
 
         <main class="flex-1 px-4 lg:px-10 py-6 lg:py-8">
+            @if (!empty($phpUploadLimitLow) && $phpUploadLimitLow)
+                <div class="alert alert-error mb-4">
+                    <i class="bi bi-exclamation-triangle-fill mt-0.5"></i>
+                    <div>
+                        <div class="font-semibold mb-1">PHP upload limit is too low ({{ $phpUploadLimit }})</div>
+                        <p class="text-sm">Stop this dev server and run <code class="text-xs bg-white/80 px-1 py-0.5 rounded">php artisan serve --port={{ request()->getPort() }}</code> again, or use port 8002 if that server is already running. Image uploads need at least 64M on the PHP process serving this URL.</p>
+                    </div>
+                </div>
+            @endif
             @if (session('success'))
                 <div data-auto-dismiss class="alert alert-success mb-4">
                     <i class="bi bi-check-circle-fill mt-0.5"></i>
@@ -152,7 +163,7 @@
                 <div class="alert alert-error mb-4">
                     <i class="bi bi-exclamation-triangle-fill mt-0.5"></i>
                     <div>
-                        <div class="font-semibold mb-1">Please fix the following:</div>
+                        <div class="font-semibold mb-1">Fix these before saving:</div>
                         <ul class="list-disc ml-5 space-y-0.5">
                             @foreach ($errors->all() as $err)
                                 <li>{{ $err }}</li>
@@ -167,6 +178,7 @@
     </div>
 </div>
 
+<x-rich-editor-scripts />
 @stack('scripts')
 </body>
 </html>

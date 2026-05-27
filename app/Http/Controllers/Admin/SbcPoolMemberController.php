@@ -31,8 +31,7 @@ class SbcPoolMemberController extends Controller
         $members = $query
             ->orderBy('sort_order')
             ->orderBy('id')
-            ->paginate(15)
-            ->withQueryString();
+            ->get();
 
         return view('admin.sbc-pool.index', compact('members', 'q'));
     }
@@ -47,7 +46,7 @@ class SbcPoolMemberController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
-            'photo' => 'required|image|max:4096',
+            'photo' => 'required|image',
             'sort_order' => 'nullable|integer|min:0',
             'status' => 'required|in:0,1',
             'facebook' => 'nullable|string|max:500',
@@ -98,7 +97,7 @@ class SbcPoolMemberController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
-            'photo' => 'nullable|image|max:4096',
+            'photo' => 'nullable|image',
             'sort_order' => 'nullable|integer|min:0',
             'status' => 'required|in:0,1',
             'facebook' => 'nullable|string|max:500',

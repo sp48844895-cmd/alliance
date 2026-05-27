@@ -29,13 +29,13 @@
       </div>
       <span class="ab-vm-kicker">Mission of the Alliance</span>
       <h3 class="ab-vm-title">
-        To build a people-centered SBC movement that reaches and impacts even the last person in the community.
+        To leverage the art of behavioural science and strategic communication to expedite desired changes and actions in the community.
       </h3>
       <p class="ab-vm-copy">
-        The alliance strives to create meaningful communication that not only spreads awareness, but also helps people understand, accept, and adopt positive behaviours in their everyday lives.
+        The alliance works to ensure meaningful communication across all spaces.
       </p>
       <p class="ab-vm-copy">
-        Through collaboration, shared learning, and community-driven approaches, the alliance aims to strengthen public services and social interventions in areas such as health, nutrition, education, gender equality, sanitation, and child protection.
+        Grounded in local realities, the alliance works to understand, design, and sustain community-led behavioural change.
       </p>
     </article>
   </div>

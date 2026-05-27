@@ -50,9 +50,9 @@
 }
 
 .cmp-hero-title {
-  font-size: clamp(46px, 6.4vw, 100px);
-  font-weight: 400;
-  letter-spacing: -0.025em;
+  font-size: var(--fs-hero-tight);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-display);
   line-height: 1.02;
   margin: var(--s-4) 0 var(--s-5);
 }
@@ -63,7 +63,6 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
 }
 .cmp-hero-title .cmp-hero-sub-line { font-size: 0.74em; color: var(--ink-soft); }
 .cmp-underline {
@@ -83,14 +82,13 @@
 }
 
 .cmp-hero-lede {
-  font-family: var(--ff-display);
-  font-size: clamp(18px, 1.4vw, 22px);
+  font-family: var(--ff-body);
+  font-size: var(--fs-lede);
   line-height: 1.55;
   color: var(--ink-soft);
-  font-weight: 300;
+  font-weight: var(--fw-light);
   max-width: 56ch;
   margin: 0 0 var(--s-6);
-  font-variation-settings: "opsz" 14, "SOFT" 60;
 }
 .cmp-hero-lede b { color: var(--ink); font-weight: 500; }
 
@@ -117,11 +115,11 @@
 }
 .cmp-stat-num {
   font-family: var(--ff-display);
-  font-size: clamp(32px, 3.4vw, 48px);
+  font-size: var(--fs-stat);
   font-weight: 400;
   line-height: 1;
   color: var(--ink);
-  letter-spacing: -0.025em;
+  letter-spacing: var(--ls-display);
   font-feature-settings: "tnum" 1;
 }
 .cmp-stat-num small {
@@ -197,12 +195,12 @@
     gap: 6px;
   }
   .cmp-filters-lbl {
-    font-size: 10px;
+    font-size: var(--fs-xxs);
     letter-spacing: 0.16em;
   }
   .cmp-select select {
     min-height: 44px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
     padding: 9px 34px 9px 14px;
   }
   .cmp-select-caret {
@@ -218,7 +216,7 @@
     border-top: 1px dashed var(--rule);
   }
   .cmp-filters-count {
-    font-size: 11px;
+    font-size: var(--fs-xs);
   }
   .cmp-filters-reset {
     padding: 5px 10px;
@@ -238,8 +236,8 @@
 }
 .cmp-filters-lbl {
   font-family: var(--ff-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -294,7 +292,7 @@
 }
 .cmp-filters-count {
   font-family: var(--ff-mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   letter-spacing: 0.06em;
 }
@@ -367,7 +365,7 @@
   right: var(--s-3);
   z-index: 2;
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-xxs);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -388,7 +386,7 @@
   left: var(--s-3);
   z-index: 2;
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--paper);
@@ -409,11 +407,11 @@
 }
 .cmp-card-title {
   font-family: var(--ff-display);
-  font-size: clamp(20px, 1.7vw, 26px);
+  font-size: var(--fs-subheading);
   font-weight: 500;
   line-height: 1.18;
   margin: 0;
-  letter-spacing: -0.015em;
+  letter-spacing: var(--ls-heading);
 }
 .cmp-card-title em {
   color: var(--cmp-c);
@@ -436,7 +434,7 @@
 }
 .cmp-card-pills li {
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-xxs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   background: var(--paper-soft);
@@ -455,7 +453,7 @@
 }
 .cmp-card-meta {
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -544,7 +542,7 @@
 
 .cmp-tl-num {
   font-family: var(--ff-mono);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--ink);
@@ -558,8 +556,8 @@
 .cmp-tl-eyebrow {
   display: block;
   font-family: var(--ff-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: rgba(250,248,255,0.65);
   margin-bottom: 4px;
@@ -567,7 +565,7 @@
 .cmp-tl-summary-text h4 {
   color: var(--paper);
   font-family: var(--ff-display);
-  font-size: clamp(18px, 1.6vw, 24px);
+  font-size: var(--fs-subheading);
   font-weight: 500;
   margin: 0;
   line-height: 1.25;
@@ -577,8 +575,8 @@
   align-items: center;
   gap: var(--s-3);
   font-family: var(--ff-mono);
-  font-size: 12px;
-  letter-spacing: 0.05em;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-wide);
   color: rgba(250,248,255,0.65);
   white-space: nowrap;
 }
@@ -646,7 +644,7 @@
 .cmp-tl-step-tag {
   display: inline-block;
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-xxs);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(250,248,255,0.7);
@@ -699,7 +697,7 @@
 
 @media (max-width: 720px) {
   .cmp-tl-summary { grid-template-columns: 44px 1fr; padding: var(--s-4); }
-  .cmp-tl-num { width: 36px; height: 36px; font-size: 12px; }
+  .cmp-tl-num { width: 36px; height: 36px; font-size: var(--fs-xs); }
   .cmp-tl-summary-meta { grid-column: 1 / -1; padding-left: 56px; }
 }
 
@@ -772,7 +770,7 @@
 .cmp-ba-tag {
   align-self: flex-start;
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   padding: 6px 12px;
@@ -795,10 +793,10 @@
 .cmp-ba-num {
   font-family: var(--ff-display);
   font-weight: 400;
-  font-size: clamp(36px, 5vw, 64px);
+  font-size: var(--fs-stat);
   line-height: 1;
   color: var(--paper);
-  letter-spacing: -0.025em;
+  letter-spacing: var(--ls-display);
   font-feature-settings: "tnum" 1;
 }
 .cmp-ba-num small {
@@ -861,7 +859,7 @@
   display: flex;
   justify-content: space-between;
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -915,8 +913,8 @@
   .cmp-ba-side { padding: var(--s-5) var(--s-5) var(--s-4); }
   .cmp-ba-stats { grid-template-columns: 1fr; gap: var(--s-3); max-width: 48%; }
   .cmp-ba-handle-knob { width: 36px; height: 36px; }
-  .cmp-ba-tag { margin-bottom: var(--s-3); font-size: 9px; padding: 5px 10px; }
-  .cmp-ba-num { font-size: clamp(28px, 6vw, 36px); }
+  .cmp-ba-tag { margin-bottom: var(--s-3); font-size: var(--fs-xxs); padding: 5px 10px; }
+  .cmp-ba-num { font-size: var(--fs-2xl); }
 }
 
 

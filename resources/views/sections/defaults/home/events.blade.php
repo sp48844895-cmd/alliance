@@ -6,8 +6,8 @@
     <p class="head-side">Upcoming webinars, workshops and convenings from across Chhattisgarh, all in one quick events preview.</p>
   </div>
 
-  <div class="initiatives-grid">
-    <a href="{{ route("events") }}" class="tile tile-1" data-aos="fade-up" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/427748.png');">
+  <div class="initiatives-grid home-events-grid">
+    <a href="{{ route("events") }}" class="tile tile-1" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/427748.png');">
       <span class="tile-tag">Featured · Webinar</span>
       <span class="arrow-circle" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
@@ -16,7 +16,7 @@
       <p>A 90-minute live webinar with master trainers from Bilaspur, Bastar and Surguja, followed by an open Q&amp;A.</p>
     </a>
 
-    <a href="{{ route("events") }}" class="tile tile-2" data-aos="fade-up" data-aos-delay="80" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/696641b1e3114.png');">
+    <a href="{{ route("events") }}" class="tile tile-2" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/696641b1e3114.png');">
       <span class="tile-tag">Conference · 3-day</span>
       <span class="arrow-circle" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
@@ -25,7 +25,7 @@
       <p>Six tracks, fourteen partners and one state-level showcase of behaviour-change programmes in Raipur.</p>
     </a>
 
-    <a href="{{ route("events") }}" class="tile tile-3" data-aos="fade-up" data-aos-delay="160" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/171026.jpeg');">
+    <a href="{{ route("events") }}" class="tile tile-3" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/171026.jpeg');">
       <span class="tile-tag">Workshop · 1-day</span>
       <span class="arrow-circle" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
@@ -34,7 +34,7 @@
       <p>A field-day in Bilaspur focused on counselling techniques, role-play and live learning with kishori groups.</p>
     </a>
 
-    <a href="{{ route("events") }}" class="tile tile-4" data-aos="fade-up" data-aos-delay="220" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/397224.png');">
+    <a href="{{ route("events") }}" class="tile tile-4" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/397224.png');">
       <span class="tile-tag">Webinar · Live</span>
       <span class="arrow-circle" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
@@ -43,7 +43,7 @@
       <p>Why anganwadi attendance for fathers tripled in Kabirdham, and what did not work in the first phase.</p>
     </a>
 
-    <a href="{{ route("events") }}" class="tile tile-5" data-aos="fade-up" data-aos-delay="280" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/427748.png');">
+    <a href="{{ route("events") }}" class="tile tile-5" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/event/427748.png');">
       <span class="tile-tag">Completed · Conclave</span>
       <span class="arrow-circle" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>

@@ -17,7 +17,7 @@ class DistrictController extends Controller
             ->select('district.id', 'district.district_name', 'district.status',
                 DB::raw('(SELECT COUNT(*) FROM block WHERE block.district_id = district.id) AS blocks_count'))
             ->orderBy('district.district_name')
-            ->paginate(33);
+            ->get();
 
         return view('admin.districts.index', compact('districts'));
     }

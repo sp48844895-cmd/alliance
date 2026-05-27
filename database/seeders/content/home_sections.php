@@ -115,9 +115,9 @@
     'content' => 
     array (
       'chapter_num' => '02',
-      'chapter_label' => 'What is SBC?',
-      'heading_html' => 'A practice that begins with <em>communication</em>.',
-      'lede_html' => 'A powerful approach that uses communication strategies to bring about <b>behaviour change</b> and improve health outcomes. It goes beyond traditional advertising — coordinating messaging across channels to reach individuals, communities and policymakers, grounded in evidence-based research.',
+      'chapter_label' => '#SBCMatters',
+      'heading_html' => '',
+      'lede_html' => 'A powerful approach that uses Strategic Communication and Community Engagement to shape behavior into practices. It goes beyond traditional advertisement, coordinating channels to measure and iterate.',
       'pillars' => 
       array (
         0 => 
@@ -151,11 +151,11 @@
       ),
       'html' => '<div class="intro-head">
     <div>
-      <span class="chapter"><b>02</b> · What is SBC?</span>
-      <h2 id="intro-h" data-aos="fade-up">A practice that begins with <em>communication</em>.</h2>
+      <span class="chapter"><b>02</b></span>
+      <h2 id="intro-h" class="hashtag-heading" data-aos="fade-up"><span class="hashtag-mark">#</span>SBCMatters</h2>
     </div>
     <p data-aos="fade-up" data-aos-delay="120">
-      A powerful approach that uses communication strategies to bring about <b>behaviour change</b> and improve health outcomes. It goes beyond traditional advertising — coordinating messaging across channels to reach individuals, communities and policymakers, grounded in evidence-based research.
+      A powerful approach that uses Strategic Communication and Community Engagement to shape behavior into practices. It goes beyond traditional advertisement, coordinating channels to measure and iterate.
     </p>
   </div>
 
@@ -207,8 +207,8 @@
     array (
       'chapter_num' => '03',
       'chapter_label' => 'Programs & Initiatives',
-      'heading_html' => 'Community-led work that turns <em>trust</em> into action.',
-      'lede_html' => 'A focused view of flagship SBC initiatives across Chhattisgarh, from youth volunteer networks to local learning resources and community-led health campaigns.',
+      'heading_html' => 'Programs &amp; Initiatives',
+      'lede_html' => 'A focused view of flagship SBC initiatives across Chhattisgarh — from youth volunteer networks to local learning resources and community led campaigns.',
       'cards' => 
       array (
         0 => 
@@ -276,10 +276,10 @@
     <div class="programs-head">
       <div>
         <span class="chapter"><b>03</b> · Programs &amp; Initiatives</span>
-        <h2 id="programs-h" data-aos="fade-up">Community-led work that turns <em>trust</em> into action.</h2>
+        <h2 id="programs-h" data-aos="fade-up">Programs &amp; Initiatives</h2>
       </div>
       <p data-aos="fade-up" data-aos-delay="120">
-        A focused view of flagship SBC initiatives across Chhattisgarh, from youth volunteer networks to local learning resources and community-led health campaigns.
+        A focused view of flagship SBC initiatives across Chhattisgarh — from youth volunteer networks to local learning resources and community led campaigns.
       </p>
     </div>
 
@@ -637,9 +637,9 @@
     'content' => 
     array (
       'chapter_num' => '06',
-      'chapter_label' => 'Resource Kit',
+      'chapter_label' => 'Knowledge Hub',
       'heading_html' => 'Knowledge assets around <em>behaviour change</em>.',
-      'side_text' => 'Open-licensed guides, toolkits, stories and participation pathways — kept simple and easy to use.',
+      'side_text' => 'Learning materials, evidence, toolkits and practitioner support — organised for teams across the alliance.',
       'resources' => 
       array (
         0 => 
@@ -647,24 +647,24 @@
           'link' => 
           array (
             'type' => 'route',
-            'name' => 'knowledge-hub',
+            'name' => 'learning-corner',
           ),
-          'type' => 'Guides',
-          'title' => 'Knowledge Hub',
-          'meta' => 'Guides, toolkits and research',
+          'type' => 'Learning',
+          'title' => 'Learning Corner',
+          'meta' => 'Modules, videos, posters and training material',
           'aos_delay' => NULL,
-          'icon' => 'layers',
+          'icon' => 'book',
         ),
         1 => 
         array (
           'link' => 
           array (
             'type' => 'route',
-            'name' => 'campaigns',
+            'name' => 'reports',
           ),
-          'type' => 'Campaigns',
-          'title' => 'What We Do',
-          'meta' => 'Six live thematic campaigns',
+          'type' => 'Evidence',
+          'title' => 'Reports & Insights',
+          'meta' => 'Reports, newsletters and success stories',
           'aos_delay' => 100,
           'icon' => 'chart',
         ),
@@ -673,26 +673,28 @@
           'link' => 
           array (
             'type' => 'route',
-            'name' => 'stories',
+            'name' => 'knowledge-hub',
+            'query' => 'filter=toolkit',
+            'fragment' => 'kh-search',
           ),
-          'type' => 'Stories',
-          'title' => 'Impact Stories',
-          'meta' => 'Champions, case studies and voices',
+          'type' => 'Toolkits',
+          'title' => 'Resource Kit',
+          'meta' => 'Open-licensed guides, IEC and campaign assets',
           'aos_delay' => 200,
-          'icon' => 'grid',
+          'icon' => 'layers',
         ),
         3 => 
         array (
           'link' => 
           array (
             'type' => 'route',
-            'name' => 'get-involved',
+            'name' => 'resources',
           ),
-          'type' => 'Get Involved',
-          'title' => 'Join the Alliance',
-          'meta' => 'Volunteer, partner or support',
+          'type' => 'Practitioners',
+          'title' => 'SBC Resource Pool',
+          'meta' => 'Connect with trainers and field communicators',
           'aos_delay' => 300,
-          'icon' => 'book',
+          'icon' => 'users',
         ),
       ),
       'library_link' => 
@@ -701,71 +703,42 @@
         'name' => 'knowledge-hub',
       ),
       'library_label' => 'Open the full library →',
-      'html' => '<div class="champions-head">
-    <div>
-      <span class="chapter"><b>06</b> · Resource Kit</span>
-      <h2 id="hub-h">Knowledge assets around <em>behaviour change</em>.</h2>
-    </div>
-    <p class="head-side">Open-licensed guides, toolkits, stories and participation pathways — kept simple and easy to use.</p>
-  </div>
-
-  <div class="hub-grid hub-grid-4">
-    <a href="{{ route("knowledge-hub") }}" class="resource" data-aos="fade-up">
-      <div class="resource-icon" aria-hidden="true">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7l10-4 10 4-10 4z"/><path d="M2 7v6c0 .5 4 4 10 4s10-3.5 10-4V7"/></svg>
-      </div>
-      <span class="resource-type">Guides</span>
-      <h4>Knowledge Hub</h4>
-      <div class="resource-meta">
-        <span>Guides, toolkits and research</span>
-        <span>→</span>
-      </div>
-    </a>
-
-    <a href="{{ route("campaigns") }}" class="resource" data-aos="fade-up" data-aos-delay="100">
-      <div class="resource-icon" aria-hidden="true">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
-      </div>
-      <span class="resource-type">Campaigns</span>
-      <h4>What We Do</h4>
-      <div class="resource-meta">
-        <span>Six live thematic campaigns</span>
-        <span>→</span>
-      </div>
-    </a>
-
-    <a href="{{ route("stories") }}" class="resource" data-aos="fade-up" data-aos-delay="200">
-      <div class="resource-icon" aria-hidden="true">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M3 9h18"/></svg>
-      </div>
-      <span class="resource-type">Stories</span>
-      <h4>Impact Stories</h4>
-      <div class="resource-meta">
-        <span>Champions, case studies and voices</span>
-        <span>→</span>
-      </div>
-    </a>
-
-    <a href="{{ route("get-involved") }}" class="resource" data-aos="fade-up" data-aos-delay="300">
-      <div class="resource-icon" aria-hidden="true">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M4 4v12a4 4 0 0 0 4 4"/></svg>
-      </div>
-      <span class="resource-type">Get Involved</span>
-      <h4>Join the Alliance</h4>
-      <div class="resource-meta">
-        <span>Volunteer, partner or support</span>
-        <span>→</span>
-      </div>
-    </a>
-  </div>
-
-  <div style="text-align:center; margin-top:48px;">
-    <a class="btn btn-ghost" href="{{ route("knowledge-hub") }}">Open the full library →</a>
-  </div>',
     ),
     'sort' => 8,
   ),
   8 => 
+  array (
+    'key' => 'get_involved_cta',
+    'type' => 'cta',
+    'content' => 
+    array (
+      'chapter_num' => '07',
+      'chapter_label' => 'Get Involved',
+      'heading_html' => 'Join the <em>Alliance</em> for behaviour change.',
+      'lede_html' => 'Volunteer, partner as an NGO or organisation, or contribute as a professional — four clear pathways to strengthen community-led SBC across Chhattisgarh.',
+      'button_label' => 'Explore ways to join',
+      'button_link' => 
+      array (
+        'type' => 'route',
+        'name' => 'get-involved',
+      ),
+    ),
+    'sort' => 9,
+  ),
+  9 => 
+  array (
+    'key' => 'newsletter',
+    'type' => 'newsletter',
+    'content' => 
+    array (
+      'chapter_num' => '08',
+      'chapter_label' => 'Newsletter Subscribe',
+      'heading_html' => 'Stay connected with the <em>Alliance</em>.',
+      'lede_html' => 'Get stories, events, and resources from across Chhattisgarh — field updates, campaign highlights, and learning materials delivered to your inbox.',
+    ),
+    'sort' => 10,
+  ),
+  10 => 
   array (
     'key' => 'cta',
     'type' => 'cta',

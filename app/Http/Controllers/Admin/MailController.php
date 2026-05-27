@@ -24,8 +24,7 @@ class MailController extends Controller
             $subscribers = $query
                 ->orderBy('subscribed_at', 'desc')
                 ->orderBy('id', 'desc')
-                ->paginate(15)
-                ->withQueryString();
+                ->get();
 
             return view('admin.mails.index', [
                 'type'              => 'newsletter',
@@ -57,8 +56,7 @@ class MailController extends Controller
 
         $mails = $query->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(15)
-            ->withQueryString();
+            ->get();
 
         return view('admin.mails.index', [
             'type'            => 'contact',
@@ -108,7 +106,7 @@ class MailController extends Controller
         return view('admin.mails.show', compact('mail', 'replies'));
     }
 
-    public function toggleRead($id)
+    public function toggleRead(Request $request, $id)
     {
         $mail = DB::table('mails')->where('id', $id)->first();
         if (!$mail) {
@@ -118,6 +116,15 @@ class MailController extends Controller
         DB::table('mails')->where('id', $id)->update([
             'status' => $mail->status ? 0 : 1,
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $isUnread = ! (bool) DB::table('mails')->where('id', $id)->value('status');
+
+            return response()->json([
+                'message' => 'Mail marked as ' . ($isUnread ? 'unread' : 'read'),
+                'rowClass' => $isUnread,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Mail status updated');
     }

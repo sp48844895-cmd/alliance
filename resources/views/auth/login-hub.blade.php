@@ -11,12 +11,12 @@
             </div>
             <div>
                 <div class="font-display text-lg text-[var(--color-ink-2)] font-medium">Alliance for Behavior Change</div>
-                <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--color-mute-2)]">Chhattisgarh · Portal logins</div>
+                <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-mute-2)]">Chhattisgarh · Portal logins</div>
             </div>
         </div>
 
         <div class="mb-10 max-w-2xl">
-            <p class="text-[10px] uppercase tracking-[0.25em] text-[var(--color-clay-500)] font-semibold mb-2">Sign in</p>
+            <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-clay-500)] font-semibold mb-2">Sign in</p>
             <h1 class="font-display text-3xl sm:text-4xl text-[var(--color-ink-2)] mb-3">Choose your portal</h1>
             <p class="text-[var(--color-mute)] text-base leading-relaxed">Select the role that matches your account. Each portal uses a separate login and email.</p>
         </div>
@@ -33,7 +33,7 @@
                     </div>
                     <div>
                         <h2 class="font-display text-xl text-[var(--color-ink-2)]">{{ $portal['label'] }}</h2>
-                        <p class="text-[10px] uppercase tracking-wider text-[var(--color-mute-2)] mt-0.5">{{ $portal['chapter'] }}</p>
+                        <p class="text-xs uppercase tracking-wider text-[var(--color-mute-2)] mt-0.5">{{ $portal['chapter'] }}</p>
                     </div>
                     <p class="text-sm text-[var(--color-mute)] leading-relaxed flex-1">{{ \Illuminate\Support\Str::limit($portal['lede'], 120) }}</p>
                     <span class="text-xs font-semibold text-[var(--color-clay-600)]">Sign in as {{ $portal['short'] }} →</span>

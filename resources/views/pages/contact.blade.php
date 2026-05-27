@@ -3,6 +3,18 @@
 @section('title', $pageContent['meta_title'] ?? 'Contact Us · ChhattisgarhABC')
 @section('meta_description', $pageContent['meta_description'] ?? 'Contact ChhattisgarhABC in Raipur, Chhattisgarh for partnerships, volunteering, resources, events and social behaviour change communication collaboration.')
 
+@php
+    $pathwaySubjects = [
+        'volunteer' => 'Volunteer registration — ChhattisgarhABC',
+        'intern' => 'Intern application — ChhattisgarhABC',
+        'fellow' => 'Fellowship application — ChhattisgarhABC',
+        'partner' => 'Organisation partnership — ChhattisgarhABC',
+    ];
+    $activePathway = old('pathway', request('pathway'));
+    $defaultSubject = $pathwaySubjects[$activePathway] ?? old('subject', '');
+    $requiresAccount = in_array($activePathway, ['volunteer', 'partner'], true);
+@endphp
+
 @section('content')
 <main id="main">
   {{--
@@ -48,11 +60,28 @@
       <div class="contact-main-grid">
         <div class="contact-form-card" data-aos="fade-up">
           <span class="chapter"><b>{{ $pageSections['contact_form']['chapter'] ?? '01' }}</b> · Message</span>
-          <h2 id="contact-form-h">{{ $pageSections['contact_form']['title'] ?? 'Send a message to the alliance.' }}</h2>
-          <p>{{ $pageSections['contact_form']['description'] ?? 'Your email address will not be published. Share a few details and the team will respond on email or phone.' }}</p>
+          <h2 id="contact-form-h">
+            @if($activePathway === 'volunteer')
+              Volunteer <em>registration</em>
+            @elseif($activePathway === 'partner')
+              Organisation <em>partnership</em>
+            @else
+              {{ $pageSections['contact_form']['title'] ?? 'Send a message to the alliance.' }}
+            @endif
+          </h2>
+          <p>
+            @if($requiresAccount)
+              Create your account and send your application in one step. Choose a password (at least 8 characters) to sign in after the team approves your registration.
+            @else
+              {{ $pageSections['contact_form']['description'] ?? 'Your email address will not be published. Share a few details and the team will respond on email or phone.' }}
+            @endif
+          </p>
 
           <form id="contact-form" class="contact-form" action="{{ route('contact.submit') }}" method="POST">
             @csrf
+            @if($activePathway)
+              <input type="hidden" name="pathway" value="{{ $activePathway }}">
+            @endif
             <div class="contact-field-group">
               <label for="contact-name">Full name</label>
               <input id="contact-name" name="name" type="text" placeholder="Your name" autocomplete="name" maxlength="120" value="{{ old('name') }}" required>
@@ -68,9 +97,21 @@
               <input id="contact-phone" name="phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel" maxlength="20" value="{{ old('phone') }}" required>
             </div>
 
+            @if($requiresAccount)
+            <div class="contact-field-group">
+              <label for="contact-password">Password</label>
+              <input id="contact-password" name="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+            </div>
+
+            <div class="contact-field-group">
+              <label for="contact-password-confirm">Confirm password</label>
+              <input id="contact-password-confirm" name="password_confirmation" type="password" placeholder="Repeat password" autocomplete="new-password" minlength="8" required>
+            </div>
+            @endif
+
             <div class="contact-field-group contact-field-group--wide">
               <label for="contact-subject">Subject</label>
-              <input id="contact-subject" name="subject" type="text" placeholder="Partnership, volunteering, resources..." maxlength="160" value="{{ old('subject') }}" required>
+              <input id="contact-subject" name="subject" type="text" placeholder="Partnership, volunteering, resources..." maxlength="160" value="{{ old('subject', $defaultSubject) }}" required>
             </div>
 
             <div class="contact-field-group contact-field-group--wide">
@@ -79,7 +120,7 @@
             </div>
 
             <button class="btn btn-primary" type="submit">
-              Send message
+              {{ $requiresAccount ? 'Submit registration' : 'Send message' }}
               <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
             </button>
           </form>

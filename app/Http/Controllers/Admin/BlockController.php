@@ -34,8 +34,7 @@ class BlockController extends Controller
         $blocks = $query
             ->orderBy('district.district_name')
             ->orderBy('block.block_name')
-            ->paginate(25)
-            ->withQueryString();
+            ->get();
 
         $districts = DB::table('district')->orderBy('district_name')->get();
 

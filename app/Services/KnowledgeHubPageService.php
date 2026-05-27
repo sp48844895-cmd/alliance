@@ -87,9 +87,9 @@ class KnowledgeHubPageService
             'title' => $row->title,
             'description' => trim((string) $row->content) !== '' ? $row->content : $row->title,
             'meta' => array_values(array_filter([
-                $row->cat_name,
-                $published !== '' ? $published : null,
-                $row->admin ?: null,
+                $row->cat_name ? ['value' => $row->cat_name, 'label' => 'category'] : null,
+                $published !== '' ? ['value' => $published, 'label' => 'published'] : null,
+                $row->admin ? ['value' => $row->admin, 'label' => 'added by'] : null,
             ])),
             'canva' => $isCanva,
             'canva_url' => $isCanva ? $link : null,

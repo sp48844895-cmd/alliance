@@ -41,4 +41,9 @@ class User extends Authenticatable
     {
         return $query->where('is_active', true);
     }
+
+    public function canPostStories(): bool
+    {
+        return \App\Support\StoryContributor::canAccess($this->type ?? null);
+    }
 }

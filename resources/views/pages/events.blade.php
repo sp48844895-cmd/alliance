@@ -5,8 +5,9 @@
 
 @php
   $board = $eventsBoard ?? ($pageSections['board'] ?? []);
+  $upcoming = $eventsUpcomingCard ?? null;
   $past = $pageSections['past'] ?? [];
-  $past['cards'] = $eventsPastCards ?? ($past['cards'] ?? []);
+  $pastCards = $eventsPastCards ?? ($past['cards'] ?? []);
   $gallery = $pageSections['gallery'] ?? [];
   $gallery['tiles'] = $eventsGalleryTiles ?? ($gallery['tiles'] ?? []);
   $gallery['total'] = $eventsGalleryTotal ?? count($gallery['tiles']);
@@ -21,7 +22,7 @@
       <span class="chapter"><b>{{ $board['chapter'] ?? '06' }}</b> · Dashboard</span>
       <h2 id="ev-board-h" data-aos="fade-up">{!! $board['title'] ?? '' !!}</h2>
       <p class="ev-board-sub" data-aos="fade-up" data-aos-delay="100">
-        {{ $board['subtitle'] ?? '' }}
+        {{ $board['subtitle'] ?? 'Browse upcoming and past events. Use the calendar to jump to a date.' }}
       </p>
     </div>
 
@@ -62,75 +63,52 @@
 
         <footer class="ev-cal-foot">
           <span id="ev-cal-foot-text">Showing <b id="ev-cal-foot-month">{{ isset($latestEventMonth) ? \Carbon\Carbon::createFromFormat('Y-m', $latestEventMonth)->format('F Y') : now()->format('F Y') }}</b> · <b id="ev-cal-foot-count">0</b> events</span>
-          <a href="#ev-timeline" class="btn-link">Open timeline →</a>
+          <a href="#ev-events-panel" class="btn-link">View events →</a>
         </footer>
       </article>
 
-      <article class="ev-tl" id="ev-timeline" aria-label="Event timeline">
-        <header class="ev-tl-head">
-          <span class="ev-tl-title">Timeline</span>
-          <div class="ev-tl-filters" role="tablist">
-            <button type="button" class="ev-tl-chip is-active" data-filter="all" role="tab" aria-selected="true">All</button>
-            <button type="button" class="ev-tl-chip" data-filter="upcoming" role="tab" aria-selected="false">Upcoming</button>
-            <button type="button" class="ev-tl-chip" data-filter="past" role="tab" aria-selected="false">Past</button>
+      <article class="ev-events-panel" id="ev-events-panel" aria-label="Events list">
+        <header class="ev-events-head">
+          <div class="ev-events-tabs" role="tablist" aria-label="Filter events">
+            <button type="button" class="ev-events-tab is-active" data-tab="upcoming" role="tab" aria-selected="true" aria-controls="ev-tab-upcoming" id="ev-tab-btn-upcoming">Upcoming</button>
+            <button type="button" class="ev-events-tab" data-tab="past" role="tab" aria-selected="false" aria-controls="ev-tab-past" id="ev-tab-btn-past">Past</button>
           </div>
         </header>
 
-        <ol class="ev-tl-rail" data-tl-list>
-          @foreach ($board['timeline'] ?? [] as $item)
-            @if (($item['status'] ?? '') === 'today')
-              <li class="ev-tl-today" aria-hidden="true">
-                <span>{{ $item['label'] }}</span>
-              </li>
+        <div class="ev-events-panels">
+          <section class="ev-events-pane is-active" id="ev-tab-upcoming" data-tab-panel="upcoming" role="tabpanel" aria-labelledby="ev-tab-btn-upcoming">
+            <div class="ev-events-pane-head">
+              <h3 class="ev-events-pane-title">Upcoming Events</h3>
+              <span class="ev-badge-coming">Coming Soon</span>
+            </div>
+
+            @if ($upcoming)
+              <div class="ev-events-list ev-events-list--upcoming">
+                @include('pages.partials.event-card', ['card' => $upcoming, 'variant' => 'upcoming'])
+              </div>
             @else
-              <li class="ev-tl-item ev-tl-item--{{ $item['status'] }}{{ !empty($item['featured']) ? ' ev-tl-item--feature' : '' }}" data-status="{{ $item['status'] }}" data-date="{{ $item['date'] }}">
-                <div class="ev-tl-stamp">
-                  <b>{{ $item['day'] }}</b><small>{{ $item['month'] }}</small>
-                </div>
-                <div class="ev-tl-body">
-                  <span class="ev-tl-tag" data-type="{{ $item['tag_type'] ?? '' }}">{{ $item['tag'] }}</span>
-                  <h3>{{ $item['title'] }}</h3>
-                  <p>{{ $item['description'] }}</p>
-                  <a href="{{ $item['link'] ?? '#' }}" class="btn-link">{{ $item['link_text'] }}</a>
-                </div>
-              </li>
+              <p class="ev-events-empty">No upcoming events are scheduled right now. Check back soon or browse past events.</p>
             @endif
-          @endforeach
-        </ol>
+          </section>
+
+          <section class="ev-events-pane" id="ev-tab-past" data-tab-panel="past" role="tabpanel" aria-labelledby="ev-tab-btn-past" hidden>
+            <div class="ev-events-pane-head">
+              <h3 class="ev-events-pane-title">Past Events</h3>
+            </div>
+
+            @if (count($pastCards) > 0)
+              <div class="ev-events-list ev-events-list--past">
+                @foreach ($pastCards as $card)
+                  @include('pages.partials.event-card', ['card' => $card, 'variant' => 'past'])
+                @endforeach
+              </div>
+            @else
+              <p class="ev-events-empty">No completed events to show yet.</p>
+            @endif
+          </section>
+        </div>
       </article>
 
-    
-    </div>
-  </div>
-</section>
-
-<section class="ev-past" aria-labelledby="ev-past-h">
-  <div class="container-x">
-    <div class="ev-past-head">
-      <span class="chapter"><b>{{ $past['chapter'] ?? '10' }}</b> · Completed events</span>
-      <h2 id="ev-past-h" data-aos="fade-up">{!! $past['title'] ?? '' !!}</h2>
-      <p class="ev-past-sub" data-aos="fade-up" data-aos-delay="100">
-        {{ $past['subtitle'] ?? '' }}
-      </p>
-    </div>
-
-    <div class="ev-past-grid">
-      @foreach ($past['cards'] ?? [] as $card)
-        <article class="ev-past-card" data-aos="fade-up" @if (!empty($card['aos_delay'])) data-aos-delay="{{ $card['aos_delay'] }}" @endif>
-          <div class="ev-past-card-img" style="background-image:url('{{ $card['image'] }}');"></div>
-          <div class="ev-past-card-body">
-            <span class="ev-past-card-meta">{{ $card['meta'] }}</span>
-            <h3>{{ $card['title'] }}</h3>
-            <p>{{ $card['description'] }}</p>
-            <ul class="ev-past-card-stats">
-              @foreach ($card['stats'] ?? [] as $stat)
-                <li><b>{{ $stat['value'] }}@if (!empty($stat['suffix']))<small>{{ $stat['suffix'] }}</small>@endif</b><span>{{ $stat['label'] }}</span></li>
-              @endforeach
-            </ul>
-            <a href="{{ $card['url'] ?? '#ev-reports' }}" class="btn-link">{{ $card['link_text'] ?? 'View event →' }}</a>
-          </div>
-        </article>
-      @endforeach
     </div>
   </div>
 </section>
@@ -152,7 +130,7 @@
     </div>
 
     <noscript>
-      <p style="text-align:center; margin-top: var(--s-5); color: var(--ink-soft);">JavaScript is needed to view the lightbox. <a href="#">View all photos →</a></p>
+      <p style="text-align:center; margin-top: var(--s-5); color: var(--ink-soft);">JavaScript is needed to view the lightbox.</p>
     </noscript>
   </div>
 </section>

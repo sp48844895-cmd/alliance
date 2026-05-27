@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\StoryPublicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class StoryController extends Controller
 {
+    public function __construct(private StoryPublicationService $publication)
+    {
+    }
+
     public function index(Request $request)
     {
+        $this->publication->syncApprovedWithoutBlog();
+
         $q = trim((string) $request->query('q', ''));
         $approvalStatus = $request->query('approval_status');
 
@@ -29,7 +36,9 @@ class StoryController extends Controller
                 'stories.updated_at',
                 'users.fname',
                 'users.lname',
-                'users.email'
+                'users.email',
+                'users.type as author_type',
+                'users.username as author_username',
             );
 
         if ($q !== '') {
@@ -43,8 +52,7 @@ class StoryController extends Controller
         $stories = $query
             ->orderByRaw("FIELD(stories.approval_status, 'pending', 'rejected', 'approved')")
             ->orderByDesc('stories.created_at')
-            ->paginate(15)
-            ->withQueryString();
+            ->get();
 
         $pendingCount = (int) DB::table('stories')
             ->where('category', '!=', 'Events')
@@ -85,6 +93,9 @@ class StoryController extends Controller
             'updated_at'      => now(),
         ]);
 
+        $story = $this->findStory($id);
+        $this->publication->publish($story);
+
         return back()->with('success', 'Story approved and published on the public site.');
     }
 
@@ -105,12 +116,16 @@ class StoryController extends Controller
             'updated_at'      => now(),
         ]);
 
+        $this->publication->unpublish((int) ($story->published_blog_id ?? 0));
+
         return back()->with('success', 'Story rejected. The author can edit and resubmit.');
     }
 
     public function destroy($id)
     {
         $story = $this->findStory($id);
+
+        $this->publication->unpublish((int) ($story->published_blog_id ?? 0));
 
         if (! empty($story->thumbnail_path) && ! Str::startsWith($story->thumbnail_path, ['http://', 'https://'])) {
             $full = public_path(ltrim($story->thumbnail_path, '/'));
@@ -137,6 +152,8 @@ class StoryController extends Controller
                 'users.fname',
                 'users.lname',
                 'users.email',
+                'users.type as author_type',
+                'users.username as author_username',
             ]);
 
         abort_unless($story, 404);

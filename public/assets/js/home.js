@@ -32,37 +32,120 @@
     observe(el, () => { if (!up.error) up.start(); });
   });
 
-  /* — Champions swiper — */
-  if (window.Swiper) {
-    const total = document.querySelectorAll('.champions-swiper .swiper-slide').length;
-    const bar = document.querySelector('.swiper-pagination-bar > span');
+  /* — Champions / home stories swiper — */
+  const initChampionsSwiper = () => {
+    const el = document.getElementById('home-stories-carousel');
+    if (!el || !window.Swiper) return;
+
+    const slides = el.querySelectorAll('.swiper-slide');
+    const total = slides.length;
+    if (total === 0) return;
+
+    const bar = document.querySelector('.champions-controls .swiper-pagination-bar > span');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const setBar = (sw) => {
       if (!bar) return;
-      const visible = sw.params.slidesPerView;
-      const max = Math.max(1, total - (typeof visible === 'number' ? visible : 1));
-      const pct = Math.min(100, ((sw.activeIndex) / max) * 100);
+      const visible = typeof sw.params.slidesPerView === 'number' ? sw.params.slidesPerView : 1;
+      const max = Math.max(1, total - visible);
+      const pct = Math.min(100, (sw.activeIndex / max) * 100);
       bar.style.width = `${pct}%`;
     };
 
-    const swiper = new Swiper('.champions-swiper', {
+    const swiper = new Swiper(el, {
       slidesPerView: 1.15,
       spaceBetween: 16,
       grabCursor: true,
+      watchOverflow: true,
+      speed: 500,
       breakpoints: {
-        640:  { slidesPerView: 2.1, spaceBetween: 20 },
+        640: { slidesPerView: 2.1, spaceBetween: 20 },
         1024: { slidesPerView: 3.15, spaceBetween: 24 },
       },
       navigation: {
-        prevEl: '.champ-prev',
-        nextEl: '.champ-next',
+        prevEl: '.champions-controls .champ-prev',
+        nextEl: '.champions-controls .champ-next',
+      },
+      autoplay: reduceMotion || total < 2 ? false : {
+        delay: 4500,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      keyboard: {
+        enabled: true,
+        onlyInViewport: true,
       },
       on: {
-        init: setBar,
+        init(sw) {
+          setBar(sw);
+        },
         slideChange: setBar,
         resize: setBar,
       },
     });
+
+    window.addEventListener('load', () => swiper.update(), { once: true });
+  };
+
+  const initHomeBannerSwiper = () => {
+    const el = document.getElementById('home-banner-carousel');
+    if (!el || !window.Swiper) return;
+
+    const total = el.querySelectorAll('.swiper-slide').length;
+    if (total === 0) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasNav = total > 1;
+
+    new Swiper(el, {
+      slidesPerView: 1,
+      spaceBetween: 0,
+      loop: hasNav,
+      grabCursor: hasNav,
+      watchOverflow: true,
+      speed: 600,
+      autoplay: reduceMotion || !hasNav ? false : {
+        delay: 5000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      pagination: hasNav ? {
+        el: document.querySelector('.hero-banner-controls .hero-banner-pagination'),
+        clickable: true,
+      } : false,
+      navigation: hasNav ? {
+        prevEl: document.querySelector('.hero-banner-controls .hero-banner-prev'),
+        nextEl: document.querySelector('.hero-banner-controls .hero-banner-next'),
+      } : false,
+      keyboard: {
+        enabled: hasNav,
+        onlyInViewport: true,
+      },
+    });
+  };
+
+  const initHomeCarousels = () => {
+    initChampionsSwiper();
+    initHomeBannerSwiper();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHomeCarousels);
+  } else {
+    initHomeCarousels();
   }
+
+  document.querySelectorAll('.home-events-grid .tile[data-aos]').forEach((tile) => {
+    tile.removeAttribute('data-aos');
+    tile.removeAttribute('data-aos-delay');
+    tile.classList.remove('aos-init');
+  });
+
+  document.querySelectorAll('.home-get-involved [data-aos]').forEach((el) => {
+    el.removeAttribute('data-aos');
+    el.removeAttribute('data-aos-delay');
+    el.classList.remove('aos-init');
+  });
 
   /* — Coverage donut chart (Chart.js) — */
   const donut = document.getElementById('coverageChart');
@@ -88,8 +171,8 @@
           legend: { display: false },
           tooltip: {
             backgroundColor: '#1a1635',
-            titleFont: { family: "'Manrope', sans-serif" },
-            bodyFont: { family: "'Manrope', sans-serif" },
+            titleFont: { family: "'Roboto', sans-serif" },
+            bodyFont: { family: "'Roboto', sans-serif" },
             padding: 10,
             cornerRadius: 8,
           },

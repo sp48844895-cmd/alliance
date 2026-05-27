@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Concerns\HandlesUploadedMedia;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class BannerController extends Controller
@@ -27,21 +28,24 @@ class BannerController extends Controller
 
     public function store(Request $request)
     {
+        $this->assertValidUpload($request, 'dbannerimg', true);
+        $this->assertValidUpload($request, 'mbannerimg', true);
+
         $data = $request->validate([
-            'dbannerimg' => 'required|image|max:4096',
-            'mbannerimg' => 'required|image|max:4096',
+            'dbannerimg' => 'required|file|image',
+            'mbannerimg' => 'required|file|image',
             'ytlink'     => 'nullable|string|max:500',
             'redirect'   => 'required|string|max:500',
         ]);
 
         $desktopName = '';
         if ($request->hasFile('dbannerimg')) {
-            $desktopName = $this->storeUploadedFile('banner', $request->file('dbannerimg'));
+            $desktopName = $this->storeUploadedFile('banner', $request->file('dbannerimg'), null, 'dbannerimg');
         }
 
         $mobileName = '';
         if ($request->hasFile('mbannerimg')) {
-            $mobileName = $this->storeUploadedFile('banner', $request->file('mbannerimg'));
+            $mobileName = $this->storeUploadedFile('banner', $request->file('mbannerimg'), null, 'mbannerimg');
         }
 
         DB::table('banner')->insert([
@@ -51,6 +55,8 @@ class BannerController extends Controller
             'redirect'   => $data['redirect'],
             'created_at' => now()->toDateString(),
         ]);
+
+        Cache::forget('home.banners');
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner saved');
     }
@@ -72,21 +78,24 @@ class BannerController extends Controller
             abort(404);
         }
 
+        $this->assertValidUpload($request, 'dbannerimg');
+        $this->assertValidUpload($request, 'mbannerimg');
+
         $data = $request->validate([
-            'dbannerimg' => 'nullable|image|max:4096',
-            'mbannerimg' => 'nullable|image|max:4096',
+            'dbannerimg' => 'nullable|file|image',
+            'mbannerimg' => 'nullable|file|image',
             'ytlink'     => 'nullable|string|max:500',
             'redirect'   => 'required|string|max:500',
         ]);
 
         $desktopName = $banner->dbannerimg;
         if ($request->hasFile('dbannerimg')) {
-            $desktopName = $this->replaceUploadedFile('banner', $request->file('dbannerimg'), $desktopName);
+            $desktopName = $this->replaceUploadedFile('banner', $request->file('dbannerimg'), $desktopName, null, 'dbannerimg');
         }
 
         $mobileName = $banner->mbannerimg;
         if ($request->hasFile('mbannerimg')) {
-            $mobileName = $this->replaceUploadedFile('banner', $request->file('mbannerimg'), $mobileName);
+            $mobileName = $this->replaceUploadedFile('banner', $request->file('mbannerimg'), $mobileName, null, 'mbannerimg');
         }
 
         DB::table('banner')->where('id', $id)->update([
@@ -95,6 +104,8 @@ class BannerController extends Controller
             'ytlink'     => $data['ytlink'] ?? null,
             'redirect'   => $data['redirect'],
         ]);
+
+        Cache::forget('home.banners');
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner saved');
     }
@@ -110,6 +121,8 @@ class BannerController extends Controller
         $this->deleteUploadedFile('banner', $banner->mbannerimg);
 
         DB::table('banner')->where('id', $id)->delete();
+
+        Cache::forget('home.banners');
 
         return redirect()->route('admin.banners.index')->with('success', 'Banner deleted');
     }

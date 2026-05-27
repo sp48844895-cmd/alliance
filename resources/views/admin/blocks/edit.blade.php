@@ -4,7 +4,7 @@
 @section('page_title', 'Edit block')
 @section('breadcrumb')
     <a href="{{ route('admin.blocks.index') }}">Blocks</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="text-[var(--color-ink-2)]">{{ $block->block_name }}</span>
 @endsection
 

@@ -48,8 +48,8 @@ class MembershipController extends Controller
             $query->where('block', $block_id);
         }
 
-        $members = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
-        $members->getCollection()->transform(function ($row) {
+        $members = $query->orderBy('id', 'desc')->get();
+        $members->transform(function ($row) {
             $row->image_url = $this->membershipPageService->resolveImageUrl(
                 (string) $row->name,
                 (string) ($row->img ?? '')
@@ -162,7 +162,7 @@ class MembershipController extends Controller
             'website'          => 'nullable|max:255',
             'ngo_organization' => 'nullable|max:255',
             'org_intro'        => 'nullable',
-            'img'              => 'nullable|image|max:4096',
+            'img'              => 'nullable|image',
         ]);
 
         $filename = '';
@@ -219,7 +219,7 @@ class MembershipController extends Controller
             'website'          => 'nullable|max:255',
             'ngo_organization' => 'nullable|max:255',
             'org_intro'        => 'nullable',
-            'img'              => 'nullable|image|max:4096',
+            'img'              => 'nullable|image',
         ]);
 
         $filename = $member->img;

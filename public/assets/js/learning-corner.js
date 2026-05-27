@@ -252,7 +252,7 @@
     if (!catHeaderEl) return;
     catHeaderEl.innerHTML =
       '<div class="lc-cat-header__top">' +
-        '<span class="lc-cat-header__icon"><i class="' + esc(cat.icon || 'bi bi-folder') + '" aria-hidden="true"></i></span>' +
+        '<span class="lc-cat-header__icon"><div class="' + esc(cat.icon || 'icon-folder') + ' lc-lucide" aria-hidden="true"></div></span>' +
         '<h2 class="lc-cat-header__name">' + esc(cat.name) + '</h2>' +
       '</div>' +
       '<div class="lc-cat-header__meta">' +
@@ -261,6 +261,9 @@
         '</span>' +
       '</div>' +
       (cat.description ? '<p class="lc-cat-header__desc">' + esc(cat.description) + '</p>' : '');
+    if (typeof window.mountLucideIcons === 'function') {
+      window.mountLucideIcons(catHeaderEl);
+    }
   }
 
   function drawResources(resources) {

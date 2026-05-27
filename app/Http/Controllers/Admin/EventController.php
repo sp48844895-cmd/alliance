@@ -33,7 +33,7 @@ class EventController extends Controller
             $query->where('event_status', (int) $status);
         }
 
-        $events = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
+        $events = $query->orderBy('id', 'desc')->get();
 
         return view('admin.events.index', compact('events', 'q', 'status'));
     }
@@ -53,7 +53,7 @@ class EventController extends Controller
             'location'     => 'required|max:100',
             'googlemap'    => 'nullable',
             'description'  => 'required',
-            'event_image'  => 'nullable|image|max:4096',
+            'event_image'  => 'nullable|image',
             'event_status' => 'required|in:0,1',
         ]);
 
@@ -131,7 +131,7 @@ class EventController extends Controller
             'location'     => 'required|max:100',
             'googlemap'    => 'nullable',
             'description'  => 'required',
-            'event_image'  => 'nullable|image|max:4096',
+            'event_image'  => 'nullable|image',
             'remove_image' => 'nullable|in:1',
             'event_status' => 'required|in:0,1',
         ]);

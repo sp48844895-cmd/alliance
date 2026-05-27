@@ -12,7 +12,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,30..100,0..1;1,9..144,300..700,30..100,0..1&family=Manrope:wght@400;500;600;700&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
@@ -24,7 +24,7 @@
   @if (request()->routeIs('home'))
   <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}?v={{ filemtime(public_path('assets/css/home.css')) }}" />
   @endif
-  @if (request()->routeIs('login.*'))
+  @if (request()->routeIs('login', 'login.*'))
   <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}" />
   @endif
   @if (request()->routeIs('about'))
@@ -39,8 +39,8 @@
   @if (request()->routeIs('events'))
   <link rel="stylesheet" href="{{ asset('assets/css/events.css') }}?v={{ filemtime(public_path('assets/css/events.css')) }}" />
   @endif
-  @if (request()->routeIs('knowledge-hub'))
-  <link rel="stylesheet" href="{{ asset('assets/css/knowledge-hub.css') }}?v={{ filemtime(public_path('assets/css/knowledge-hub.css')) }}" />
+  @if (request()->routeIs('programs'))
+  <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}?v={{ filemtime(public_path('assets/css/home.css')) }}" />
   @endif
   @if (request()->routeIs('get-involved'))
   <link rel="stylesheet" href="{{ asset('assets/css/get-involved.css') }}?v={{ filemtime(public_path('assets/css/get-involved.css')) }}" />
@@ -60,6 +60,10 @@
   @if (request()->routeIs('contact'))
   <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}?v={{ filemtime(public_path('assets/css/contact.css')) }}" />
   @endif
+  @if (request()->routeIs('register.*'))
+  <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}?v={{ filemtime(public_path('assets/css/contact.css')) }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/register.css') }}?v={{ filemtime(public_path('assets/css/register.css')) }}" />
+  @endif
 
   @stack('styles')
 </head>
@@ -69,9 +73,12 @@
 
 <div class="announce">
   <div class="container-x announce-row">
-    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-      <span class="pill">CONTACT</span>
-      <span>{{ $settings['contact_city'] ?? 'Raipur, Chhattisgarh' }} · <a href="mailto:{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}" style="color:inherit; text-decoration:none;">{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}</a> · <a href="tel:{{ $settings['contact_phone_raw'] ?? '+919098498822' }}" style="color:inherit; text-decoration:none;">{{ $settings['contact_phone'] ?? '+91 90984 98822' }}</a></span>
+    <div class="announce-contact">
+      <span>{{ $settings['contact_city'] ?? 'Raipur, Chhattisgarh' }}</span>
+      <span class="announce-contact__sep" aria-hidden="true">·</span>
+      <a href="mailto:{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}">{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}</a>
+      <span class="announce-contact__sep" aria-hidden="true">·</span>
+      <a href="tel:{{ $settings['contact_phone_raw'] ?? '+919098498822' }}">{{ $settings['contact_phone'] ?? '+91 90984 98822' }}</a>
     </div>
     <nav class="announce-links social-icons" aria-label="Social links">
       @include('partials.social-icon-links', ['layout' => 'announce'])
@@ -95,7 +102,7 @@
         <li><a href="{{ route('events') }}" class="{{ request()->routeIs('events*') ? 'is-active' : '' }}">Events</a></li>
         <li><a href="{{ route('stories') }}" class="{{ request()->routeIs('stories*') ? 'is-active' : '' }}">Stories</a></li>
         <li class="nav-dropdown">
-          <details class="nav-dropdown__details {{ request()->routeIs('knowledge-hub', 'learning-corner', 'reports', 'resources') ? 'nav-dropdown--active' : '' }}">
+          <details class="nav-dropdown__details {{ request()->routeIs('learning-corner', 'reports', 'resources', 'programs') ? 'nav-dropdown--active' : '' }}">
             <summary class="nav-dropdown__trigger" aria-haspopup="menu">
               <span class="nav-dropdown__label">Knowledge Hub</span>
               <svg class="nav-dropdown__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -103,17 +110,17 @@
               </svg>
             </summary>
             <div class="nav-dropdown__panel" role="menu">
-              <a class="nav-dropdown__item" href="{{ route('knowledge-hub') }}?filter=toolkit#kh-search" role="menuitem">
-                Program and Initiatives
-              </a>
               <a class="nav-dropdown__item" href="{{ route('learning-corner') }}" role="menuitem">
                 Learning Corner
               </a>
-              <a class="nav-dropdown__item" href="{{ route('reports') }}" role="menuitem">
-                Reports and Insights
-              </a>
               <a class="nav-dropdown__item" href="{{ route('resources') }}" role="menuitem">
                 SBC Resource Pool
+              </a>
+              <a class="nav-dropdown__item" href="{{ route('programs') }}" role="menuitem">
+                Programs and Initiatives
+              </a>
+              <a class="nav-dropdown__item" href="{{ route('reports') }}" role="menuitem">
+                Reports and Insights
               </a>
             </div>
           </details>
@@ -122,7 +129,7 @@
         <li><a href="{{ route('members') }}" class="{{ request()->routeIs('members') ? 'is-active' : '' }}">Our Members</a></li>
 
         <li class="nav-login">
-          <details class="nav-login__details {{ request()->routeIs('login.*') ? 'nav-login--active' : '' }}">
+          <details class="nav-login__details {{ request()->routeIs('login', 'login.show', 'login.attempt') ? 'nav-login--active' : '' }}">
             <summary class="nav-login__trigger" aria-haspopup="menu">
               Log in
               <svg class="nav-login__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -130,65 +137,14 @@
               </svg>
             </summary>
             <div class="nav-login__panel" role="menu">
-              <a class="nav-login__item nav-login__item--admin" href="{{ route('login.show', 'admin') }}" role="menuitem">
-                <span class="nav-login__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 8l9 6 9-6"/></svg>
-                </span>
-                <span class="nav-login__text">
-                  <b>Admin</b>
-                  <small>Platform administration</small>
-                </span>
-              </a>
-              <a class="nav-login__item" href="{{ route('login.show', 'author') }}" role="menuitem">
-                <span class="nav-login__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                </span>
-                <span class="nav-login__text">
-                  <b>Author</b>
-                  <small>Submit stories for review</small>
-                </span>
-              </a>
-              <a class="nav-login__item" href="{{ route('login.show', 'volunteer') }}" role="menuitem">
-                <span class="nav-login__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-                </span>
-                <span class="nav-login__text">
-                  <b>Volunteer</b>
-                  <small>Field volunteers &amp; youth leaders</small>
-                </span>
-              </a>
-              <a class="nav-login__item" href="{{ route('login.show', 'intern') }}" role="menuitem">
-                <span class="nav-login__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 7l2-3h12l2 3M4 7v13h16V7"/><path d="M9 12h6"/></svg>
-                </span>
-                <span class="nav-login__text">
-                  <b>Intern</b>
-                  <small>Student &amp; programme interns</small>
-                </span>
-              </a>
-              <a class="nav-login__item" href="{{ route('login.show', 'pro') }}" role="menuitem">
-                <span class="nav-login__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                </span>
-                <span class="nav-login__text">
-                  <b>Pro</b>
-                  <small>SBC practitioners &amp; consultants</small>
-                </span>
-              </a>
-              <a class="nav-login__item" href="{{ route('login.show', 'ngo') }}" role="menuitem">
-                <span class="nav-login__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l9-6 9 6v11"/><path d="M9 21v-7h6v7"/></svg>
-                </span>
-                <span class="nav-login__text">
-                  <b>NGO</b>
-                  <small>Civil society &amp; partner orgs</small>
-                </span>
-              </a>
-              <a class="nav-login__item border-t border-[var(--color-line)] mt-1 pt-2" href="{{ route('login') }}" role="menuitem">
-                <span class="nav-login__text w-full text-center">
-                  <b>All login portals</b>
-                </span>
-              </a>
+              @foreach ($loginPortals ?? [] as $portal)
+                <a class="nav-login__item {{ $portal['is_admin'] ? 'nav-login__item--admin' : '' }}" href="{{ route('login.show', $portal['slug']) }}" role="menuitem">
+                  <span class="nav-login__text">
+                    <b>{{ $portal['label'] }}</b>
+                    <small>{{ $portal['subtitle'] }}</small>
+                  </span>
+                </a>
+              @endforeach
             </div>
           </details>
         </li>
@@ -207,7 +163,7 @@
   </div>
 </header>
 
-@unless (request()->routeIs('home'))
+@unless (request()->routeIs('home', 'events.show', 'stories.show'))
   @include('partials.page-jumbotron')
 @endunless
 
@@ -223,7 +179,7 @@
           <input type="email" name="email" required placeholder="your@email · monthly digest" aria-label="Email address" />
           <button type="submit">Subscribe</button>
         </form>
-        <p style="font-size:13px; opacity:0.6; margin-top:16px; max-width:380px;">Updates from the alliance — stories, events and resources, straight from the field.</p>
+        <p class="footer-digest type-caption">Updates from the alliance — stories, events and resources, straight from the field.</p>
       </div>
 
       <div>
@@ -233,7 +189,6 @@
           <li><a href="{{ route('campaigns') }}">Campaigns</a></li>
           <li><a href="{{ route('events') }}">Events</a></li>
           <li><a href="{{ route('stories') }}">Stories</a></li>
-          <li><a href="{{ route('knowledge-hub') }}">Knowledge Hub</a></li>
           <li><a href="{{ route('get-involved') }}">Get Involved</a></li>
           <li><a href="{{ route('members') }}">Members</a></li>
         </ul>
@@ -242,10 +197,10 @@
       <div>
         <h5>Knowledge Hub</h5>
         <ul>
-          <li><a href="{{ route('knowledge-hub') }}?filter=toolkit#kh-search">Program and Initiatives</a></li>
           <li><a href="{{ route('learning-corner') }}">Learning Corner</a></li>
-          <li><a href="{{ route('reports') }}">Reports and Insights</a></li>
           <li><a href="{{ route('resources') }}">SBC Resource Pool</a></li>
+          <li><a href="{{ route('programs') }}">Programs and Initiatives</a></li>
+          <li><a href="{{ route('reports') }}">Reports and Insights</a></li>
         </ul>
       </div>
 
@@ -256,7 +211,7 @@
           <li><a href="mailto:{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}">{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}</a></li>
           <li><a href="tel:{{ $settings['contact_phone_raw'] ?? '+919098498822' }}">{{ $settings['contact_phone'] ?? '+91 90984 98822' }}</a></li>
         </ul>
-        <h5 style="margin-top:24px;">Follow</h5>
+        <h5 class="footer-follow-heading">Follow</h5>
         @include('partials.social-icon-links', ['layout' => 'footer'])
       </div>
     </div>
@@ -285,9 +240,6 @@
 @if (request()->routeIs('events'))
 <script src="{{ asset('assets/js/events.js') }}?v={{ filemtime(public_path('assets/js/events.js')) }}"></script>
 @endif
-@if (request()->routeIs('knowledge-hub'))
-<script src="{{ asset('assets/js/knowledge-hub.js') }}?v={{ filemtime(public_path('assets/js/knowledge-hub.js')) }}"></script>
-@endif
 @if (request()->routeIs('get-involved'))
 <script src="{{ asset('assets/js/get-involved.js') }}?v={{ filemtime(public_path('assets/js/get-involved.js')) }}"></script>
 @endif
@@ -295,6 +247,8 @@
 <script src="{{ asset('assets/js/members.js') }}?v={{ filemtime(public_path('assets/js/members.js')) }}"></script>
 @endif
 @if (request()->routeIs('learning-corner'))
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="{{ asset('assets/js/lucide-icons.js') }}?v={{ filemtime(public_path('assets/js/lucide-icons.js')) }}"></script>
 <script src="{{ asset('assets/js/learning-corner.js') }}?v={{ filemtime(public_path('assets/js/learning-corner.js')) }}"></script>
 @endif
 

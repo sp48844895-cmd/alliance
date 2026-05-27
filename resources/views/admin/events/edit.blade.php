@@ -4,9 +4,9 @@
 @section('page_title', 'Edit event')
 @section('breadcrumb')
     <a href="{{ route('admin.events.index') }}">Events</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <a href="{{ route('admin.events.show', $event->id) }}">{{ \Illuminate\Support\Str::limit($event->event_name, 40) }}</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="text-[var(--color-ink-2)]">Edit</span>
 @endsection
 

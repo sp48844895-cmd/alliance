@@ -7,7 +7,7 @@
 @section('page_title', 'Learning Corner')
 
 @section('topbar_actions')
-    <a href="{{ route('admin.learning-corner.create') }}" class="btn btn-primary">
+    <a href="{{ route('admin.learning-corner.create') }}" class="btn btn-primary btn-sm">
         <i class="bi bi-plus-lg"></i>
         <span>New resource</span>
     </a>
@@ -15,38 +15,36 @@
 
 @section('content')
     <form method="GET" action="{{ route('admin.learning-corner.index') }}" class="card p-4 mb-5">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
             <div class="md:col-span-5">
-                <input type="text" name="q" value="{{ $filters['q'] }}" class="input"
-                       placeholder="Search by title…">
-            </div>
-            <div class="md:col-span-3">
-                <select name="cat_id" class="select">
+                <label class="label" for="cat_id">Category</label>
+                <select id="cat_id" name="cat_id" class="select">
                     <option value="">All categories</option>
                     @foreach ($categories as $c)
-                        <option value="{{ $c->id }}" {{ (string) $filters['cat_id'] === (string) $c->id ? 'selected' : '' }}>
+                        <option value="{{ $c->id }}" @selected((string) $filters['cat_id'] === (string) $c->id)>
                             {{ $c->cat_name }}
                         </option>
                     @endforeach
                 </select>
             </div>
-            <div class="md:col-span-2">
-                <select name="m_type" class="select">
+            <div class="md:col-span-4">
+                <label class="label" for="m_type">Resource type</label>
+                <select id="m_type" name="m_type" class="select">
                     <option value="">All types</option>
                     @foreach (['book', 'posters', 'mobile kunji', 'video'] as $t)
-                        <option value="{{ $t }}" {{ $filters['m_type'] === $t ? 'selected' : '' }}>
+                        <option value="{{ $t }}" @selected($filters['m_type'] === $t)>
                             {{ ucwords($t) }}
                         </option>
                     @endforeach
                 </select>
             </div>
-            <div class="md:col-span-2 flex gap-2">
-                <button type="submit" class="btn btn-primary flex-1">
+            <div class="md:col-span-3 flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm flex-1">
                     <i class="bi bi-funnel"></i>
-                    <span>Filter</span>
+                    <span>Apply filters</span>
                 </button>
-                @if ($filters['q'] !== '' || $filters['cat_id'] || $filters['m_type'])
-                    <a href="{{ route('admin.learning-corner.index') }}" class="btn btn-ghost" title="Clear">
+                @if ($filters['cat_id'] || $filters['m_type'])
+                    <a href="{{ route('admin.learning-corner.index') }}" class="btn btn-ghost btn-sm" title="Clear">
                         <i class="bi bi-x-lg"></i>
                     </a>
                 @endif
@@ -54,77 +52,74 @@
         </div>
     </form>
 
-    @if ($resources->isEmpty())
-        <div class="card p-10 text-center">
-            <div class="w-14 h-14 rounded-full bg-[var(--color-paper-2)] flex items-center justify-center mx-auto mb-4">
-                <i class="bi bi-inbox text-2xl text-[var(--color-mute-2)]"></i>
-            </div>
-            <h3 class="font-display text-lg text-[var(--color-ink-2)] mb-1">No resources yet</h3>
-            <p class="text-sm text-[var(--color-mute)] mb-5">Add the first learning resource to share with your community.</p>
-            <a href="{{ route('admin.learning-corner.create') }}" class="btn btn-primary">
+    <x-admin.datatable-card
+        :empty="$resources->isEmpty()"
+        empty-icon="bi-inbox"
+        empty-title="No resources yet"
+        empty-text="Add a learning resource for your community.">
+        <x-slot:emptyAction>
+            <a href="{{ route('admin.learning-corner.create') }}" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-lg"></i>
                 <span>New resource</span>
             </a>
-        </div>
-    @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 stagger">
-            @foreach ($resources as $r)
-                <div class="card overflow-hidden flex flex-col relative">
-                    <div class="absolute top-2 right-2 z-10 flex items-center gap-1.5">
-                        <a href="{{ route('admin.learning-corner.edit', $r->id) }}"
-                           class="w-8 h-8 rounded-full bg-white/90 backdrop-blur border border-[var(--color-line)] text-[var(--color-ink-2)] hover:text-[var(--color-clay-700)] flex items-center justify-center transition shadow-sm"
-                           title="Edit">
-                            <i class="bi bi-pencil text-xs"></i>
-                        </a>
-                        <x-admin.delete-form
-                            :action="route('admin.learning-corner.destroy', $r->id)"
-                            message="Delete this resource?"
-                            buttonClass="w-8 h-8 rounded-full bg-white/90 backdrop-blur border border-[var(--color-line)] text-[var(--color-flame)] hover:bg-[var(--color-flame-soft)] flex items-center justify-center transition shadow-sm"
-                            iconClass="text-xs" />
-                    </div>
-
-                    <div class="h-40 w-full bg-[var(--color-paper)] overflow-hidden">
-                        <x-admin-image
-                            :filename="$r->image"
-                            folder="uploads/learning"
-                            :alt="$r->title"
-                            class="object-cover h-40 w-full rounded-t"
-                            icon="bi-image" />
-                    </div>
-
-                    <div class="p-4 flex-1 flex flex-col">
-                        <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            <span class="pill pill-clay">{{ ucwords($r->m_type) }}</span>
-                            @if (isset($r->status) && (int)$r->status === 0)
-                                <span class="pill" style="background:var(--color-paper-2);color:var(--color-mute)">Draft</span>
+        </x-slot:emptyAction>
+        <table data-admin-datatable class="table w-full">
+            <thead>
+                <tr>
+                    <th class="no-sort w-16">Thumb</th>
+                    <th>Title & type</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th class="no-sort col-actions text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($resources as $r)
+                    <tr>
+                        <td>
+                            <x-admin-image
+                                :filename="$r->image"
+                                folder="uploads/learning"
+                                :alt="$r->title"
+                                class="w-12 h-12 rounded-md object-cover border border-[var(--color-line)]"
+                                icon="bi-image" />
+                        </td>
+                        <td>
+                            <div class="font-medium text-[var(--color-ink-2)] line-clamp-2">{{ $r->title }}</div>
+                            <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                                <span class="pill pill-clay text-xs">{{ ucwords($r->m_type) }}</span>
+                                @if (isset($r->status) && (int) $r->status === 0)
+                                    <span class="pill pill-mute text-xs">Draft</span>
+                                @endif
+                            </div>
+                            @if ($r->content)
+                                <p class="text-xs text-[var(--color-mute)] mt-1 line-clamp-1">{{ $r->content }}</p>
                             @endif
-                            <span class="text-xs text-[var(--color-mute)] truncate">{{ $r->cat_name ?? '—' }}</span>
-                        </div>
-                        <h3 class="font-display text-base text-[var(--color-ink-2)] mt-1 leading-snug line-clamp-2">
-                            {{ $r->title }}
-                        </h3>
-                        @if ($r->content)
-                            <p class="text-sm text-[var(--color-mute)] mt-2 line-clamp-2">{{ $r->content }}</p>
-                        @endif
-                    </div>
-
-                    <div class="border-t border-[var(--color-line)] px-4 py-3 flex items-center justify-between text-xs text-[var(--color-mute)]">
-                        <a href="{{ $r->link }}" target="_blank" rel="noopener"
-                           class="inline-flex items-center gap-1.5 hover:text-[var(--color-clay-700)] truncate max-w-[60%]">
-                            <i class="bi bi-box-arrow-up-right"></i>
-                            <span class="truncate">Open</span>
-                        </a>
-                        <span class="inline-flex items-center gap-1.5">
-                            <i class="bi bi-calendar3"></i>
-                            <span>{{ $r->date ? \Illuminate\Support\Carbon::parse($r->date)->format('d M Y') : '—' }}</span>
-                        </span>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-        <div class="mt-6">
-            {{ $resources->links() }}
-        </div>
-    @endif
+                        </td>
+                        <td class="text-sm text-[var(--color-mute)]">{{ $r->cat_name ?? '—' }}</td>
+                        <td class="text-xs text-[var(--color-mute)] whitespace-nowrap">
+                            {{ $r->date ? \Illuminate\Support\Carbon::parse($r->date)->format('d M Y') : '—' }}
+                        </td>
+                        <td>
+                            <div class="flex items-center justify-end gap-1">
+                                @if ($r->link)
+                                    <a href="{{ $r->link }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" title="Open link">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                @endif
+                                <a href="{{ route('admin.learning-corner.edit', $r->id) }}" class="btn btn-ghost btn-sm" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <x-admin.delete-form
+                                    :action="route('admin.learning-corner.destroy', $r->id)"
+                                    message="Delete this resource?"
+                                    buttonClass="btn btn-ghost btn-sm"
+                                    iconClass="text-[var(--color-flame)]" />
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </x-admin.datatable-card>
 @endsection

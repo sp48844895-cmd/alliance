@@ -1,13 +1,36 @@
 @extends('layouts.admin')
 
-@push('head')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+@push('scripts')
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="{{ asset('assets/js/lucide-icons.js') }}?v={{ filemtime(public_path('assets/js/lucide-icons.js')) }}"></script>
+<script>
+(function () {
+  var input = document.getElementById('cat_icon');
+  var preview = document.getElementById('lc-icon-preview');
+  if (!input || !preview) return;
+
+  function updatePreview() {
+    var iconClass = input.value.trim() || 'icon-folder';
+    if (iconClass.startsWith('bi ') || iconClass.startsWith('fa-')) {
+      preview.innerHTML = '<i class="' + iconClass + ' text-2xl text-[var(--color-clay-700)]" aria-hidden="true"></i>';
+      return;
+    }
+    preview.innerHTML = '<div class="' + iconClass + ' lc-lucide text-[var(--color-clay-700)]" aria-hidden="true"></div>';
+    if (typeof window.mountLucideIcons === 'function') {
+      window.mountLucideIcons(preview);
+    }
+  }
+
+  input.addEventListener('input', updatePreview);
+  updatePreview();
+})();
+</script>
 @endpush
 
 @section('title', 'Edit category')
 @section('breadcrumb')
     <a href="{{ route('admin.learning-cats.index') }}">Learning Categories</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="text-[var(--color-ink-2)]">Edit #{{ $category->id }}</span>
 @endsection
 @section('page_title', 'Edit category')
@@ -45,15 +68,15 @@
                 <label class="label" for="cat_icon">Icon class</label>
                 <input type="text" name="cat_icon" id="cat_icon" class="input" required maxlength="255"
                        value="{{ old('cat_icon', $category->cat_icon) }}"
-                       placeholder="fa-solid fa-brain">
-                <p class="help">Use FontAwesome 6 free class. Preview shown below.</p>
+                       placeholder="icon-salad">
+                <p class="help">Lucide icon class (e.g. icon-salad). Preview shown below.</p>
                 @error('cat_icon') <p class="err">{{ $message }}</p> @enderror
             </div>
 
             <div class="md:col-span-2">
                 <div class="rounded-lg bg-[var(--color-paper)] border border-[var(--color-line)] p-4 flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-lg bg-white border border-[var(--color-line)] flex items-center justify-center">
-                        <i class="{{ old('cat_icon', $category->cat_icon) }} text-2xl text-[var(--color-clay-700)]"></i>
+                    <div id="lc-icon-preview" class="w-12 h-12 rounded-lg bg-white border border-[var(--color-line)] flex items-center justify-center [&_svg]:w-6 [&_svg]:h-6">
+                        @include('partials.lucide-icon', ['class' => old('cat_icon', $category->cat_icon)])
                     </div>
                     <div class="text-xs text-[var(--color-mute)]">Live icon preview</div>
                 </div>

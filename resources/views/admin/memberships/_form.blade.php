@@ -132,7 +132,7 @@
                     alt="">
                 <input type="file" name="img" accept="image/*"
                     data-image-preview="#img_preview" class="input">
-                <p class="help">JPG/PNG/WebP up to 4 MB. Optional.</p>
+                <p class="help">JPG, PNG or WebP. Optional.</p>
             </div>
         </div>
 

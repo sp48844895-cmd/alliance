@@ -3,7 +3,7 @@
 @section('title', 'New resource')
 @section('breadcrumb')
     <a href="{{ route('admin.learning-corner.index') }}">Learning Corner</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="text-[var(--color-ink-2)]">New</span>
 @endsection
 @section('page_title', 'New resource')

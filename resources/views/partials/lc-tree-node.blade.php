@@ -20,7 +20,7 @@
             title="{{ e($node->cat_name) }}">
 
       <span class="lc-tree-icon-wrap" aria-hidden="true">
-        <i class="{{ $node->cat_icon ?: 'bi bi-folder' }}"></i>
+        @include('partials.lucide-icon', ['class' => $node->cat_icon ?: 'icon-folder'])
       </span>
 
       <span class="lc-tree-label">{{ $node->cat_name }}</span>

@@ -10,7 +10,7 @@
     $statusVal  = old('status',     $isEdit ? (string) $program->status : '1');
 @endphp
 
-<form method="POST" action="{{ $action }}" class="space-y-5">
+<form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="space-y-5">
     @csrf
     @if ($isEdit) @method('PUT') @endif
 
@@ -28,15 +28,26 @@
             <div class="card p-5">
                 <label class="label" for="short_desc">Short description</label>
                 <textarea id="short_desc" name="short_desc" rows="5"
-                    required class="textarea" placeholder="Primary description shown on the card...">{{ $short_desc }}</textarea>
-                <p class="help">This text appears as the main card content.</p>
+                    required class="textarea" placeholder="Primary description shown on the card back...">{{ $short_desc }}</textarea>
+                <p class="help">Shown on the back of the flip card when hovered.</p>
             </div>
 
             <div class="card p-5">
                 <label class="label" for="full_desc">Full description <span class="text-[var(--color-mute)] font-normal">(optional)</span></label>
                 <textarea id="full_desc" name="full_desc" rows="6"
-                    class="textarea" placeholder="Extended content shown on featured or expanded cards...">{{ $full_desc }}</textarea>
-                <p class="help">Used for the featured card style to show extra paragraphs.</p>
+                    class="textarea" placeholder="Additional detail appended on the card back...">{{ $full_desc }}</textarea>
+            </div>
+
+            <div class="card p-5">
+                <label class="label" for="image">Program photo</label>
+                @if ($isEdit && !empty($program->image))
+                    @php $preview = \App\Support\MediaUrl::tryResolve('program', (string) $program->image); @endphp
+                    @if ($preview)
+                        <img src="{{ $preview }}" alt="" class="w-full max-w-xs rounded-lg mb-3 object-cover aspect-[4/5]">
+                    @endif
+                @endif
+                <input type="file" id="image" name="image" accept="image/*" class="input">
+                <p class="help">Front of the flip card. Recommended 560×720px (4:5).</p>
             </div>
         </div>
 

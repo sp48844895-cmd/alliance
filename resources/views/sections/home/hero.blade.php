@@ -1,11 +1,53 @@
-@php $s = $pageSections['hero'] ?? []; @endphp
-<section class="hero has-video">
+@php
+    $s = $pageSections['hero'] ?? [];
+    $banners = $homeBanners ?? collect();
+    $hasBanners = $banners->isNotEmpty();
+    $tag = $s['panel_tag'] ?? ['kicker' => 'District coverage', 'value' => '33/33', 'small' => 'Districts engaged'];
+    $stat = $s['panel_stat'] ?? ['kicker' => 'Beneficiaries reached', 'value' => '1.4M', 'small' => 'Across households, schools and panchayats'];
+@endphp
+<section class="hero has-video{{ $hasBanners ? ' hero-has-banners' : '' }}">
+  @if ($hasBanners)
+  <div id="home-banner-carousel" class="hero-banner-swiper hero-banner-swiper--bg swiper" aria-label="Featured banners">
+    <div class="swiper-wrapper">
+      @foreach ($banners as $banner)
+      <div class="swiper-slide">
+        @if ($banner->href)
+        <a href="{{ $banner->href }}" class="hero-banner-slide"@if ($banner->is_external) target="_blank" rel="noopener noreferrer"@endif>
+        @else
+        <div class="hero-banner-slide">
+        @endif
+          <picture>
+            <source media="(max-width: 767px)" srcset="{{ $banner->mobile_url }}">
+            <img src="{{ $banner->desktop_url }}" alt="" width="1920" height="822" loading="{{ $loop->first ? 'eager' : 'lazy' }}" decoding="async">
+          </picture>
+        @if ($banner->href)
+        </a>
+        @else
+        </div>
+        @endif
+      </div>
+      @endforeach
+    </div>
+  </div>
+  @if ($banners->count() > 1)
+  <div class="hero-banner-controls hero-banner-controls--bg">
+    <button type="button" class="swiper-arrow hero-banner-prev" aria-label="Previous banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <button type="button" class="swiper-arrow hero-banner-next" aria-label="Next banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <div class="hero-banner-pagination swiper-pagination"></div>
+  </div>
+  @endif
+  @else
   <video class="hero-video" autoplay muted loop playsinline preload="auto"
          poster="{{ $s["video_poster"] ?? "https://www.chhattisgarhabc.org/stories/uploads/banner/1714379236.png" }}"
          aria-hidden="true">
     <source src="{{ asset($s["video_src"] ?? "assets/videos/hero.mp4") }}" type="video/mp4" />
     <source src="{{ $s["video_fallback"] ?? "https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_30fps.mp4" }}" type="video/mp4" />
   </video>
+  @endif
   <div class="hero-overlay" aria-hidden="true"></div>
 
   <div class="hero-deco-1" aria-hidden="true">
@@ -47,31 +89,15 @@
 
         <h1 class="fade-up" data-delay="2">{!! $s["headline_html"] ?? "<span class=\"line\">Social &amp;</span><span class=\"line line-nowrap\"><span class=\"underline\"><em>Behaviour Change</em></span></span><span class=\"line\">Communication for all.</span>" !!}</h1>
 
-
-        <p class="hero-lede fade-up" data-delay="3">{!! $s['lede_html'] ?? 'ChhattisgarhABC is a community platform where <b>youth, professionals, civil society and government</b> come together to share experiences and understand <em>Social &amp; Behaviour Change Communication</em> across Chhattisgarh.' !!}</p>
-
-        {{-- Hero CTAs (Explore work / Join the alliance) hidden as per request --}}
-        {{--
-        <div class="hero-cta fade-up" data-delay="4">
-          @foreach ($s['ctas'] ?? [['label' => 'Explore work', 'class' => 'btn btn-primary', 'link' => ['type' => 'route', 'name' => 'campaigns'], 'show_arrow' => true], ['label' => 'Join the alliance', 'class' => 'btn btn-ghost', 'link' => ['type' => 'route', 'name' => 'get-involved']]] as $cta)
-          @php $link = $cta['link'] ?? []; $ctaUrl = match ($link['type'] ?? 'route') { 'route' => route($link['name'] ?? 'home'), 'anchor' => $link['hash'] ?? '#', default => $link['url'] ?? '#' }; @endphp
-          <a class="{{ $cta['class'] }}" href="{{ $ctaUrl }}" @if(!empty($link['external'])) target="_blank" rel="noopener" @endif>
-            {{ $cta['label'] }}
-            @if (!empty($cta['show_arrow']))
-            <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            @endif
-          </a>
-          @endforeach
-        </div>
-        --}}
-
+        <p class="hero-lede type-lede fade-up" data-delay="3">{!! $s['lede_html'] ?? 'ChhattisgarhABC is a community platform where <b>youth, professionals, civil society and government</b> come together to share experiences and understand <em>Social &amp; Behaviour Change Communication</em> across Chhattisgarh.' !!}</p>
       </div>
 
-      <div class="hero-visual fade-up" data-delay="3" aria-hidden="true">
+      <div class="hero-visual fade-up{{ $hasBanners ? ' hero-visual--stats-only' : '' }}" data-delay="3">
+        @unless ($hasBanners)
         @foreach ($s['panels'] ?? [['class' => 'panel-1', 'image' => 'https://www.chhattisgarhabc.org/stories/uploads/banner/1714379236.png'], ['class' => 'panel-2', 'image' => 'https://www.chhattisgarhabc.org/stories/uploads/banner/1714379202.png']] as $panel)
-        <div class="panel {{ $panel['class'] }}" style="background-image:url('{{ $panel['image'] }}');"></div>
+        <div class="panel {{ $panel['class'] }}" style="background-image:url('{{ $panel['image'] }}');" aria-hidden="true"></div>
         @endforeach
-        @php $tag = $s['panel_tag'] ?? ['kicker' => 'District coverage', 'value' => '33/33', 'small' => 'Districts engaged']; $stat = $s['panel_stat'] ?? ['kicker' => 'Beneficiaries reached', 'value' => '1.4M', 'small' => 'Across households, schools and panchayats']; @endphp
+        @endunless
         <div class="panel-tag">
           <span class="kicker">{{ $tag['kicker'] }}</span>
           <strong>{{ $tag['value'] }}</strong>

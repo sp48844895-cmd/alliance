@@ -19,13 +19,13 @@
       <div class="cmp-hero-text">
         <span class="chapter fade-up" data-delay="1"><b>01</b> · Campaigns &amp; What We Do</span>
 
-        <h1 id="cmp-hero-h" class="cmp-hero-title fade-up" data-delay="2">
+        <h2 id="cmp-hero-h" class="cmp-hero-title type-hero fade-up" data-delay="2">
           <span class="line">From <span class="cmp-underline">behaviour</span></span>
           <span class="line">to <em>habit:</em></span>
           <span class="line cmp-hero-sub-line">A collective <em>journey.</em></span>
-        </h1>
+        </h2>
 
-        <p class="cmp-hero-lede fade-up" data-delay="3">
+        <p class="cmp-hero-lede type-lede fade-up" data-delay="3">
           Six live campaigns. Twenty-three districts. Hundreds of villages where the alliance, communities and government walk the <b>same slow loop</b> — listen, frame, design, measure — until a one-time action becomes a daily habit.
         </p>
 

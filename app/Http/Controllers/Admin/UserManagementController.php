@@ -30,18 +30,18 @@ class UserManagementController extends Controller
             });
         }
 
-        $allowedTypes = ['admin', 'volunteer', 'intern', 'professional', 'ngo', 'author'];
+        $allowedTypes = ['admin', 'volunteer', 'intern', 'fellow', 'ngo'];
         if ($type !== null && $type !== '' && in_array($type, $allowedTypes, true)) {
             $query->where('type', $type);
         }
 
-        $users = $query->orderBy('id', 'desc')->paginate(15)->withQueryString();
+        $users = $query->orderBy('id', 'desc')->get();
 
         $totalUsers   = (int) DB::table('users')->count();
         $totalAdmins  = (int) DB::table('users')->where('type', 'admin')->count();
-        $totalAuthors = (int) DB::table('users')->where('type', 'author')->count();
+        $totalFellows = (int) DB::table('users')->where('type', 'fellow')->count();
         $totalOther   = (int) DB::table('users')
-            ->whereNotIn('type', ['admin', 'author'])
+            ->whereNotIn('type', ['admin', 'fellow'])
             ->count();
 
         return view('admin.users.index', [
@@ -49,7 +49,7 @@ class UserManagementController extends Controller
             'filters'      => ['q' => $q, 'type' => $type],
             'totalUsers'   => $totalUsers,
             'totalAdmins'  => $totalAdmins,
-            'totalAuthors' => $totalAuthors,
+            'totalFellows' => $totalFellows,
             'totalOther'   => $totalOther,
         ]);
     }
@@ -67,10 +67,10 @@ class UserManagementController extends Controller
             'username' => 'required|string|max:50|unique:users,username',
             'email'    => 'required|email|max:100|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'type'     => 'required|in:admin,volunteer,intern,professional,ngo,author',
+            'type'     => 'required|in:admin,volunteer,intern,fellow,ngo',
             'role'     => 'required|in:1,2',
             'bio'      => 'nullable|string|max:2000',
-            'image'    => 'nullable|image|max:4096',
+            'image'    => 'nullable|image',
         ]);
 
         $imageName = '';
@@ -119,10 +119,10 @@ class UserManagementController extends Controller
             'username'     => 'required|string|max:50|unique:users,username,' . $id,
             'email'        => 'required|email|max:100|unique:users,email,' . $id,
             'password'     => 'nullable|string|min:8|confirmed',
-            'type'         => 'required|in:admin,volunteer,intern,professional,ngo,author',
+            'type'         => 'required|in:admin,volunteer,intern,fellow,ngo',
             'role'         => 'required|in:1,2',
             'bio'          => 'nullable|string|max:2000',
-            'image'        => 'nullable|image|max:4096',
+            'image'        => 'nullable|image',
             'delete_image' => 'nullable|boolean',
         ]);
 

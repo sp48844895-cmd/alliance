@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <a href="{{ route('admin.users.index') }}">Users</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span>{{ trim(($user->fname ?? '') . ' ' . ($user->lname ?? '')) ?: $user->username }}</span>
 @endsection
 
@@ -19,11 +19,10 @@
 @php
     $types = [
         'admin'        => 'Admin',
-        'author'       => 'Author',
-        'volunteer'    => 'Volunteer',
+        'volunteer'    => 'Individual Volunteer',
         'intern'       => 'Intern',
-        'professional' => 'Professional',
-        'ngo'          => 'NGO',
+        'fellow'       => 'Fellow',
+        'ngo'          => 'CSO / NGO / Firm / Organization',
     ];
     $hasImage = $user->image && file_exists(public_path('uploads/users/' . $user->image));
     $avatarExisting = $hasImage ? asset('uploads/users/' . $user->image) : '';
@@ -135,7 +134,7 @@
                     <input type="file" name="image" id="image" accept="image/*"
                            class="input"
                            data-image-preview="#avatarPreview">
-                    <p class="help">Square image recommended. Max 4 MB.</p>
+                    <p class="help">Square image recommended.</p>
                     @error('image') <p class="err">{{ $message }}</p> @enderror
 
                     @if ($hasImage)

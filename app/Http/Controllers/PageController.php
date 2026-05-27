@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\LoadsPageContent;
+use App\Support\MediaUrl;
 use App\Services\BlogStoryService;
 use App\Services\EventPageService;
-use App\Services\KnowledgeHubPageService;
 use App\Services\MembershipPageService;
 use App\Services\ReportsPageService;
 use App\Services\SbcResourcePoolService;
@@ -25,7 +25,12 @@ class PageController extends Controller
             ->where('status', 1)
             ->orderBy('sort_order')
             ->orderBy('id')
-            ->get(['id', 'title', 'tag', 'short_desc', 'full_desc', 'card_style']));
+            ->get(['id', 'title', 'tag', 'short_desc', 'full_desc', 'card_style', 'image'])
+            ->map(function ($row) {
+                $row->image_url = \App\Support\MediaUrl::tryResolve('program', (string) ($row->image ?? '')) ?? '';
+
+                return $row;
+            }));
 
         $homeInsights = Cache::remember('home.insights', 3600, fn () => DB::table('insights')
             ->where('status', 1)
@@ -33,16 +38,49 @@ class PageController extends Controller
             ->orderBy('id')
             ->get(['id', 'title', 'tag', 'description', 'image', 'link_text', 'link_url'])
             ->map(function ($row) {
-                $row->image_url = \App\Support\MediaUrl::tryResolve('insights', (string) ($row->image ?? '')) ?? '';
+                $row->image_url = MediaUrl::tryResolve('insights', (string) ($row->image ?? '')) ?? '';
 
                 return $row;
             }));
+
+        $homeBanners = Cache::remember('home.banners', 3600, function () {
+            return DB::table('banner')
+                ->orderByDesc('id')
+                ->get(['id', 'dbannerimg', 'mbannerimg', 'ytlink', 'redirect'])
+                ->map(function ($row) {
+                    $desktopUrl = MediaUrl::tryResolve('banner', (string) ($row->dbannerimg ?? ''));
+                    $mobileUrl = MediaUrl::tryResolve('banner', (string) ($row->mbannerimg ?? ''));
+
+                    if ($desktopUrl === null && $mobileUrl === null) {
+                        return null;
+                    }
+
+                    $redirect = trim((string) ($row->redirect ?? ''));
+                    $ytlink = trim((string) ($row->ytlink ?? ''));
+                    $href = ($redirect !== '' && $redirect !== '#') ? $redirect : null;
+
+                    if ($href === null && $ytlink !== '') {
+                        $href = $ytlink;
+                    }
+
+                    return (object) [
+                        'id' => $row->id,
+                        'desktop_url' => $desktopUrl ?? $mobileUrl,
+                        'mobile_url' => $mobileUrl ?? $desktopUrl,
+                        'href' => $href,
+                        'is_external' => $href !== null && str_starts_with($href, 'http'),
+                    ];
+                })
+                ->filter()
+                ->values();
+        });
 
         return $this->pageView('pages.home', [
             'homeRecentStories' => $blogStories->recentForHome(6),
             'homeRecentEvents'  => $eventPage->recentForHome(5),
             'homePrograms'      => $homePrograms,
             'homeInsights'      => $homeInsights,
+            'homeBanners'       => $homeBanners,
         ]);
     }
 
@@ -61,7 +99,6 @@ class PageController extends Controller
         return $this->pageView('pages.stories', [
             'storyPaginator' => $blogStories->paginatedListing(20),
             'storyFilters' => $blogStories->filters(),
-            'recentStories' => $blogStories->recentForSidebar(),
         ]);
     }
 
@@ -73,7 +110,6 @@ class PageController extends Controller
 
         return view('pages.story-details', [
             'story' => $story,
-            'relatedStories' => $blogStories->relatedStoriesForPage($story['related_slugs'] ?? []),
         ]);
     }
 
@@ -97,6 +133,7 @@ class PageController extends Controller
 
         return $this->pageView('pages.events', [
             'eventsBoard' => array_merge($this->pageSection('events', 'board'), $eventPage->boardData()),
+            'eventsUpcomingCard' => $eventPage->upcomingCard(),
             'eventsPastCards' => $eventPage->pastCards(),
             'eventsGalleryTiles' => $galleryTiles,
             'eventsGalleryTotal' => count($galleryTiles),
@@ -123,15 +160,21 @@ class PageController extends Controller
         );
     }
 
-    public function knowledgeHub(KnowledgeHubPageService $knowledgeHub)
+    public function programsAndInitiatives()
     {
-        $dbResources = $knowledgeHub->gridResources();
-        $hasDb = count($dbResources) > 0;
+        $programs = Cache::remember('home.programs', 3600, fn () => DB::table('programs')
+            ->where('status', 1)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['id', 'title', 'tag', 'short_desc', 'full_desc', 'card_style', 'image'])
+            ->map(function ($row) {
+                $row->image_url = \App\Support\MediaUrl::tryResolve('program', (string) ($row->image ?? '')) ?? '';
 
-        return $this->pageView('pages.knowledge-hub', [
-            'knowledgeHubGridResources' => $hasDb ? $dbResources : null,
-            'knowledgeHubTotal' => $hasDb ? $knowledgeHub->totalCount() : null,
-            'knowledgeHubFeatured' => $hasDb ? $knowledgeHub->featuredResource() : null,
+                return $row;
+            }));
+
+        return $this->pageView('pages.programs-and-initiatives', [
+            'homePrograms' => $programs,
         ]);
     }
 
@@ -248,7 +291,7 @@ class PageController extends Controller
                 return (object) [
                     'id'          => $cat->id,
                     'cat_name'    => $cat->cat_name,
-                    'cat_icon'    => $cat->cat_icon ?? 'bi bi-folder',
+                    'cat_icon'    => $cat->cat_icon ?? 'icon-folder',
                     'description' => $cat->description ?? '',
                     'children'    => $children,
                     'count'       => $directCount,

@@ -12,7 +12,7 @@ class CreateLoginUsers extends Command
                             {--password=abc@1234 : Password for all portal accounts}
                             {--force : Update password if the account already exists}';
 
-    protected $description = 'Create or update all portal login users (Admin, Author, Volunteer, Intern, Pro, NGO).';
+    protected $description = 'Create or update all portal login users (Volunteer, Intern, Fellow, NGO, Admin).';
 
     private const ACCOUNTS = [
         [
@@ -23,15 +23,6 @@ class CreateLoginUsers extends Command
             'email'    => 'admin@abc.in',
             'bio'      => 'Platform administrator',
             'role'     => 1,
-        ],
-        [
-            'type'     => 'author',
-            'fname'    => 'Anita',
-            'lname'    => 'Author',
-            'username' => 'anita.a',
-            'email'    => 'author@abc.in',
-            'bio'      => 'Story author',
-            'role'     => 2,
         ],
         [
             'type'     => 'volunteer',
@@ -52,12 +43,12 @@ class CreateLoginUsers extends Command
             'role'     => 2,
         ],
         [
-            'type'     => 'professional',
-            'fname'    => 'Dr. Mehra',
-            'lname'    => '',
-            'username' => 'pro.mehra',
-            'email'    => 'pro@abc.in',
-            'bio'      => 'Public health professional',
+            'type'     => 'fellow',
+            'fname'    => 'Neha',
+            'lname'    => 'Fellow',
+            'username' => 'neha.f',
+            'email'    => 'fellow@abc.in',
+            'bio'      => 'Fellowship participant',
             'role'     => 2,
         ],
         [
@@ -85,7 +76,7 @@ class CreateLoginUsers extends Command
 
             if ($existing && ! $force) {
                 $this->line("Skipped {$account['type']} — {$account['email']} already exists (use --force to reset password).");
-                $rows[] = [$account['type'], $account['email'], 'exists', $baseUrl . '/login/' . $this->loginPath($account['type'])];
+                $rows[] = [$account['type'], $account['email'], 'exists', $baseUrl . '/login/' . $account['type']];
                 continue;
             }
 
@@ -116,7 +107,7 @@ class CreateLoginUsers extends Command
             }
 
             $this->info(ucfirst($account['type']) . " {$action}: {$account['email']}");
-            $rows[] = [$account['type'], $account['email'], $action, $baseUrl . '/login/' . $this->loginPath($account['type'])];
+            $rows[] = [$account['type'], $account['email'], $action, $baseUrl . '/login/' . $account['type']];
         }
 
         $this->newLine();
@@ -126,10 +117,5 @@ class CreateLoginUsers extends Command
         $this->line('All portals hub: ' . $baseUrl . '/login');
 
         return self::SUCCESS;
-    }
-
-    private function loginPath(string $type): string
-    {
-        return $type === 'professional' ? 'pro' : $type;
     }
 }

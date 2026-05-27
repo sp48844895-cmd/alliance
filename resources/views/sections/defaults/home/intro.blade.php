@@ -1,10 +1,10 @@
 <div class="intro-head">
     <div>
-      <span class="chapter"><b>02</b> · What is SBC?</span>
-      <h2 id="intro-h" data-aos="fade-up">A practice that begins with <em>communication</em>.</h2>
+      <span class="chapter"><b>02</b></span>
+      <h2 id="intro-h" class="hashtag-heading" data-aos="fade-up"><span class="hashtag-mark">#</span>SBCMatters</h2>
     </div>
     <p data-aos="fade-up" data-aos-delay="120">
-      A powerful approach that uses communication strategies to bring about <b>behaviour change</b> and improve health outcomes. It goes beyond traditional advertising — coordinating messaging across channels to reach individuals, communities and policymakers, grounded in evidence-based research.
+      A powerful approach that uses Strategic Communication and Community Engagement to shape behavior into practices. It goes beyond traditional advertisement, coordinating channels to measure and iterate.
     </p>
   </div>
 

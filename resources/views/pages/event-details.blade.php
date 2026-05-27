@@ -15,19 +15,21 @@
 
       <div class="ed-hero-grid">
         <div class="ed-copy">
-          <span class="chapter fade-up" data-delay="1"><b>05</b> · Event details</span>
+          <span class="chapter"><b>05</b> · Event details</span>
 
-          <div class="ed-chips fade-up" data-delay="2">
+          <div class="ed-chips">
             <span class="ed-chip ed-chip--status">{{ $event['status'] }}</span>
             <span class="ed-chip">{{ $event['tag'] }}</span>
-            <span class="ed-chip">{{ $event['location'] }}</span>
+            @if (!empty($event['location']))
+              <span class="ed-chip">{{ $event['location'] }}</span>
+            @endif
           </div>
 
-          <h1 id="ed-title" class="ed-title fade-up" data-delay="2">{{ $event['title'] }}</h1>
+          <h1 id="ed-title" class="ed-title">{{ $event['title'] }}</h1>
 
-          <p class="ed-lede fade-up" data-delay="3">{{ $event['summary'] }}</p>
+          <p class="ed-lede">{{ $event['summary'] }}</p>
 
-          <div class="ed-cta fade-up" data-delay="4">
+          <div class="ed-cta">
             <a href="{{ $event['cta_link'] }}" class="btn btn-primary" target="{{ $event['cta_link'] === route('contact') ? '_self' : '_blank' }}" rel="noreferrer">
               {{ $event['cta_label'] }}
               <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -35,7 +37,7 @@
             <a href="{{ route('contact') }}" class="btn btn-ghost">Host with the alliance</a>
           </div>
 
-          <div class="ed-meta fade-up" data-delay="4">
+          <div class="ed-meta">
             <div class="ed-meta-item">
               <span>Date</span>
               <strong>{{ $event['date_label'] }}</strong>
@@ -51,25 +53,19 @@
           </div>
         </div>
 
-        <div class="ed-poster-wrap fade-up" data-delay="3">
-          <article class="ed-poster">
-            <div class="ed-stamp">
+        <figure class="ed-poster-wrap">
+          <div class="ed-poster">
+            <div class="ed-stamp" aria-hidden="true">
               <span class="ed-stamp-day">{{ $event['day_label'] }}</span>
               <span class="ed-stamp-month">{{ $event['month_label'] }}</span>
               <span class="ed-stamp-year">{{ $event['year_label'] }}</span>
             </div>
-            <div class="ed-poster-body">
-              <div class="ed-poster-image">
-                <img src="{{ $event['image_url'] }}" alt="{{ $event['title'] }}">
-              </div>
-              <div class="ed-poster-copy">
-                <span class="ed-poster-kicker">{{ $event['tag'] }}</span>
-                <h2>{{ $event['title'] }}</h2>
-                <p>{{ $event['date_label'] }} · {{ $event['time_label'] }}</p>
-              </div>
+            <div class="ed-poster-image">
+              <img src="{{ $event['image_url'] }}" alt="{{ $event['title'] }} event poster">
             </div>
-          </article>
-        </div>
+          </div>
+          <figcaption class="ed-poster-caption">{{ $event['date_label'] }} · {{ $event['time_label'] }}</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -84,8 +80,7 @@
           </div>
 
           <div class="ed-richtext">
-            <p>{!! $event['content'] !!}</p>
-            <p>This session is part of the alliance calendar of public conversations, workshops and community-led learning moments across Chhattisgarh. The page is designed to help a visitor quickly understand what the event is, when it happens, where it is being held, and how to take the next step.</p>
+            {!! $event['content'] !!}
           </div>
 
           <div class="ed-highlight-grid">

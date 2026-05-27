@@ -7,17 +7,17 @@
       <p class="head-side">A rolling chronicle of behaviour-change work — campaigns, milestones, and human stories from across Chhattisgarh.</p>
     </div>
 
-    <div class="champions-swiper swiper" data-aos="fade-up">
+    <div id="home-stories-carousel" class="champions-swiper swiper" data-aos="fade-up">
       <div class="swiper-wrapper">
 
         <article class="swiper-slide champion">
           <div class="champion-photo" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/69b2a3de375ea.png');">
             <div class="champion-meta">
-              <span class="role-pill">12 March 2026</span>
+              <span class="role-pill story-location-pill">Raipur</span>
             </div>
           </div>
           <div class="champion-body">
-            <div class="champion-where">Filed: Chhattisgarh</div>
+            <div class="champion-where">12 March 2026</div>
             <h4 class="champion-name">Chhattisgarh launches youth-led dashboard and "Aaj Mauka Hai" campaign</h4>
             <p class="champion-blurb">A youth-led dashboard tracking behaviour-change action, alongside the "Aaj Mauka Hai" outreach campaign rolling across districts.</p>
           </div>
@@ -26,11 +26,11 @@
         <article class="swiper-slide champion">
           <div class="champion-photo" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/69a086247a963.png');">
             <div class="champion-meta">
-              <span class="role-pill">26 February 2026</span>
+              <span class="role-pill story-location-pill">Jashpur</span>
             </div>
           </div>
           <div class="champion-body">
-            <div class="champion-where">Filed: Jashpur</div>
+            <div class="champion-where">26 February 2026</div>
             <h4 class="champion-name">एक सवाल, बड़ा बदलाव — 'आज क्या सीखा?' ने जशपुर में…</h4>
             <p class="champion-blurb">A simple daily question reshaping classroom conversations across Jashpur — peer-led and teacher-supported.</p>
           </div>
@@ -39,11 +39,11 @@
         <article class="swiper-slide champion">
           <div class="champion-photo" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/69974fe1da143.png');">
             <div class="champion-meta">
-              <span class="role-pill">19 February 2026</span>
+              <span class="role-pill story-location-pill">Bilaspur</span>
             </div>
           </div>
           <div class="champion-body">
-            <div class="champion-where">Filed: Bilaspur</div>
+            <div class="champion-where">19 February 2026</div>
             <h4 class="champion-name">UNICEF Human-Centered Design Workshop, Bilaspur</h4>
             <p class="champion-blurb">Tackling disability stigma through participatory HCD methods, co-led with UNICEF and local champions.</p>
           </div>
@@ -52,11 +52,11 @@
         <article class="swiper-slide champion">
           <div class="champion-photo" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/696641b1e3114.png');">
             <div class="champion-meta">
-              <span class="role-pill">13 January 2026</span>
+              <span class="role-pill story-location-pill">Balod</span>
             </div>
           </div>
           <div class="champion-body">
-            <div class="champion-where">Filed: Balod</div>
+            <div class="champion-where">13 January 2026</div>
             <h4 class="champion-name">Balod becomes India's first Child Marriage–Free District</h4>
             <p class="champion-blurb">A multi-year SBC effort culminates in a verified district-wide milestone — community-owned, government-backed.</p>
           </div>
@@ -65,11 +65,11 @@
         <article class="swiper-slide champion">
           <div class="champion-photo" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/67ce9ac3493da.png');">
             <div class="champion-meta">
-              <span class="role-pill">10 March 2025</span>
+              <span class="role-pill story-location-pill">Kabirdham</span>
             </div>
           </div>
           <div class="champion-body">
-            <div class="champion-where">Filed: Kabirdham</div>
+            <div class="champion-where">10 March 2025</div>
             <h4 class="champion-name">Kavir Participatory Action Lab — community-driven change</h4>
             <p class="champion-blurb">A hub for participatory research and field-tested behaviour-change interventions, run by and for the community.</p>
           </div>
@@ -78,11 +78,11 @@
         <article class="swiper-slide champion">
           <div class="champion-photo" style="background-image:url('https://www.chhattisgarhabc.org/stories/uploads/story/67909992e8e60.png');">
             <div class="champion-meta">
-              <span class="role-pill">21 January 2025</span>
+              <span class="role-pill story-location-pill">Raipur</span>
             </div>
           </div>
           <div class="champion-body">
-            <div class="champion-where">Filed: Chhattisgarh</div>
+            <div class="champion-where">21 January 2025</div>
             <h4 class="champion-name">Yuvoday Volunteers — Championing Mental Health Inclusion</h4>
             <p class="champion-blurb">Youth-led groups advancing mental-health inclusion across Chhattisgarh's panchayats — circles, conversations, referrals.</p>
           </div>
@@ -101,6 +101,6 @@
         </button>
       </div>
       <div class="swiper-pagination-bar" aria-hidden="true"><span></span></div>
-      <a class="btn-link" href="{{ route("stories") }}">Read all stories →</a>
+      <a class="btn-link" href="{{ route('stories') }}">Read all stories →</a>
     </div>
-  </div>
+</div>

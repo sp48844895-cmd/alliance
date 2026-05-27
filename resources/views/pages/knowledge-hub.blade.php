@@ -22,11 +22,11 @@
       <div class="kh-hero-text">
         <span class="chapter fade-up" data-delay="1"><b>{{ $hero['chapter'] ?? '06' }}</b> · Library</span>
 
-        <h1 id="kh-hero-h" class="kh-hero-title fade-up" data-delay="2">
+        <h2 id="kh-hero-h" class="kh-hero-title type-hero fade-up" data-delay="2">
           {!! $hero['title'] ?? '' !!}
-        </h1>
+        </h2>
 
-        <p class="kh-hero-lede fade-up" data-delay="3">
+        <p class="kh-hero-lede type-lede fade-up" data-delay="3">
           {!! $hero['lede'] ?? '' !!}
         </p>
 
@@ -132,7 +132,13 @@
         <p class="kh-feature-desc">{{ $featured['description'] ?? '' }}</p>
         <ul class="kh-feature-meta">
           @foreach ($featured['meta'] ?? [] as $meta)
-            <li><b>{{ $meta['value'] }}</b><span>{{ $meta['label'] }}</span></li>
+            <li>
+              @if (is_array($meta))
+                <b>{{ $meta['value'] ?? '' }}</b><span>{{ $meta['label'] ?? '' }}</span>
+              @else
+                {{ $meta }}
+              @endif
+            </li>
           @endforeach
         </ul>
         <div class="kh-feature-cta">

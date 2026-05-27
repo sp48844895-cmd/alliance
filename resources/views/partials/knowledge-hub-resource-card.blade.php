@@ -37,7 +37,13 @@
     <p>{{ $resource['description'] }}</p>
     <ul class="kh-card-meta">
       @foreach ($resource['meta'] ?? [] as $metaLine)
-        <li>{{ $metaLine }}</li>
+        <li>
+          @if (is_array($metaLine))
+            <b>{{ $metaLine['value'] ?? '' }}</b> {{ $metaLine['label'] ?? '' }}
+          @else
+            {{ $metaLine }}
+          @endif
+        </li>
       @endforeach
     </ul>
     <footer>

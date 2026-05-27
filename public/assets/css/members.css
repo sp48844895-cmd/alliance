@@ -9,16 +9,16 @@
   gap: clamp(32px, 5vw, 72px);
 }
 
-.members-overview__copy h1 {
+.members-overview__copy h2 {
   margin: var(--s-3) 0 var(--s-5);
-  font-size: clamp(44px, 6vw, 92px);
-  letter-spacing: -0.03em;
+  font-size: var(--fs-heading);
+  letter-spacing: var(--ls-tighter);
 }
 
 .members-overview__copy p {
   color: var(--ink-soft);
   font-family: var(--ff-display);
-  font-size: clamp(18px, 1.4vw, 22px);
+  font-size: var(--fs-body);
   font-weight: 300;
   line-height: 1.55;
 }
@@ -47,16 +47,16 @@
 
 .members-stats b {
   font-family: var(--ff-display);
-  font-size: clamp(38px, 4vw, 58px);
-  font-weight: 400;
-  line-height: 1;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  line-height: 1.1;
   color: var(--terracotta);
   font-feature-settings: "tnum" 1;
 }
 
 .members-stats span {
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -87,7 +87,7 @@
 
 .members-field label {
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -102,7 +102,8 @@
   border-radius: 999px;
   background: var(--paper);
   color: var(--ink);
-  font: inherit;
+  font-family: var(--ff-body);
+  font-size: var(--fs-body);
   padding: 0 var(--s-4);
   outline: none;
   transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
@@ -188,8 +189,8 @@
   background: var(--brand-grad);
   color: var(--paper);
   font-family: var(--ff-display);
-  font-size: clamp(24px, 2.4vw, 34px);
-  font-weight: 500;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
   box-shadow: var(--shadow-warm);
 }
 
@@ -217,7 +218,7 @@
   background: var(--paper-coral);
   color: var(--terracotta);
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-small);
   font-weight: 800;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -230,14 +231,16 @@
 
 .member-card h3 {
   margin: 0;
-  font-size: clamp(22px, 2vw, 28px);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
 }
 
 .member-card__district {
   margin: 0;
   color: var(--terracotta);
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-small);
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -284,7 +287,7 @@
   border-radius: 999px;
   color: var(--ink);
   text-decoration: none;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   font-weight: 700;
   transition: border-color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
@@ -325,7 +328,7 @@
 
 .mb-pagination__summary {
   margin: 0;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   color: var(--ink-soft);
 }
 
@@ -347,7 +350,7 @@
   border-radius: 999px;
   color: var(--ink);
   text-decoration: none;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   font-weight: 700;
   transition: border-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
@@ -381,7 +384,7 @@
   border-radius: 999px;
   color: var(--ink);
   text-decoration: none;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   font-weight: 700;
   transition: border-color var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
@@ -405,7 +408,7 @@
   .mb-pagination__btn {
     min-height: 40px;
     padding: 0 var(--s-3);
-    font-size: 13px;
+    font-size: var(--fs-body);
   }
 
   .mb-pagination__page {

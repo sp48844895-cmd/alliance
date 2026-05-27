@@ -68,4 +68,38 @@
   document.querySelectorAll('[data-year]').forEach(el => {
     el.textContent = new Date().getFullYear();
   });
+
+  document.querySelectorAll('[data-st-share]').forEach(btn => {
+    const label = btn.querySelector('.st-share-btn__label');
+    const defaultLabel = label ? label.textContent : 'Share';
+
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const url = btn.dataset.shareUrl || window.location.href;
+      const title = btn.dataset.shareTitle || document.title;
+      const hashtags = btn.dataset.shareHashtags || '#SBCMatters';
+      const text = `${title} ${hashtags}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text, url });
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        if (label) {
+          label.textContent = 'Copied!';
+          window.setTimeout(() => { label.textContent = defaultLabel; }, 2000);
+        }
+      } catch (_) {
+        window.prompt('Copy this link to share:', `${text}\n${url}`);
+      }
+    });
+  });
 })();

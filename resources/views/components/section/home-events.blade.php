@@ -17,9 +17,9 @@
         heading-id="events-home-h"
     />
 
-    <div class="initiatives-grid">
+    <div class="initiatives-grid home-events-grid">
         @foreach ($eventItems as $item)
-            <a href="{{ $item['url'] }}" class="{{ $item['tile_class'] }}" data-aos="fade-up"@if (!empty($item['aos_delay'])) data-aos-delay="{{ $item['aos_delay'] }}"@endif style="background-image:url('{{ $item['image'] }}');">
+            <a href="{{ $item['url'] }}" class="{{ $item['tile_class'] }}" style="background-image:url('{{ $item['image'] }}');">
                 <span class="tile-tag">{{ $item['tag'] }}</span>
                 <span class="arrow-circle" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
@@ -38,9 +38,9 @@
         heading-id="events-home-h"
     />
 
-    <div class="initiatives-grid">
+    <div class="initiatives-grid home-events-grid">
         @foreach ($s['tiles'] as $tile)
-            <a href="{{ route($s['events_link']['name'] ?? 'events') }}" class="tile {{ $tile['class'] ?? 'tile-1' }}" data-aos="fade-up"@if (!empty($tile['aos_delay'])) data-aos-delay="{{ $tile['aos_delay'] }}"@endif style="background-image:url('{{ $tile['image'] ?? '' }}');">
+            <a href="{{ route($s['events_link']['name'] ?? 'events') }}" class="tile {{ $tile['class'] ?? 'tile-1' }}" style="background-image:url('{{ $tile['image'] ?? '' }}');">
                 <span class="tile-tag">{{ $tile['tag'] ?? '' }}</span>
                 <span class="arrow-circle" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>

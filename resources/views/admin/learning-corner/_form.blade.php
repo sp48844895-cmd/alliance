@@ -109,7 +109,7 @@
             </div>
             <input type="file" name="image" id="image" accept="image/*"
                    class="input" data-image-preview="#lcPreview">
-            <p class="help">Optional. Max 4 MB. Shown as card thumbnail.</p>
+            <p class="help">Optional. Shown as card thumbnail.</p>
             @error('image') <p class="err">{{ $message }}</p> @enderror
         </div>
 

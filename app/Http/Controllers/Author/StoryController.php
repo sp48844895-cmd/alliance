@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Author;
 
 use App\Http\Controllers\Controller;
+use App\Support\StoryContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -47,8 +48,15 @@ class StoryController extends Controller
             'category' => 'required|string|max:100',
             'content'  => 'required|string',
             'tag'      => 'nullable|string|max:255',
-            'image'    => 'nullable|image|max:4096',
+            'image'    => 'nullable|image',
         ]);
+
+        $content = StoryContent::sanitize($data['content']);
+        if (StoryContent::isEmpty($content)) {
+            return back()
+                ->withErrors(['content' => 'Please add some story content.'])
+                ->withInput();
+        }
 
         $slug = $this->uniqueSlug($data['title']);
         $thumbnail = $this->storeThumbnail($request);
@@ -57,7 +65,7 @@ class StoryController extends Controller
             'title'            => $data['title'],
             'slug'             => $slug,
             'category'         => $data['category'],
-            'content'          => $data['content'],
+            'content'          => $content,
             'tag'              => $data['tag'] ?? '',
             'thumbnail_path'   => $thumbnail,
             'status'           => 'inactive',
@@ -101,13 +109,20 @@ class StoryController extends Controller
             'category' => 'required|string|max:100',
             'content'  => 'required|string',
             'tag'      => 'nullable|string|max:255',
-            'image'    => 'nullable|image|max:4096',
+            'image'    => 'nullable|image',
         ]);
+
+        $content = StoryContent::sanitize($data['content']);
+        if (StoryContent::isEmpty($content)) {
+            return back()
+                ->withErrors(['content' => 'Please add some story content.'])
+                ->withInput();
+        }
 
         $update = [
             'title'           => $data['title'],
             'category'        => $data['category'],
-            'content'         => $data['content'],
+            'content'         => $content,
             'tag'             => $data['tag'] ?? '',
             'approval_status' => 'pending',
             'status'          => 'inactive',

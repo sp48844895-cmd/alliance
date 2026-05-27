@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <span>Configuration</span>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span>Site Settings</span>
 @endsection
 
@@ -82,7 +82,7 @@
                                class="input"
                                data-image-preview="#logoPreview">
                     </div>
-                    <p class="help">PNG / SVG recommended. Max 4 MB.</p>
+                    <p class="help">PNG / SVG recommended.</p>
                     @error('logo') <p class="err">{{ $message }}</p> @enderror
                 </div>
             </div>

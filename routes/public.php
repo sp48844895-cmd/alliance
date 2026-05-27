@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ProgramRegistrationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +15,15 @@ Route::get('/events/calendar-data', [PageController::class, 'calendarData'])->na
 Route::get('/events/{slug}', [PageController::class, 'event'])->name('events.show');
 Route::get('/stories', [PageController::class, 'stories'])->name('stories');
 Route::get('/stories/{slug}', [PageController::class, 'story'])->name('stories.show');
-Route::get('/knowledge-hub', [PageController::class, 'knowledgeHub'])->name('knowledge-hub');
+Route::get('/knowledge-hub', fn () => redirect()->route('learning-corner', [], 301))->name('knowledge-hub');
+Route::get('/programs-and-initiatives', [PageController::class, 'programsAndInitiatives'])->name('programs');
 Route::get('/get-involved', [PageController::class, 'getInvolved'])->name('get-involved');
+Route::get('/get-involved/register/volunteer', [ProgramRegistrationController::class, 'volunteerForm'])->name('register.volunteer');
+Route::post('/get-involved/register/volunteer', [ProgramRegistrationController::class, 'volunteerStore'])->name('register.volunteer.submit')->middleware('throttle:10,1');
+Route::get('/get-involved/register/intern', [ProgramRegistrationController::class, 'internForm'])->name('register.intern');
+Route::post('/get-involved/register/intern', [ProgramRegistrationController::class, 'internStore'])->name('register.intern.submit')->middleware('throttle:10,1');
+Route::get('/get-involved/register/fellowship', [ProgramRegistrationController::class, 'fellowForm'])->name('register.fellow');
+Route::post('/get-involved/register/fellowship', [ProgramRegistrationController::class, 'fellowStore'])->name('register.fellow.submit')->middleware('throttle:10,1');
 Route::get('/members', [PageController::class, 'members'])->name('members');
 Route::get('/resources', [PageController::class, 'resources'])->name('resources');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
@@ -28,7 +36,7 @@ Route::post('/newsletter', [PageController::class, 'newsletterSubscribe'])->name
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 
-Route::prefix('login')->whereIn('type', ['admin', 'author', 'volunteer', 'intern', 'professional', 'pro', 'ngo'])->group(function () {
+Route::prefix('login')->whereIn('type', ['volunteer', 'intern', 'fellow', 'ngo', 'admin'])->group(function () {
     Route::get('/{type}', [LoginController::class, 'showForm'])->name('login.show');
     Route::post('/{type}', [LoginController::class, 'attempt'])->name('login.attempt')->middleware('throttle:5,1');
 });

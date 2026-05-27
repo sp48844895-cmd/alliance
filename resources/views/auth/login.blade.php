@@ -13,12 +13,12 @@
                 </div>
                 <div>
                     <div class="font-display text-lg leading-tight text-[var(--color-ink-2)] font-medium">Alliance for Behavior Change</div>
-                    <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--color-mute-2)]">Chhattisgarh</div>
+                    <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-mute-2)]">Chhattisgarh</div>
                 </div>
             </div>
 
             <div class="max-w-md">
-                <p class="text-[10px] uppercase tracking-[0.25em] text-[var(--color-clay-500)] font-semibold mb-4">{{ $config['chapter'] }}</p>
+                <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-clay-500)] font-semibold mb-4">{{ $config['chapter'] }}</p>
                 <h1 class="font-display text-4xl xl:text-5xl leading-[1.05] text-[var(--color-ink-2)] mb-5">{{ $config['headline'] }}</h1>
                 <p class="text-[var(--color-mute)] text-base leading-relaxed">{{ $config['lede'] }}</p>
             </div>
@@ -33,30 +33,38 @@
     </div>
 
     <div class="flex items-center justify-center p-6 lg:p-10">
-        <div class="w-full max-w-md">
+        <div class="w-full max-w-lg">
             <div class="lg:hidden flex items-center gap-3 mb-8">
                 <div class="w-9 h-9 rounded-lg bg-[var(--color-clay-500)] flex items-center justify-center">
                     <span class="font-display text-white text-lg leading-none">A</span>
                 </div>
                 <div>
                     <div class="font-display text-sm leading-tight font-medium">Alliance for Behavior Change</div>
-                    <div class="text-[10px] uppercase tracking-[0.2em] text-[var(--color-mute-2)]">Chhattisgarh</div>
+                    <div class="text-xs uppercase tracking-[0.2em] text-[var(--color-mute-2)]">Chhattisgarh</div>
                 </div>
             </div>
 
             <div class="mb-7">
-                <p class="text-[10px] uppercase tracking-[0.25em] text-[var(--color-clay-500)] font-semibold mb-2">Sign in</p>
+                <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-clay-500)] font-semibold mb-2">Sign in</p>
                 <h2 class="font-display text-3xl text-[var(--color-ink-2)]">{{ $config['label'] }} access</h2>
                 <p class="text-sm text-[var(--color-mute)] mt-2">Choose your role and continue.</p>
             </div>
 
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 p-1.5 rounded-xl bg-[var(--color-paper-2)] border border-[var(--color-line)] mb-6">
-                @foreach($portals as $portal)
-                    <a href="{{ route('login.show', $portal['slug']) }}"
-                       class="text-[11px] uppercase tracking-wider text-center font-semibold py-2 px-1 rounded-md transition {{ $type === $portal['type'] ? 'bg-white text-[var(--color-clay-700)] shadow-sm' : 'text-[var(--color-mute)] hover:text-[var(--color-ink-2)]' }}">
-                        {{ $portal['label'] }}
-                    </a>
-                @endforeach
+            <div class="mb-6">
+                <p class="label !mb-2">Sign in as</p>
+                <div class="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-2)] p-1.5">
+                    <div class="grid grid-cols-3 gap-1 sm:grid-cols-5" role="tablist" aria-label="Choose login role">
+                        @foreach($portals as $portal)
+                            <a href="{{ route('login.show', $portal['slug']) }}"
+                               role="tab"
+                               @if($type === $portal['type']) aria-selected="true" @else aria-selected="false" @endif
+                               class="flex items-center justify-center min-h-10 px-2 py-2 rounded-lg text-xs sm:text-sm font-medium leading-tight text-center transition {{ $type === $portal['type'] ? 'bg-white text-[var(--color-clay-700)] shadow-sm ring-1 ring-[var(--color-line)]' : 'bg-white/40 text-[var(--color-mute)] hover:bg-white hover:text-[var(--color-ink-2)] ring-1 ring-transparent hover:ring-[var(--color-line)]' }}"
+                               title="{{ $portal['label'] }}">
+                                {{ $portal['switcher_label'] }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
 
             @if(session('status'))
@@ -84,14 +92,17 @@
                     @error($config['identifier'])
                         <p class="err">{{ $message }}</p>
                     @enderror
+                    @error('email')
+                        <p class="err">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
                         <label class="label !mb-0" for="password">Password</label>
-                        <a href="#" class="text-[11px] text-[var(--color-mute)] hover:text-[var(--color-clay-500)]">Forgot?</a>
+                        <a href="#" class="text-xs text-[var(--color-mute)] hover:text-[var(--color-clay-500)]">Forgot?</a>
                     </div>
-                    <input id="password" type="password" name="password" class="input" autocomplete="current-password" required minlength="6">
+                    <input id="password" type="password" name="password" class="input" autocomplete="current-password" required minlength="8">
                     @error('password')
                         <p class="err">{{ $message }}</p>
                     @enderror

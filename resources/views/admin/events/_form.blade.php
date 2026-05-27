@@ -33,9 +33,9 @@
 
             <div class="card p-5">
                 <label class="label" for="description">Description</label>
-                <textarea id="description" name="description" rows="10"
-                    required class="textarea" placeholder="Write a detailed event description...">{{ $description }}</textarea>
-                <p class="help">Plain text or basic HTML allowed.</p>
+                <textarea id="description" name="description" data-rich-editor rows="12"
+                    required class="textarea min-h-[280px]" placeholder="Write a detailed event description...">{{ $description }}</textarea>
+                <p class="help">Use headings, lists, and links. Formatting is saved with the event.</p>
             </div>
         </div>
 
@@ -95,7 +95,7 @@
                         data-image-preview-box="#event_image_preview_box"
                         data-image-preview-placeholder="#event_image_placeholder"
                         class="input">
-                    <p class="help">JPG, PNG, WebP or GIF up to 4 MB.</p>
+                    <p class="help">JPG, PNG, WebP or GIF.</p>
                     @if ($isEdit && $hasImage)
                         <label class="inline-flex items-center gap-2 text-sm text-[var(--color-mute)] cursor-pointer">
                             <input type="checkbox" name="remove_image" value="1" class="rounded border-[var(--color-line)]">

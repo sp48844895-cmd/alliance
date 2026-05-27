@@ -21,8 +21,8 @@
     <div class="container-x members-overview__grid">
       <div class="members-overview__copy" data-aos="fade-up">
         <span class="chapter"><b>{{ $pageSections['members_overview']['chapter'] ?? '01' }}</b> · Member directory</span>
-        <h1 id="members-overview-h">{!! $pageSections['members_overview']['title'] ?? 'People behind the <em>alliance.</em>' !!}</h1>
-        <p>{{ $pageSections['members_overview']['description'] ?? 'Browse members district-wise, search by name, or filter by member type. The directory brings individuals, volunteers, NGOs, CSOs and organisations into one easy view.' }}</p>
+        <h2 id="members-overview-h">{!! $pageSections['members_overview']['title'] ?? 'People behind the <em>alliance.</em>' !!}</h2>
+        <p class="type-lede">{{ $pageSections['members_overview']['description'] ?? 'Browse members district-wise, search by name, or filter by member type. The directory brings individuals, volunteers, NGOs, CSOs and organisations into one easy view.' }}</p>
       </div>
 
       <div class="members-stats" data-aos="fade-up" data-aos-delay="100" aria-label="Members overview">

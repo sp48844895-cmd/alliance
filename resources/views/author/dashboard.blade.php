@@ -21,8 +21,8 @@
 @section('content')
     <div class="mb-6">
         <p class="text-sm text-[var(--color-mute)]">
-            Welcome back, <span class="font-semibold text-[var(--color-ink-2)]">{{ auth()->user()->fname ?? 'Author' }}</span>.
-            Submit stories for admin review — approved stories appear on the public site.
+            Welcome back, <span class="font-semibold text-[var(--color-ink-2)]">{{ auth()->user()->fname ?? 'there' }}</span>.
+            Write a story and send it for review — once approved, it goes live on the public site.
         </p>
     </div>
 

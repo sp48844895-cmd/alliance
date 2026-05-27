@@ -32,9 +32,10 @@
 .contact-title {
   max-width: 900px;
   margin: var(--s-4) 0 var(--s-5);
-  font-size: clamp(42px, 6vw, 96px);
-  line-height: 0.98;
-  letter-spacing: -0.035em;
+  font-size: var(--fs-display);
+  font-weight: var(--fw-regular);
+  line-height: 1.02;
+  letter-spacing: var(--ls-display);
 }
 
 .contact-title em {
@@ -47,11 +48,10 @@
 .contact-lede {
   max-width: 720px;
   color: var(--ink-soft);
-  font-family: var(--ff-display);
-  font-size: clamp(18px, 1.45vw, 23px);
-  font-weight: 300;
-  line-height: 1.55;
-  font-variation-settings: "opsz" 14, "SOFT" 60;
+  font-family: var(--ff-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-relaxed);
 }
 
 .contact-actions,
@@ -83,7 +83,7 @@
 .contact-note-kicker,
 .contact-card-label {
   font-family: var(--ff-mono);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -92,12 +92,15 @@
 
 .contact-note p {
   margin: 0;
+  font-size: var(--fs-body);
+  line-height: var(--lh-relaxed);
   color: var(--ink-soft);
 }
 
 .contact-note-links a {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
   color: var(--ink);
-  font-weight: 700;
   text-decoration: none;
   border-bottom: 1px solid var(--rule);
   overflow-wrap: anywhere;
@@ -150,9 +153,9 @@
 .contact-card-value {
   color: var(--ink);
   font-family: var(--ff-display);
-  font-size: clamp(18px, 1.35vw, 22px);
-  font-weight: 500;
-  line-height: 1.25;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
   text-decoration: none;
   overflow-wrap: anywhere;
 }
@@ -163,6 +166,8 @@
 
 .contact-card p {
   margin: 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-relaxed);
   color: var(--muted);
 }
 
@@ -195,10 +200,13 @@
 .contact-form-card h2,
 .contact-map-copy h2 {
   margin-top: var(--s-3);
+  font-size: var(--fs-heading);
 }
 
 .contact-form-card p,
 .contact-map-copy p {
+  font-size: var(--fs-body);
+  line-height: var(--lh-relaxed);
   color: var(--ink-soft);
 }
 
@@ -271,7 +279,7 @@
 
 .site-toast__title {
   margin: 0 0 4px;
-  font-size: 0.95rem;
+  font-size: var(--fs-body);
   font-weight: 700;
   color: var(--ink);
   line-height: 1.3;
@@ -279,7 +287,7 @@
 
 .site-toast__message {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--fs-body);
   font-weight: 500;
   color: var(--ink-soft);
   line-height: 1.5;
@@ -288,9 +296,9 @@
 .site-toast__errors {
   margin: 8px 0 0;
   padding-left: 18px;
-  font-size: 0.8125rem;
+  font-size: var(--fs-small);
   color: var(--ink-soft);
-  line-height: 1.45;
+  line-height: var(--lh-relaxed);
 }
 
 .site-toast__close {
@@ -340,6 +348,8 @@
   gap: var(--s-1);
   margin: 0;
   padding-left: var(--s-5);
+  font-size: var(--fs-small);
+  line-height: var(--lh-relaxed);
   color: var(--ink-soft);
   font-weight: 500;
 }
@@ -358,7 +368,7 @@
 }
 
 .contact-field-group label {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   font-weight: 700;
   color: var(--ink);
 }
@@ -370,7 +380,7 @@
   border-radius: var(--radius);
   background: var(--paper);
   color: var(--ink);
-  font: 500 var(--fs-md)/1.5 var(--ff-body);
+  font: 500 var(--fs-body)/1.5 var(--ff-body);
   padding: 0.95rem 1rem;
   outline: none;
   transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);

@@ -44,8 +44,7 @@ class LearningCornerController extends Controller
         }
 
         $resources = $query->orderBy('learning_corner.id', 'desc')
-            ->paginate(12)
-            ->withQueryString();
+            ->get();
 
         $categories = DB::table('learning_cat')
             ->where('status', 1)
@@ -81,7 +80,7 @@ class LearningCornerController extends Controller
             'm_type'  => 'required|in:book,posters,mobile kunji,video',
             'link'    => 'required|url|max:500',
             'content' => 'nullable|string|max:500',
-            'image'   => 'nullable|image|max:4096',
+            'image'   => 'nullable|image',
             'date'    => 'required|date',
             'status'  => 'required|in:0,1',
         ]);
@@ -140,7 +139,7 @@ class LearningCornerController extends Controller
             'm_type'  => 'required|in:book,posters,mobile kunji,video',
             'link'    => 'required|url|max:500',
             'content' => 'nullable|string|max:500',
-            'image'   => 'nullable|image|max:4096',
+            'image'   => 'nullable|image',
             'date'    => 'required|date',
             'status'  => 'required|in:0,1',
         ]);

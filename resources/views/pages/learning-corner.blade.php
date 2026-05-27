@@ -101,7 +101,7 @@
                         data-lc-cat="{{ $node->id }}"
                         aria-label="Browse {{ e($node->cat_name) }}">
                   <span class="lc-quick-cat-card__icon">
-                    <i class="{{ $node->cat_icon }}" aria-hidden="true"></i>
+                    @include('partials.lucide-icon', ['class' => $node->cat_icon ?: 'icon-folder'])
                   </span>
                   <span class="lc-quick-cat-card__name">{{ $node->cat_name }}</span>
                   @if ($node->total_count > 0)

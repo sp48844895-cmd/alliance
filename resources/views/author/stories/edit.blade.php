@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <a href="{{ route('author.stories.index') }}">Stories</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span>Edit</span>
 @endsection
 

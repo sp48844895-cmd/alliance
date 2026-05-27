@@ -1,8 +1,8 @@
 @php
-    $chapterNum = '07';
-    $chapterLabel = 'Newsletter';
-    $headingHtml = 'Stay connected with the <em>Alliance</em>.';
-    $ledeHtml = 'Get stories, events, and resources from across Chhattisgarh — field updates, campaign highlights, and learning materials delivered to your inbox.';
+    $chapterNum = $s['chapter_num'] ?? '08';
+    $chapterLabel = $s['chapter_label'] ?? 'Newsletter Subscribe';
+    $headingHtml = $s['heading_html'] ?? 'Stay connected with the <em>Alliance</em>.';
+    $ledeHtml = $s['lede_html'] ?? 'Get stories, events, and resources from across Chhattisgarh — field updates, campaign highlights, and learning materials delivered to your inbox.';
 @endphp
 <div class="container-x">
     <div class="newsletter-section-grid">

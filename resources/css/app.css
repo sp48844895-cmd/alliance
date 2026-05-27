@@ -6,10 +6,10 @@
 @source '../**/*.js';
 
 @theme {
-    --font-display: 'Fraunces', ui-serif, Georgia, serif;
-    --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-    --font-hand: 'Caveat', cursive;
+    --font-display: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+    --font-hand: 'Roboto', ui-sans-serif, system-ui, sans-serif;
 
     --color-paper: #faf8ff;
     --color-paper-2: #f4f0ff;
@@ -68,12 +68,10 @@
         font-weight: 500;
         letter-spacing: -0.01em;
         color: var(--color-ink-2);
-        font-variation-settings: "opsz" 72, "SOFT" 30, "WONK" 0;
     }
     em {
         font-style: italic;
         color: var(--color-clay-500);
-        font-variation-settings: "opsz" 72, "SOFT" 60, "WONK" 1;
     }
     *::selection {
         background: var(--color-clay-100);
@@ -273,6 +271,64 @@
     .admin-panel .help {
         font-weight: 500;
         color: var(--color-mute);
+    }
+
+    .admin-datatable-wrap {
+        max-width: 100%;
+    }
+    .admin-datatable-wrap .dataTables_wrapper {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    .admin-datatable-wrap table.dataTable {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    .admin-datatable-wrap .dataTables_filter input,
+    .admin-datatable-wrap .dataTables_length select {
+        @apply w-full max-w-xs py-2 px-3 text-sm rounded-lg border font-semibold;
+        border-color: var(--color-line);
+        background: var(--color-surface);
+        color: var(--color-ink-2);
+        min-height: 2.5rem;
+    }
+    .admin-datatable-wrap .dataTables_filter label,
+    .admin-datatable-wrap .dataTables_length label {
+        @apply text-sm font-semibold flex items-center gap-2;
+        color: var(--color-mute);
+    }
+    .admin-datatable-wrap .dataTables_info {
+        @apply text-sm font-semibold;
+        color: var(--color-mute);
+    }
+    .admin-datatable-wrap .dataTables_paginate {
+        @apply flex flex-wrap gap-1;
+    }
+    .admin-datatable-wrap .dataTables_paginate .paginate_button {
+        @apply inline-flex items-center justify-center min-w-[2.25rem] h-9 px-2 rounded-lg text-sm font-semibold border transition;
+        border-color: var(--color-line) !important;
+        background: var(--color-surface) !important;
+        color: var(--color-ink-2) !important;
+        margin: 0 !important;
+    }
+    .admin-datatable-wrap .dataTables_paginate .paginate_button.current {
+        background: linear-gradient(135deg, var(--color-brand-from), var(--color-brand-to)) !important;
+        border-color: var(--color-clay-500) !important;
+        color: #fff !important;
+    }
+    .admin-datatable-wrap .dataTables_paginate .paginate_button.disabled {
+        opacity: 0.45;
+    }
+    .admin-datatable-wrap .dt-toolbar,
+    .admin-datatable-wrap .dt-footer {
+        background: var(--color-surface);
+    }
+    table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before,
+    table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before {
+        background-color: var(--color-clay-600);
+        border: none;
+        box-shadow: none;
     }
 
     .pagination-nav {

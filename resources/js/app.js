@@ -2,6 +2,10 @@ import './bootstrap';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+if (document.body.classList.contains('admin-panel')) {
+    import('./admin-datatables.js');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.querySelector('[data-admin-sidebar]');
     const toggle = document.querySelector('[data-admin-toggle]');

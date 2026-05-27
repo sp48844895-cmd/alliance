@@ -6,11 +6,11 @@
             <div class="gi-hero-text">
                 <span class="chapter fade-up" data-delay="1"><b>{{ $hero['chapter'] ?? '07' }}</b> · Join</span>
 
-                <h1 id="gi-hero-h" class="gi-hero-title fade-up" data-delay="2">
+                <h2 id="gi-hero-h" class="gi-hero-title type-hero fade-up" data-delay="2">
                     {!! $hero['title'] ?? '' !!}
-                </h1>
+                </h2>
 
-                <p class="gi-hero-lede fade-up" data-delay="3">
+                <p class="gi-hero-lede type-lede fade-up" data-delay="3">
                     {!! $hero['lede'] ?? '' !!}
                 </p>
 
@@ -27,7 +27,7 @@
                 <span class="gi-hero-paths-eyebrow">Join pathways</span>
                 <ol class="gi-hero-paths-list">
                     @foreach ($hero['pathways'] ?? [] as $pathway)
-                        <li><a href="#gi-join"><b>{{ $pathway['num'] }}</b><span>{{ $pathway['label'] }}</span><i>{{ $pathway['hint'] }}</i></a></li>
+                        <li><a href="#{{ $pathway['anchor'] ?? 'gi-join' }}"><b>{{ $pathway['num'] }}</b><span>{{ $pathway['label'] }}</span><i>{{ $pathway['hint'] }}</i></a></li>
                     @endforeach
                 </ol>
             </aside>

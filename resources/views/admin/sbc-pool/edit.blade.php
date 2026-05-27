@@ -4,7 +4,7 @@
 @section('page_title', 'Edit SBC member')
 @section('breadcrumb')
     <a href="{{ route('admin.sbc-pool.index') }}">SBC Resource Pool</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="text-[var(--color-ink-2)]">Edit #{{ $member->id }}</span>
 @endsection
 

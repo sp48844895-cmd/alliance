@@ -23,7 +23,7 @@
 }
 
 .auth-title {
-  font: 500 var(--fs-3xl)/1.05 var(--ff-display);
+  font: 500 var(--fs-heading)/1.05 var(--ff-display);
   margin: var(--s-4) 0 var(--s-4);
   color: var(--ink);
 }
@@ -34,7 +34,7 @@
 
 .auth-lede {
   color: var(--muted);
-  font-size: var(--fs-md);
+  font-size: var(--fs-body);
   line-height: 1.6;
   max-width: 46ch;
 }
@@ -60,7 +60,7 @@
   border-radius: 999px;
   text-decoration: none;
   color: var(--muted);
-  font: 500 var(--fs-xs)/1 var(--ff-body);
+  font: 500 var(--fs-small)/1 var(--ff-body);
   transition: border-color var(--dur-1) var(--ease-out),
     color var(--dur-1) var(--ease-out),
     background var(--dur-1) var(--ease-out);
@@ -103,7 +103,7 @@
 }
 
 .auth-card__head h2 {
-  font: 500 var(--fs-2xl)/1.1 var(--ff-display);
+  font: 500 var(--fs-subheading)/1.1 var(--ff-display);
   margin: 0;
   color: var(--ink);
 }
@@ -113,7 +113,7 @@
   border-radius: var(--radius-sm);
   background: var(--paper-deep);
   color: var(--ink-soft);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   margin-bottom: var(--s-4);
   border-left: 3px solid var(--teal);
 }
@@ -142,7 +142,7 @@
 }
 
 .auth-field__label {
-  font: 500 var(--fs-xs)/1 var(--ff-body);
+  font: 500 var(--fs-small)/1 var(--ff-body);
   color: var(--muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -154,7 +154,7 @@
   border: 1px solid var(--rule);
   border-radius: var(--radius-sm);
   background: var(--paper);
-  font: 400 var(--fs-md)/1.4 var(--ff-body);
+  font: 400 var(--fs-body)/1.4 var(--ff-body);
   color: var(--ink);
   transition: border-color var(--dur-1) var(--ease-out),
     box-shadow var(--dur-1) var(--ease-out);
@@ -180,7 +180,7 @@
   align-items: center;
   gap: 8px;
   color: var(--muted);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
 }
 
 .auth-check input {
@@ -189,7 +189,7 @@
 
 .auth-link {
   color: var(--terracotta);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   text-decoration: none;
 }
 
@@ -205,7 +205,7 @@
 
 .auth-foot {
   margin: var(--s-3) 0 0;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-small);
   color: var(--muted);
   text-align: center;
 }

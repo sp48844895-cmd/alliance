@@ -25,13 +25,13 @@
       <div>
         <span class="chapter fade-up" data-delay="1"><b>01</b> · About the Alliance</span>
 
-        <h1 id="ab-hero-h" class="ab-hero-title fade-up" data-delay="2">
+        <h2 id="ab-hero-h" class="ab-hero-title type-hero fade-up" data-delay="2">
           <span class="line">An <em>open</em> alliance.</span>
           <span class="line">A shared <em>practice.</em></span>
           <span class="line">A state-wide story of <span class="ab-underline">behaviour change.</span></span>
-        </h1>
+        </h2>
 
-        <p class="ab-hero-lede ab-hero-lede--intro fade-up" data-delay="3">
+        <p class="ab-hero-lede ab-hero-lede--intro type-lede fade-up" data-delay="3">
           ChhattisgarhABC is a dynamic platform dedicated to strengthening <em>Social and Behaviour Change Communication (SBC)</em> across Chhattisgarh. It serves as a collaborative community space where youth, professionals, civil society organizations, development partners, media, and government institutions come together to learn, connect, share experiences, and drive meaningful social change.
         </p>
         <details class="ab-hero-more fade-up" data-delay="4">
@@ -39,7 +39,7 @@
             <span class="ab-hero-more__open">Read more</span>
             <span class="ab-hero-more__close">Read less</span>
           </summary>
-          <p class="ab-hero-lede ab-hero-more__content">
+          <p class="ab-hero-lede ab-hero-more__content type-lede">
             SBC is more than posters, advertisements, or awareness messages. It is a people-centered approach that helps individuals, families, and communities make informed choices and adopt healthier, safer, and more positive behaviours in everyday life. From villages surrounded by forests to growing urban neighborhoods, SBC helps connect policies with people through communication that is local, relatable, and impactful.
           </p>
         </details>

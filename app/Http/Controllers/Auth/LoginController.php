@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\TurnstileService;
+use App\Support\LoginPortals;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -13,78 +14,6 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class LoginController extends Controller
 {
-    public const PORTAL_ORDER = [
-        'admin',
-        'author',
-        'volunteer',
-        'intern',
-        'professional',
-        'ngo',
-    ];
-
-    private const TYPES = [
-        'volunteer' => [
-            'label'      => 'Volunteer',
-            'headline'   => 'Welcome back, volunteer.',
-            'lede'       => 'Sign in to log field activities, mark attendance for talk shows, and stay updated with district programmes.',
-            'identifier' => 'email',
-            'idLabel'    => 'Email',
-            'idType'     => 'email',
-            'chapter'    => 'Volunteer access',
-            'redirect'   => 'home',
-        ],
-        'intern' => [
-            'label'      => 'Intern',
-            'headline'   => 'Welcome, intern.',
-            'lede'       => 'Sign in to access your placement timesheet, training modules and submission portal.',
-            'identifier' => 'email',
-            'idLabel'    => 'Institutional email',
-            'idType'     => 'email',
-            'chapter'    => 'Intern access',
-            'redirect'   => 'home',
-        ],
-        'professional' => [
-            'label'      => 'Professional',
-            'headline'   => 'Welcome, professional.',
-            'lede'       => 'Sign in to share resources, mentor cohorts and contribute to the SBC resource pool.',
-            'identifier' => 'email',
-            'idLabel'    => 'Work email',
-            'idType'     => 'email',
-            'chapter'    => 'Professional access',
-            'redirect'   => 'home',
-        ],
-        'ngo' => [
-            'label'      => 'NGO / CSO',
-            'headline'   => 'Welcome, partner organisation.',
-            'lede'       => 'Sign in to manage your organisation profile, programmes, and member roster.',
-            'identifier' => 'email',
-            'idLabel'    => 'Organisation email',
-            'idType'     => 'email',
-            'chapter'    => 'NGO access',
-            'redirect'   => 'home',
-        ],
-        'admin' => [
-            'label'      => 'Admin',
-            'headline'   => 'Admin sign-in.',
-            'lede'       => 'Restricted area for alliance staff. Manage every module of the ABC Chhattisgarh platform.',
-            'identifier' => 'email',
-            'idLabel'    => 'Admin email',
-            'idType'     => 'email',
-            'chapter'    => 'Admin access',
-            'redirect'   => 'admin.dashboard',
-        ],
-        'author' => [
-            'label'      => 'Author',
-            'headline'   => 'Welcome, story author.',
-            'lede'       => 'Sign in to submit stories for review. Approved stories appear on the public Stories page.',
-            'identifier' => 'email',
-            'idLabel'    => 'Author email',
-            'idType'     => 'email',
-            'chapter'    => 'Author access',
-            'redirect'   => 'author.dashboard',
-        ],
-    ];
-
     public function __construct(private TurnstileService $turnstile)
     {
     }
@@ -96,24 +25,24 @@ class LoginController extends Controller
         }
 
         return view('auth.login-hub', [
-            'portals' => $this->portalsForHub(),
+            'portals' => LoginPortals::forHub(),
         ]);
     }
 
     public function showForm(string $type)
     {
         $type = $this->resolveType($type);
-        abort_unless(isset(self::TYPES[$type]), 404);
+        abort_unless(LoginPortals::isValid($type), 404);
 
         if (Auth::check() && (Auth::user()->type ?? null) === $type) {
             return $this->redirectAuthenticated($type);
         }
 
         return view('auth.login', [
-            'type'              => $type,
-            'typeSlug'          => $this->loginSlug($type),
-            'config'            => self::TYPES[$type],
-            'portals'           => $this->portalsForSwitcher(),
+            'type'                   => $type,
+            'typeSlug'               => $type,
+            'config'                 => LoginPortals::config($type),
+            'portals'                => LoginPortals::forSwitcher(),
             'turnstileSiteKey'       => $this->turnstile->siteKey(),
             'turnstileEnabled'       => $this->turnstile->isActive(),
             'turnstileMisconfigured' => $this->turnstile->isMisconfigured(),
@@ -123,14 +52,14 @@ class LoginController extends Controller
     public function attempt(Request $request, string $type)
     {
         $type = $this->resolveType($type);
-        abort_unless(isset(self::TYPES[$type]), 404);
+        abort_unless(LoginPortals::isValid($type), 404);
 
-        $config = self::TYPES[$type];
-
+        $config = LoginPortals::config($type);
         $rateLimiterKey = 'login:' . $type . ':' . str($request->input('email', ''))->lower()->value() . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($rateLimiterKey, 5)) {
             $seconds = RateLimiter::availableIn($rateLimiterKey);
+
             return back()
                 ->withErrors(['email' => "Too many login attempts. Please try again in {$seconds} seconds."])
                 ->onlyInput('email', 'remember');
@@ -155,26 +84,44 @@ class LoginController extends Controller
 
         if ($this->turnstile->isEnabled() && ! $this->turnstile->verify($request->input('cf-turnstile-response'), $request->ip())) {
             RateLimiter::hit($rateLimiterKey, 900);
+
             return back()
                 ->withErrors(['cf-turnstile-response' => 'Please complete the security check.'])
                 ->onlyInput('email', 'remember');
         }
 
+        $email = strtolower(trim((string) $request->input('email')));
+
         $user = DB::table('users')
-            ->select(['id', 'password', 'type'])
-            ->where('email', $request->input('email'))
+            ->select(['id', 'password', 'type', 'is_active'])
+            ->where('email', $email)
             ->where('type', $type)
-            ->where('is_active', true)
             ->whereNull('deleted_at')
             ->first();
 
         if (! $user || ! Hash::check($request->input('password'), $user->password)) {
             RateLimiter::hit($rateLimiterKey, 900);
+
             return back()
                 ->withErrors(['email' => 'These credentials do not match our records.'])
                 ->onlyInput('email', 'remember');
         }
 
+        if (! ($user->is_active ?? false)) {
+            RateLimiter::hit($rateLimiterKey, 900);
+
+            $message = $this->inactiveLoginMessage((int) $user->id, $type);
+
+            return back()
+                ->withErrors(['email' => $message])
+                ->onlyInput('email', 'remember');
+        }
+
+        return $this->completeLogin($request, $user, $rateLimiterKey, $config['redirect']);
+    }
+
+    private function completeLogin(Request $request, object $user, string $rateLimiterKey, string $redirectRoute)
+    {
         RateLimiter::clear($rateLimiterKey);
 
         $remember = $request->boolean('remember');
@@ -191,12 +138,11 @@ class LoginController extends Controller
             'last_login_ip' => $request->ip(),
         ]);
 
-        return redirect()->intended(route($config['redirect']));
+        return redirect()->intended(route($redirectRoute));
     }
 
     private function capRememberCookieLifetime(): void
     {
-        /** @var \Illuminate\Auth\SessionGuard $guard */
         $guard   = Auth::guard();
         $name    = $guard->getRecallerName();
         $queued  = Cookie::queued($name);
@@ -219,62 +165,45 @@ class LoginController extends Controller
         );
     }
 
+    private function inactiveLoginMessage(int $userId, string $type): string
+    {
+        if (! in_array($type, ['intern', 'fellow'], true)) {
+            return 'These credentials do not match our records.';
+        }
+
+        $registration = DB::table('program_registrations')
+            ->where('user_id', $userId)
+            ->orderByDesc('id')
+            ->first();
+
+        if (! $registration) {
+            return 'These credentials do not match our records.';
+        }
+
+        if (in_array($registration->status, ['new', 'reviewed'], true)) {
+            return 'Your application is under review.';
+        }
+
+        if ($registration->status === 'rejected') {
+            return 'Your application was not approved.';
+        }
+
+        return 'These credentials do not match our records.';
+    }
+
     private function redirectAuthenticated(?string $type)
     {
-        $route = self::TYPES[$type]['redirect'] ?? 'home';
-        return redirect()->route($route);
+        $redirect = LoginPortals::redirectRoute($type);
+
+        if ($redirect) {
+            return redirect()->route($redirect);
+        }
+
+        return redirect()->route('home');
     }
 
     private function resolveType(string $type): string
     {
-        return $type === 'pro' ? 'professional' : $type;
-    }
-
-    private function loginSlug(string $type): string
-    {
-        return $type === 'professional' ? 'pro' : $type;
-    }
-
-    private function portalsForHub(): array
-    {
-        $icons = [
-            'admin'        => 'bi-shield-lock',
-            'author'       => 'bi-pencil-square',
-            'volunteer'    => 'bi-person-heart',
-            'intern'       => 'bi-mortarboard',
-            'professional' => 'bi-briefcase',
-            'ngo'          => 'bi-buildings',
-        ];
-
-        $portals = [];
-        foreach (self::PORTAL_ORDER as $type) {
-            $config = self::TYPES[$type];
-            $portals[] = [
-                'type'     => $type,
-                'slug'     => $this->loginSlug($type),
-                'label'    => $config['label'],
-                'short'    => $type === 'professional' ? 'Pro' : $config['label'],
-                'lede'     => $config['lede'],
-                'chapter'  => $config['chapter'],
-                'icon'     => $icons[$type] ?? 'bi-box-arrow-in-right',
-            ];
-        }
-
-        return $portals;
-    }
-
-    private function portalsForSwitcher(): array
-    {
-        $portals = [];
-        foreach (self::PORTAL_ORDER as $type) {
-            $config = self::TYPES[$type];
-            $portals[] = [
-                'slug'  => $this->loginSlug($type),
-                'type'  => $type,
-                'label' => $type === 'professional' ? 'Pro' : $config['label'],
-            ];
-        }
-
-        return $portals;
+        return $type;
     }
 }

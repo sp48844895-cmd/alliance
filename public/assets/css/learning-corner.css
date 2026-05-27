@@ -44,16 +44,16 @@
   align-items: center;
   gap: var(--s-2);
   font-family: var(--ff-mono);
-  font-size: 11px;
+  font-size: var(--fs-small);
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
   color: var(--terracotta);
   margin-bottom: var(--s-3);
 }
 
 .lc-hero__title {
-  font-size: clamp(32px, 4.5vw, 60px);
+  font-size: var(--fs-heading);
   margin-bottom: var(--s-3);
   line-height: 1.0;
 }
@@ -61,7 +61,7 @@
 .lc-hero__sub {
   color: var(--ink-soft);
   font-family: var(--ff-display);
-  font-size: clamp(14px, 1.1vw, 17px);
+  font-size: var(--fs-body);
   font-weight: 300;
   max-width: 52ch;
   margin: 0;
@@ -89,7 +89,7 @@
 
 .lc-stat b {
   font-family: var(--ff-display);
-  font-size: clamp(24px, 2.5vw, 36px);
+  font-size: var(--fs-heading);
   font-weight: 400;
   line-height: 1;
   color: var(--terracotta);
@@ -97,7 +97,7 @@
 
 .lc-stat span {
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -106,7 +106,7 @@
 }
 
 .lc-stat__icon {
-  font-size: 20px;
+  font-size: var(--fs-body);
   color: var(--terracotta-l);
   margin-bottom: 2px;
 }
@@ -148,7 +148,7 @@
   align-items: center;
   gap: var(--s-2);
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -156,7 +156,7 @@
 }
 
 .lc-sidebar__title i {
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--paper);
 }
 
@@ -193,7 +193,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--fs-small);
   pointer-events: none;
 }
 
@@ -206,7 +206,7 @@
   background: var(--paper-soft);
   color: var(--ink);
   font: inherit;
-  font-size: 13px;
+  font-size: var(--fs-body);
   outline: none;
   transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
@@ -238,7 +238,7 @@
   border-radius: 999px;
   background: transparent;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-small);
   font-family: var(--ff-body);
   cursor: pointer;
   transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
@@ -330,7 +330,7 @@
   background: transparent;
   color: var(--ink-soft);
   font-family: var(--ff-body);
-  font-size: 13px;
+  font-size: var(--fs-body);
   font-weight: 500;
   text-align: left;
   cursor: pointer;
@@ -376,7 +376,7 @@
   border-radius: var(--radius-sm);
   background: var(--paper-soft);
   color: var(--terracotta-l);
-  font-size: 12px;
+  font-size: var(--fs-small);
   flex-shrink: 0;
   transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
@@ -384,6 +384,24 @@
 .lc-tree-btn.is-active .lc-tree-icon-wrap {
   background: var(--brand-grad);
   color: var(--paper);
+}
+
+.lc-tree-icon-wrap .lc-lucide svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+}
+
+.lc-quick-cat-card__icon .lc-lucide svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+.lc-cat-header__icon .lc-lucide svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
 }
 
 /* ── Tree label ──────────────────────────────────────────── */
@@ -407,7 +425,7 @@
   background: var(--paper-deep);
   color: var(--muted);
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fs-small);
   font-weight: 800;
   flex-shrink: 0;
   transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
@@ -487,13 +505,13 @@
 }
 
 .lc-tree-empty i {
-  font-size: 36px;
+  font-size: var(--fs-heading);
   opacity: 0.35;
 }
 
 .lc-tree-empty p {
   margin: var(--s-3) 0 0;
-  font-size: 13px;
+  font-size: var(--fs-body);
 }
 
 /* ── Content panel ───────────────────────────────────────── */
@@ -525,7 +543,7 @@
   display: inline-flex;
   align-items: center;
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-small);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -540,7 +558,7 @@
   content: "›";
   margin: 0 4px;
   color: var(--rule);
-  font-size: 14px;
+  font-size: var(--fs-body);
   line-height: 1;
 }
 
@@ -575,19 +593,19 @@
   border-radius: var(--radius-lg);
   background: var(--brand-grad);
   color: var(--paper);
-  font-size: 28px;
+  font-size: var(--fs-body);
   margin-bottom: var(--s-5);
   box-shadow: var(--shadow-warm);
 }
 
 .lc-welcome__title {
-  font-size: clamp(24px, 2.5vw, 36px);
+  font-size: var(--fs-heading);
   margin-bottom: var(--s-2);
 }
 
 .lc-welcome__sub {
   color: var(--muted);
-  font-size: 15px;
+  font-size: var(--fs-body);
   max-width: 44ch;
   margin: 0 0 var(--s-6);
 }
@@ -637,13 +655,13 @@
   border-radius: var(--radius);
   background: var(--brand-grad);
   color: var(--paper);
-  font-size: 16px;
+  font-size: var(--fs-body);
   flex-shrink: 0;
 }
 
 .lc-quick-cat-card__name {
   font-family: var(--ff-display);
-  font-size: 16px;
+  font-size: var(--fs-body);
   font-weight: 500;
   color: var(--ink);
   line-height: 1.2;
@@ -651,7 +669,7 @@
 
 .lc-quick-cat-card__count {
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fs-small);
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -663,7 +681,7 @@
   align-items: center;
   gap: 3px;
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fs-small);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -701,13 +719,13 @@
   border-radius: var(--radius);
   background: var(--brand-grad);
   color: var(--paper);
-  font-size: 20px;
+  font-size: var(--fs-body);
   flex-shrink: 0;
   box-shadow: var(--shadow-warm);
 }
 
 .lc-cat-header__name {
-  font-size: clamp(22px, 2.5vw, 36px);
+  font-size: var(--fs-heading);
   margin: 0;
   line-height: 1.05;
 }
@@ -729,7 +747,7 @@
   border: 1px solid var(--rule);
   color: var(--terracotta);
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-small);
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -737,7 +755,7 @@
 
 .lc-cat-header__desc {
   color: var(--ink-soft);
-  font-size: 15px;
+  font-size: var(--fs-body);
   max-width: 65ch;
   margin: var(--s-3) 0 0;
   font-family: var(--ff-display);
@@ -762,14 +780,14 @@
   border-radius: 999px;
   background: var(--paper-soft);
   color: var(--ink-soft);
-  font-size: 12px;
+  font-size: var(--fs-small);
   font-weight: 500;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 
 .lc-subcat-chip i {
-  font-size: 11px;
+  font-size: var(--fs-small);
   color: var(--terracotta-l);
 }
 
@@ -834,8 +852,8 @@
   border-radius: var(--radius-lg);
   color: var(--paper);
   font-family: var(--ff-display);
-  font-size: 22px;
-  font-weight: 500;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
 }
 
 .lc-resource-card__type-badge {
@@ -851,7 +869,7 @@
   backdrop-filter: blur(6px);
   color: var(--paper);
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fs-small);
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -880,7 +898,7 @@
   background: var(--paper-coral);
   color: var(--terracotta);
   font-family: var(--ff-mono);
-  font-size: 9px;
+  font-size: var(--fs-small);
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -888,16 +906,16 @@
 
 .lc-resource-card__title {
   font-family: var(--ff-display);
-  font-size: clamp(15px, 1.3vw, 18px);
-  font-weight: 500;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-semibold);
   color: var(--ink);
-  line-height: 1.3;
+  line-height: var(--lh-snug);
   margin: 0;
 }
 
 .lc-resource-card__desc {
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: var(--fs-body);
   line-height: 1.55;
   margin: 0;
   flex: 1;
@@ -919,7 +937,7 @@
 
 .lc-resource-card__date {
   font-family: var(--ff-mono);
-  font-size: 10px;
+  font-size: var(--fs-small);
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--muted);
@@ -935,7 +953,7 @@
   background: var(--brand-grad);
   color: var(--paper);
   font-family: var(--ff-body);
-  font-size: 11px;
+  font-size: var(--fs-small);
   font-weight: 600;
   text-decoration: none;
   transition: opacity var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
@@ -961,7 +979,7 @@
 
 .lc-resource-empty i,
 .lc-error i {
-  font-size: 44px;
+  font-size: var(--fs-heading);
   opacity: 0.35;
   margin-bottom: var(--s-4);
 }
@@ -980,7 +998,7 @@
   background: var(--paper);
   color: var(--ink);
   font-family: var(--ff-body);
-  font-size: 13px;
+  font-size: var(--fs-body);
   font-weight: 600;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
@@ -1046,7 +1064,7 @@
   background: var(--brand-grad);
   color: var(--paper);
   font-family: var(--ff-body);
-  font-size: 13px;
+  font-size: var(--fs-body);
   font-weight: 600;
   cursor: pointer;
   box-shadow: var(--shadow-3);

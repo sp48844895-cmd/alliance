@@ -5,7 +5,7 @@
 
 @section('breadcrumb')
     <a href="{{ route('admin.contact-messages.index') }}">Contact Messages</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="truncate max-w-[240px]">{{ $message->subject }}</span>
 @endsection
 
@@ -18,6 +18,7 @@
 
 @section('content')
     @php
+        $pathwayLabels = \App\Http\Controllers\Admin\ContactMessageController::pathwayLabels();
         $sentAt = \Illuminate\Support\Carbon::parse($message->created_at);
         $pill = match($message->status) {
             'replied' => 'pill-leaf',
@@ -30,6 +31,12 @@
         <div class="lg:col-span-2">
             <div class="card p-5 lg:p-6">
                 <h2 class="font-display text-2xl text-[var(--color-ink-2)] mb-4">{{ $message->subject }}</h2>
+
+                @if(!empty($message->pathway))
+                    <p class="mb-4">
+                        <span class="pill pill-mute">{{ $pathwayLabels[$message->pathway] ?? ucfirst($message->pathway) }}</span>
+                    </p>
+                @endif
 
                 <div class="flex items-start gap-3 mb-5">
                     <div class="w-10 h-10 rounded-full bg-[var(--color-clay-100)] text-[var(--color-clay-700)] font-semibold flex items-center justify-center text-sm shrink-0">

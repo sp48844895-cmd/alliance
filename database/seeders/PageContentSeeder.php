@@ -54,11 +54,15 @@ class PageContentSeeder extends Seeder
             $this->page('events', 'events', 'Events · ChhattisgarhABC', 'A calendar of upcoming and completed SBC events — workshops, trainings, webinars and conferences across Chhattisgarh. Register, attend, download recap reports.', array_merge([
                 $this->jumbotron('events', 'Events & engagement', 'Events', 'Upcoming gatherings, hands-on trainings and webinars that keep the alliance learning in public.', 'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1600&auto=format&fit=crop', 'calendar'),
             ], $this->eventsPageSections())),
-            $this->page('knowledge-hub', 'knowledge-hub', 'Knowledge Hub · ChhattisgarhABC', 'A working library of SBC research, IEC materials, toolkits, guides, reports and data resources — open-licensed, downloadable, and many remixable on Canva.', array_merge([
-                $this->jumbotron('knowledge-hub', 'Open resource library', 'Knowledge Hub', 'A practical pool of guides, toolkits and IEC resources designed to be reused, adapted and shared widely.', 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1600&auto=format&fit=crop', 'book'),
-            ], $this->knowledgeHubPageSections())),
-            $this->page('get-involved', 'get-involved', 'Get Involved · ChhattisgarhABC', 'Four pathways to join the alliance — individual professional, volunteer, CSO/NGO or firm/organization. Pick yours and support social and behavioural change communication.', array_merge([
-                $this->jumbotron('get-involved', 'Participation pathways', 'Get Involved', 'Join the alliance as a volunteer, partner, NGO, firm or professional and help strengthen community-led change.', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop', 'users'),
+            $this->page('programs', 'programs-and-initiatives', 'Programs and Initiatives · ChhattisgarhABC', 'Flagship SBC programs and initiatives across Chhattisgarh — youth volunteer networks, learning resources and community-led campaigns.', [
+                $this->jumbotron('programs', 'Programs & initiatives', 'Programs and Initiatives', 'Explore flagship behaviour-change programmes from youth networks to district learning resources and community action.', 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1600&auto=format&fit=crop', 'target'),
+                $this->section('page_header', 'page_header', [
+                    'pageTitle' => 'Programs and Initiatives',
+                    'pageLede' => 'A focused view of flagship SBC initiatives across Chhattisgarh.',
+                ]),
+            ]),
+            $this->page('get-involved', 'get-involved', 'Get Involved · ChhattisgarhABC', 'Four pathways to join the alliance — volunteer, intern, fellowship or organisation partner. Pick yours and register to support social and behavioural change communication.', array_merge([
+                $this->jumbotron('get-involved', 'Participation pathways', 'Get Involved', 'Join as a volunteer, intern, fellow or organisation partner and help strengthen community-led change across Chhattisgarh.', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop', 'users'),
             ], $this->getInvolvedPageSections())),
             $this->page('resources', 'resources', 'SBC Resource Pool · ChhattisgarhABC', 'Meet the SBC Resource Pool of ChhattisgarhABC: resource people supporting social and behaviour change learning, facilitation and field practice.', [
                 $this->jumbotron('resources', 'Open resource pool', 'SBC Resource Pool', 'Connect with resource people who support social and behaviour change learning, facilitation and field practice across Chhattisgarh.', 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=1600&auto=format&fit=crop', 'book'),
@@ -244,15 +248,15 @@ class PageContentSeeder extends Seeder
                 ['label' => 'Calendar view', 'value' => 'Browse scheduled workshops, trainings and alliance sessions.'],
                 ['label' => 'Past recaps', 'value' => 'Revisit completed events through summaries, photos and report links.'],
             ],
-            'knowledge-hub' => [
-                ['label' => 'Toolkits', 'value' => 'Find ready-to-use materials that simplify planning and field delivery.'],
-                ['label' => 'IEC material', 'value' => 'Open posters, templates and communication assets for community outreach.'],
-                ['label' => 'Canva editables', 'value' => 'Start with adaptable files that teams can localise for their own use.'],
+            'programs' => [
+                ['label' => 'Flagship work', 'value' => 'See district programmes and youth-led initiatives in one place.'],
+                ['label' => 'Field networks', 'value' => 'From volunteer circles to learning corners and community campaigns.'],
+                ['label' => 'Open to partners', 'value' => 'Co-design and scale behaviour change with the alliance.'],
             ],
             'get-involved' => [
-                ['label' => 'Volunteer', 'value' => 'Contribute to field outreach, mobilisation and programme support.'],
-                ['label' => 'NGO / CSO', 'value' => 'Partner with the alliance to co-design and scale local work.'],
-                ['label' => 'CSR & professionals', 'value' => 'Support the network with expertise, funding and strategic collaboration.'],
+                ['label' => 'Volunteer', 'value' => 'Register for field outreach, mobilisation and programme support.'],
+                ['label' => 'Intern & fellowship', 'value' => 'Apply for structured learning and district-level practice roles.'],
+                ['label' => 'Organisation partner', 'value' => 'CSOs, NGOs and firms can co-design campaigns with the alliance.'],
             ],
             'resources' => [
                 ['label' => 'Templates', 'value' => 'Access reusable assets for planning, printing and facilitation.'],

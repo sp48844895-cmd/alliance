@@ -83,7 +83,7 @@
   }
 
   const tocLinks = Array.from(document.querySelectorAll('.st-article-toc-link'));
-  if (tocLinks.length && 'IntersectionObserver' in window) {
+  if (tocLinks.length) {
     const sections = tocLinks
       .map(link => document.querySelector(link.getAttribute('href')))
       .filter(Boolean);
@@ -95,27 +95,50 @@
       });
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter(entry => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-      if (visible?.target?.id) {
-        setActive(visible.target.id);
-      }
-    }, {
-      rootMargin: '-20% 0px -55% 0px',
-      threshold: [0.2, 0.45, 0.7],
-    });
-
-    sections.forEach(section => observer.observe(section));
-
     tocLinks.forEach(link => {
       link.addEventListener('click', () => {
         const id = link.getAttribute('href').slice(1);
         setActive(id);
       });
     });
+
+    if ('IntersectionObserver' in window && sections.length) {
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible?.target?.id) {
+          setActive(visible.target.id);
+        }
+      }, {
+        rootMargin: '-20% 0px -55% 0px',
+        threshold: [0.2, 0.45, 0.7],
+      });
+
+      sections.forEach(section => observer.observe(section));
+    }
+
+    const scrollToHash = () => {
+      const hash = window.location.hash;
+      if (!hash) {
+        return;
+      }
+
+      const target = document.querySelector(hash);
+      if (!target) {
+        return;
+      }
+
+      const id = hash.slice(1);
+      setActive(id);
+      window.requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    };
+
+    scrollToHash();
+    window.addEventListener('hashchange', scrollToHash);
   }
 
   /* — Video modal — */

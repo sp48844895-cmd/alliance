@@ -5,11 +5,8 @@
 
 @php
     $s = $section;
-    $storyItems = $stories;
-    if (empty($storyItems) && !empty($s['items'])) {
-        $storyItems = $s['items'];
-    }
-    $storiesLink = $s['stories_link']['name'] ?? 'stories';
+    $storyItems = !empty($stories) ? $stories : ($s['items'] ?? []);
+    $storiesUrl = route('stories');
     $storiesLinkLabel = $s['stories_link_label'] ?? 'Read all stories →';
 @endphp
 
@@ -23,7 +20,7 @@
             heading-id="ch-h"
         />
 
-        <div class="champions-swiper swiper" data-aos="fade-up">
+        <div id="home-stories-carousel" class="champions-swiper swiper" data-aos="fade-up">
             <div class="swiper-wrapper">
                 @foreach ($storyItems as $item)
                     @php
@@ -33,11 +30,15 @@
                     <article class="swiper-slide champion">
                         <div class="champion-photo" style="background-image:url('{{ $image }}');">
                             <div class="champion-meta">
-                                <span class="role-pill"@if (!empty($item['pill_style'])) style="{{ $item['pill_style'] }}"@endif>{{ $item['pill'] ?? '' }}</span>
+                                @if (!empty($item['location']) || !empty($item['pill']))
+                                    <span class="role-pill story-location-pill"@if (!empty($item['pill_style'])) style="{{ $item['pill_style'] }}"@endif>{{ $item['location'] ?? $item['pill'] }}</span>
+                                @endif
                             </div>
                         </div>
                         <div class="champion-body">
-                            <div class="champion-where">{{ $item['where'] ?? '' }}</div>
+                            @if (!empty($item['where']))
+                                <div class="champion-where">{{ $item['where'] }}</div>
+                            @endif
                             <h4 class="champion-name">
                                 @if ($url)
                                     <a href="{{ $url }}">{{ $item['title'] ?? '' }}</a>
@@ -46,6 +47,9 @@
                                 @endif
                             </h4>
                             <p class="champion-blurb">{{ $item['blurb'] ?? '' }}</p>
+                            @if (!empty($item['author']))
+                                <p class="champion-authored">{{ $item['authored_by'] ?? 'Authored by '.$item['author'] }}</p>
+                            @endif
                         </div>
                     </article>
                 @endforeach
@@ -62,7 +66,7 @@
                 </button>
             </div>
             <div class="swiper-pagination-bar" aria-hidden="true"><span></span></div>
-            <a class="btn-link" href="{{ route($storiesLink) }}">{{ $storiesLinkLabel }}</a>
+            <a class="btn-link" href="{{ $storiesUrl }}">{{ $storiesLinkLabel }}</a>
         </div>
     </div>
 @else

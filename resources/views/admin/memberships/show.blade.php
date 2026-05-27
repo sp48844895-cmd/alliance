@@ -4,7 +4,7 @@
 @section('page_title', $member->name)
 @section('breadcrumb')
     <a href="{{ route('admin.memberships.index') }}">Memberships</a>
-    <i class="bi bi-chevron-right text-[10px]"></i>
+    <i class="bi bi-chevron-right text-xs"></i>
     <span class="text-[var(--color-ink-2)]">{{ \Illuminate\Support\Str::limit($member->name, 32) }}</span>
 @endsection
 
@@ -167,7 +167,7 @@
             <div class="px-5 py-4 border-b border-[var(--color-line)]">
                 <h3 class="font-display text-lg text-[var(--color-ink-2)]">Social presence</h3>
             </div>
-            <table class="table">
+            <table data-admin-datatable class="table w-full" data-admin-datatable-options='{"pageLength":10,"searching":false,"lengthChange":false}'>
                 <tbody>
                     @foreach ($socials as $platform => $url)
                         <tr>
