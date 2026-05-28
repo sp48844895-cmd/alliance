@@ -53,12 +53,10 @@
 
             <div class="card p-5">
                 <h3 class="font-display text-base text-[var(--color-ink-2)] mb-4">Thumbnail</h3>
-                @if($isEdit && $thumb && !str_starts_with($thumb, 'http'))
-                    <img src="{{ asset($thumb) }}" alt="" class="mb-3 w-full h-auto object-cover rounded-lg border border-[var(--color-line)]">
-                @endif
-                <input id="image" type="file" name="image" accept="image/*" class="input">
-                @error('image') <p class="err">{{ $message }}</p> @enderror
-                <p class="help mt-2">JPG, PNG or WebP.</p>
+                @php
+                    $existingThumbUrl = ($isEdit && $thumb && !str_starts_with($thumb, 'http')) ? '/'.ltrim($thumb, '/') : null;
+                @endphp
+                <x-story-image-crop :existing-url="$existingThumbUrl" />
             </div>
 
             <div class="card p-4 bg-[var(--color-paper-2)] border border-[var(--color-line)]">

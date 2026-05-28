@@ -50,7 +50,7 @@
                 </div>
                 <h2 class="font-display text-2xl text-[var(--color-ink-2)] mb-4">{{ $story->title }}</h2>
                 @if($thumb && !str_starts_with($thumb, 'http'))
-                    <img src="{{ asset($thumb) }}" alt="" class="w-full max-h-80 object-cover rounded-lg border border-[var(--color-line)] mb-5">
+                    <img src="{{ '/'.ltrim($thumb, '/') }}" alt="" class="w-full max-h-80 object-cover rounded-lg border border-[var(--color-line)] mb-5">
                 @endif
                 <div class="story-html-content text-[var(--color-ink-2)]">{!! \App\Support\StoryContent::sanitize($story->content) !!}</div>
                 @if($story->tag)

@@ -35,6 +35,13 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        if ($this->app->environment('local') && ! $this->app->runningInConsole()) {
+            $root = request()->getSchemeAndHttpHost();
+            if ($root !== '') {
+                URL::forceRootUrl($root);
+            }
+        }
+
         Paginator::defaultView('pagination.admin');
         Paginator::defaultSimpleView('pagination.admin');
 

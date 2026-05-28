@@ -124,9 +124,61 @@
     });
   };
 
+  const initProgramsSwiper = () => {
+    const el = document.getElementById('programs-initiatives-slider');
+    if (!el || !window.Swiper) return;
+
+    const total = el.querySelectorAll('.swiper-slide').length;
+    if (total === 0) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasNav = total > 1;
+
+    new Swiper(el, {
+      effect: 'coverflow',
+      centeredSlides: true,
+      slidesPerView: 'auto',
+      spaceBetween: 22,
+      loop: total > 2,
+      speed: 650,
+      grabCursor: hasNav,
+      coverflowEffect: {
+        rotate: 0,
+        stretch: 0,
+        depth: 140,
+        modifier: 1,
+        slideShadows: false,
+      },
+      navigation: hasNav ? {
+        prevEl: '.programs-slider-prev',
+        nextEl: '.programs-slider-next',
+      } : false,
+      keyboard: {
+        enabled: hasNav,
+        onlyInViewport: true,
+      },
+      autoplay: reduceMotion || !hasNav ? false : {
+        delay: 4200,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      breakpoints: {
+        768: {
+          spaceBetween: 28,
+          coverflowEffect: { rotate: 0, stretch: 0, depth: 180, modifier: 1, slideShadows: false },
+        },
+        1024: {
+          spaceBetween: 36,
+          coverflowEffect: { rotate: 0, stretch: 0, depth: 220, modifier: 1.1, slideShadows: false },
+        },
+      },
+    });
+  };
+
   const initHomeCarousels = () => {
     initChampionsSwiper();
     initHomeBannerSwiper();
+    initProgramsSwiper();
   };
 
   if (document.readyState === 'loading') {

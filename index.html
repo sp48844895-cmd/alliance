@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>e-Residency Carousel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #efefef;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+    padding: 24px 16px 40px;
+  }
+  .carousel-section {
+    width: 100%;
+    max-width: 1360px;
+  }
+  .card-wrapper {
+    width: 100%;
+    padding: 16px 0 0;
+  }
+  .swiper-wrapper {
+    align-items: flex-start;
+  }
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    transition: none;
+    opacity: 1;
+    padding-top: 22px;
+  }
+  .card {
+    width: min(100%, 348px);
+    height: 486px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    transform: translateY(0);
+    transition: box-shadow 350ms ease;
+  }
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .swiper-slide-prev .card,
+  .swiper-slide-next .card {
+    transform: translateY(56px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+  }
+  .swiper-slide-prev .card {
+    transform: translateX(-58px) translateY(56px) rotate(-20deg);
+  }
+  .swiper-slide-next .card {
+    transform: translateX(58px) translateY(56px) rotate(20deg);
+  }
+
+  .info {
+    text-align: center;
+    margin-top: 26px;
+    padding: 0 16px;
+    min-height: 108px;
+  }
+  .info h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    color: #101018;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .info p {
+    margin-top: 12px;
+    color: #4f4f58;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  .nav-actions {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  .nav-actions .swiper-button-next,
+  .nav-actions .swiper-button-prev {
+    position: static;
+    margin: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: #1a5cff;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(26, 92, 255, 0.35);
+  }
+  .nav-actions .swiper-button-next::after,
+  .nav-actions .swiper-button-prev::after {
+    font-size: 11px;
+    font-weight: 700;
+  }
+  @media (max-width: 767px) {
+    .card-wrapper {
+      padding-top: 8px;
+    }
+    .card {
+      height: 380px;
+    }
+    .swiper-slide-prev .card,
+    .swiper-slide-next .card {
+      transform: translateY(34px);
+    }
+    .swiper-slide-prev .card {
+      transform: translateX(-24px) translateY(34px) rotate(-14deg);
+    }
+    .swiper-slide-next .card {
+      transform: translateX(24px) translateY(34px) rotate(14deg);
+    }
+    .info {
+      margin-top: 18px;
+      min-height: 96px;
+    }
+  }
+</style>
+</head>
+<body>
+<section class="carousel-section">
+  <div class="swiper card-wrapper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide" data-title="AI-Leap" data-description="A pioneering program to put AI tools into every classroom across the country">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&q=80" alt="AI-Leap">
+        </div>
+      </div>
+      <div class="swiper-slide" data-title="Smart Mobility" data-description="Autonomous solutions improving urban transport and public life">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80" alt="Smart Mobility">
+        </div>
+      </div>
+      <div class="swiper-slide" data-title="e-Residency" data-description="The world's first borderless digital identity powers 130,000+ entrepreneurs globally">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=900&q=80" alt="e-Residency">
+        </div>
+      </div>
+      <div class="swiper-slide" data-title="Connected Learning" data-description="Collaborative spaces built for modern digital-first education">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=900&q=80" alt="Connected Learning">
+        </div>
+      </div>
+      <div class="swiper-slide" data-title="Future Talent" data-description="Programs that prepare youth for high-impact technology careers">
+        <div class="card">
+          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&q=80" alt="Future Talent">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="info">
+    <h2 id="slideTitle">e-Residency</h2>
+    <p id="slideDescription">The world's first borderless digital identity powers 130,000+ entrepreneurs globally</p>
+  </div>
+  <div class="nav-actions">
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const slideTitle = document.getElementById('slideTitle');
+  const slideDescription = document.getElementById('slideDescription');
+
+  function updateCenterContent(swiper) {
+    const activeSlide = swiper.slides[swiper.activeIndex];
+    if (!activeSlide) return;
+    slideTitle.textContent = activeSlide.dataset.title || '';
+    slideDescription.textContent = activeSlide.dataset.description || '';
+  }
+
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 3,
+    spaceBetween: 100,
+    slidesOffsetAfter: 10,
+    speed: 700,
+    loop: true,
+    centeredSlides: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev"
+    },
+    breakpoints: {
+      0: {
+        slidesPerView: 1,
+        spaceBetween: 0
+      },
+      768: {
+        slidesPerView: 3,
+        spaceBetween: 100
+      }
+    },
+    on: {
+      init(swiper) {
+        updateCenterContent(swiper);
+      },
+      slideChange(swiper) {
+        updateCenterContent(swiper);
+      }
+    }
+  });
+</script>
+</body>
+</html>

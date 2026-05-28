@@ -111,12 +111,15 @@ class BlogStoryService
 
     public function recentForHome(int $limit = 6): array
     {
-        return Cache::remember('blog.recent.home.'.$limit, 300, fn () => $this->publishedQuery()
+        $rows = Cache::remember('blog.recent.home.rows.'.$limit, 300, fn () => $this->publishedQuery()
             ->limit($limit)
             ->get()
+            ->all());
+
+        return collect($rows)
             ->values()
             ->map(fn ($row, $index) => $this->formatHomeChampion($row, $index))
-            ->all());
+            ->all();
     }
 
     private function publishedQuery()

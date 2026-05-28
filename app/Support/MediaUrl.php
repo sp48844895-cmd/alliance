@@ -39,7 +39,7 @@ class MediaUrl
 
         foreach ($folders as $folder) {
             if (is_file(public_path($folder.'/'.$filename))) {
-                return asset($folder.'/'.$filename);
+                return self::publicRelativePath($folder, $filename);
             }
         }
 
@@ -63,6 +63,11 @@ class MediaUrl
         }
 
         return $path;
+    }
+
+    public static function publicRelativePath(string $folder, string $filename): string
+    {
+        return '/'.trim($folder, '/').'/'.ltrim($filename, '/');
     }
 
     public static function delete(string $preset, string $filename): void

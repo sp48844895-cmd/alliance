@@ -88,10 +88,10 @@ class StoryContent
         }
 
         if ($path !== '' && is_file(public_path($path))) {
-            return self::encodeUrlFilename(asset($path));
+            return self::encodeUrlFilename('/'.ltrim($path, '/'));
         }
 
-        return self::encodeUrlFilename(asset($path));
+        return self::encodeUrlFilename('/'.ltrim($path, '/'));
     }
 
     private static function isStoryUploadPath(string $path): bool

@@ -21,59 +21,9 @@ class PageController extends Controller
 
     public function home(BlogStoryService $blogStories, EventPageService $eventPage)
     {
-        $homePrograms = Cache::remember('home.programs', 3600, fn () => DB::table('programs')
-            ->where('status', 1)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get(['id', 'title', 'tag', 'short_desc', 'full_desc', 'card_style', 'image'])
-            ->map(function ($row) {
-                $row->image_url = \App\Support\MediaUrl::tryResolve('program', (string) ($row->image ?? '')) ?? '';
-
-                return $row;
-            }));
-
-        $homeInsights = Cache::remember('home.insights', 3600, fn () => DB::table('insights')
-            ->where('status', 1)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get(['id', 'title', 'tag', 'description', 'image', 'link_text', 'link_url'])
-            ->map(function ($row) {
-                $row->image_url = MediaUrl::tryResolve('insights', (string) ($row->image ?? '')) ?? '';
-
-                return $row;
-            }));
-
-        $homeBanners = Cache::remember('home.banners', 3600, function () {
-            return DB::table('banner')
-                ->orderByDesc('id')
-                ->get(['id', 'dbannerimg', 'mbannerimg', 'ytlink', 'redirect'])
-                ->map(function ($row) {
-                    $desktopUrl = MediaUrl::tryResolve('banner', (string) ($row->dbannerimg ?? ''));
-                    $mobileUrl = MediaUrl::tryResolve('banner', (string) ($row->mbannerimg ?? ''));
-
-                    if ($desktopUrl === null && $mobileUrl === null) {
-                        return null;
-                    }
-
-                    $redirect = trim((string) ($row->redirect ?? ''));
-                    $ytlink = trim((string) ($row->ytlink ?? ''));
-                    $href = ($redirect !== '' && $redirect !== '#') ? $redirect : null;
-
-                    if ($href === null && $ytlink !== '') {
-                        $href = $ytlink;
-                    }
-
-                    return (object) [
-                        'id' => $row->id,
-                        'desktop_url' => $desktopUrl ?? $mobileUrl,
-                        'mobile_url' => $mobileUrl ?? $desktopUrl,
-                        'href' => $href,
-                        'is_external' => $href !== null && str_starts_with($href, 'http'),
-                    ];
-                })
-                ->filter()
-                ->values();
-        });
+        $homePrograms = $this->cachedHomePrograms();
+        $homeInsights = $this->cachedHomeInsights();
+        $homeBanners = $this->cachedHomeBanners();
 
         return $this->pageView('pages.home', [
             'homeRecentStories' => $blogStories->recentForHome(6),
@@ -162,19 +112,8 @@ class PageController extends Controller
 
     public function programsAndInitiatives()
     {
-        $programs = Cache::remember('home.programs', 3600, fn () => DB::table('programs')
-            ->where('status', 1)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get(['id', 'title', 'tag', 'short_desc', 'full_desc', 'card_style', 'image'])
-            ->map(function ($row) {
-                $row->image_url = \App\Support\MediaUrl::tryResolve('program', (string) ($row->image ?? '')) ?? '';
-
-                return $row;
-            }));
-
         return $this->pageView('pages.programs-and-initiatives', [
-            'homePrograms' => $programs,
+            'homePrograms' => $this->cachedHomePrograms(),
         ]);
     }
 
@@ -443,5 +382,69 @@ class PageController extends Controller
             : 'Thanks for subscribing! We will be in touch.';
 
         return $redirect->with('status', $message);
+    }
+
+    private function cachedHomePrograms()
+    {
+        $rows = Cache::remember('home.programs', 3600, fn () => DB::table('programs')
+            ->where('status', 1)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['id', 'title', 'tag', 'short_desc', 'full_desc', 'card_style', 'image']));
+
+        return $rows->map(function ($row) {
+            $row->image_url = MediaUrl::tryResolve('program', (string) ($row->image ?? '')) ?? '';
+
+            return $row;
+        });
+    }
+
+    private function cachedHomeInsights()
+    {
+        $rows = Cache::remember('home.insights', 3600, fn () => DB::table('insights')
+            ->where('status', 1)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['id', 'title', 'tag', 'description', 'image', 'link_text', 'link_url']));
+
+        return $rows->map(function ($row) {
+            $row->image_url = MediaUrl::tryResolve('insights', (string) ($row->image ?? '')) ?? '';
+
+            return $row;
+        });
+    }
+
+    private function cachedHomeBanners()
+    {
+        $rows = Cache::remember('home.banners', 3600, fn () => DB::table('banner')
+            ->orderByDesc('id')
+            ->get(['id', 'dbannerimg', 'mbannerimg', 'ytlink', 'redirect']));
+
+        return $rows->map(function ($row) {
+            $desktopUrl = MediaUrl::tryResolve('banner', (string) ($row->dbannerimg ?? ''));
+            $mobileUrl = MediaUrl::tryResolve('banner', (string) ($row->mbannerimg ?? ''));
+
+            if ($desktopUrl === null && $mobileUrl === null) {
+                return null;
+            }
+
+            $redirect = trim((string) ($row->redirect ?? ''));
+            $ytlink = trim((string) ($row->ytlink ?? ''));
+            $href = ($redirect !== '' && $redirect !== '#') ? $redirect : null;
+
+            if ($href === null && $ytlink !== '') {
+                $href = $ytlink;
+            }
+
+            return (object) [
+                'id' => $row->id,
+                'desktop_url' => $desktopUrl ?? $mobileUrl,
+                'mobile_url' => $mobileUrl ?? $desktopUrl,
+                'href' => $href,
+                'is_external' => $href !== null && str_starts_with($href, 'http'),
+            ];
+        })
+            ->filter()
+            ->values();
     }
 }

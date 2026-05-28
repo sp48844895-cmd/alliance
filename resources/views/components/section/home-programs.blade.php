@@ -65,26 +65,42 @@
 
 @if (! empty($cards))
     <div class="container-x">
-        <x-section.heading
-            :chapter-num="$s['chapter_num'] ?? '03'"
-            :chapter-label="$s['chapter_label'] ?? 'Programs & Initiatives'"
-            :heading-html="$s['heading_html'] ?? 'Programs &amp; Initiatives'"
-            :side-text="$sideText"
-            heading-id="programs-h"
-            wrapper-class="programs-head"
-        />
-
-        <div class="program-flip-grid">
-            @foreach ($cards as $index => $card)
-                <x-section.program-flip-card
-                    :title="$card['title']"
-                    :description="$card['description']"
-                    :image-url="$card['image_url']"
-                    :accent="$card['accent']"
-                    :delay="$index * 80"
-                />
-            @endforeach
+        <div class="programs-head programs-head--center-slider">
+            <div>
+                <span class="chapter"><b>{{ $s['chapter_num'] ?? '03' }}</b> · {{ $s['chapter_label'] ?? 'Programs & Initiatives' }}</span>
+                <h2 id="programs-h">{!! $s['heading_html'] ?? 'Programs &amp; Initiatives' !!}</h2>
+            </div>
+            <div class="programs-center-controls">
+                <button id="programs-center-prev" class="programs-center-nav-btn" type="button" aria-label="Previous program">‹</button>
+                <button id="programs-center-next" class="programs-center-nav-btn" type="button" aria-label="Next program">›</button>
+            </div>
         </div>
+
+        <p class="programs-center-lede">{{ strip_tags($sideText) }}</p>
+
+        <div class="programs-center-slider">
+            <div class="programs-center-track" id="programs-center-track">
+                @foreach ($cards as $index => $card)
+                    <article class="programs-center-card" @if ($index === 0) active @endif data-program-card>
+                        @if (! empty($card['image_url']))
+                            <img class="programs-center-card__bg" src="{{ $card['image_url'] }}" alt="{{ $card['title'] }}" loading="lazy" decoding="async">
+                        @endif
+                        <div class="programs-center-card__content">
+                            @if (! empty($card['image_url']))
+                                <img class="programs-center-card__thumb" src="{{ $card['image_url'] }}" alt="{{ $card['title'] }}" loading="lazy" decoding="async">
+                            @endif
+                            <div class="programs-center-card__copy">
+                                <h3 class="programs-center-card__title">{{ $card['title'] }}</h3>
+                                <p class="programs-center-card__desc">{{ $card['description'] }}</p>
+                                <a href="{{ route('programs') }}" class="programs-center-card__btn">Details</a>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="programs-center-dots" id="programs-center-dots"></div>
 
         <div class="programs-explore" data-aos="fade-up">
             <a href="{{ $exploreUrl }}" class="btn btn-primary programs-explore__btn">
@@ -96,3 +112,9 @@
 @else
     @include('sections.defaults.home.programs')
 @endif
+
+@once
+    @push('scripts')
+        <script src="{{ asset('assets/js/programs-center-slider.js') }}?v={{ filemtime(public_path('assets/js/programs-center-slider.js')) }}"></script>
+    @endpush
+@endonce

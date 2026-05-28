@@ -228,7 +228,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
-@if (request()->routeIs('home'))
+@if (request()->routeIs('home', 'programs'))
 <script src="{{ asset('assets/js/home.js') }}?v={{ filemtime(public_path('assets/js/home.js')) }}"></script>
 @endif
 @if (request()->routeIs('campaigns'))

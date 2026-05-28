@@ -100,7 +100,7 @@
 
                 @if($currentImageRel)
                     <div class="mb-3">
-                        <img src="{{ asset($currentImageRel) }}" alt="" class="w-full h-auto object-cover rounded-lg border border-[var(--color-line)]">
+                        <img src="{{ '/'.ltrim($currentImageRel, '/') }}" alt="" class="w-full h-auto object-cover rounded-lg border border-[var(--color-line)]">
                         <label class="flex items-center gap-2 mt-2 text-xs text-[var(--color-mute)]">
                             <input type="checkbox" name="delete_image" value="1" class="rounded">
                             <span>Remove current image</span>
@@ -108,13 +108,7 @@
                     </div>
                 @endif
 
-                <div>
-                    <label class="label" for="image">{{ $isEdit && $currentImage ? 'Replace image' : 'Upload image' }}</label>
-                    <input id="image" type="file" name="image" accept="image/*" data-image-preview="#blogPreview" class="input">
-                    @error('image') <p class="err">{{ $message }}</p> @enderror
-                    <p class="help">JPG, PNG or WebP.</p>
-                    <img id="blogPreview" src="" alt="" class="hidden mt-3 w-full h-auto object-cover rounded-lg border border-[var(--color-line)]">
-                </div>
+                <x-story-image-crop />
             </div>
         </div>
     </div>
