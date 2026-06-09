@@ -1,0 +1,62 @@
+---
+description: Laravel team coding standards — readable code for all experience levels
+globs: "**/*.{php,blade.php}"
+alwaysApply: true
+---
+
+# Laravel Team Rules
+
+Write code that every developer — fresher to senior — can understand.
+
+## 1. Views — Pages & Partials
+
+- Create a **separate blade file** for each page (e.g., `users/index.blade.php`).
+- Keep only **header and footer** in partials — everything else stays in the page file.
+- No over-splitting — one clean single file per page is easier to read than 10 includes.
+- Use `@include('partials.header')` and `@include('partials.footer')` only.
+- Keep blade templates simple — normal HTML with minimal Blade logic.
+
+## 2. Controller — Methods & Structure
+
+- Always follow the **7 standard methods**: `index`, `create`, `store`, `show`, `edit`, `update`, `destroy`.
+- One method = one responsibility — don't mix listing and saving logic in the same method.
+- Method names must be **clear and self-explanatory**.
+- Add a short **comment above each method** explaining what it does (one line is enough).
+- Keep controllers thin — no heavy business logic inside them.
+
+## 3. Database — Query Builder Rules
+
+- Use **Laravel Query Builder** — no raw SQL strings unless absolutely necessary.
+- Write queries in **multi-line format** — never chain everything on one unreadable line.
+- Always use `->where()` with named columns — no magic numbers or unnamed conditions.
+- Never use `DB::select("SELECT * ...")` — it hides columns and is hard to maintain.
+- Add a comment above complex queries explaining what data is being fetched and why.
+
+```php
+// ✅ GOOD
+$activeUsers = DB::table('users')
+    ->where('status', 'active')
+    ->where('deleted_at', null)
+    ->orderBy('name')
+    ->get();
+```
+
+## 4. Security — Non-Negotiable
+
+- Always **validate every request** using `$request->validate([...])` — never trust user input.
+- Never pass raw `$request->all()` to DB — always use `$request->only([...])`.
+- Use **CSRF protection** — always add `@csrf` in every form.
+- Use **auth middleware** on all routes that require login — no exceptions.
+- Never store passwords as plain text — always use `Hash::make()`.
+
+## 5. Code Style — Readability First
+
+- Use **meaningful variable names** — `$userList` not `$u` or `$data`.
+- Add blank lines between logical sections of code.
+- No magic numbers or strings — put them in `config()` or constants.
+- If a fresher cannot understand the code in **30 seconds**, simplify it.
+- One task per function — if a function does 3 things, split it into 3 functions.
+
+## Golden Rule
+
+Write code as if the next person reading it is a fresher on their first week — because they might be.

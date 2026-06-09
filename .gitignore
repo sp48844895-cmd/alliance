@@ -23,3 +23,5 @@ Thumbs.db
 /.playwright-mcp/
 /.vscode
 database/*.sqlite*
+Archive.zip
+*.zip
