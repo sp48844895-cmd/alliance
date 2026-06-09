@@ -1,27 +1,26 @@
 <style>
-    .ck-editor__editable {
+    @import url("https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css");
+
+    .note-editor.note-frame {
+        border: 1px solid var(--color-line);
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background: var(--color-surface);
+    }
+    .note-editor.note-frame .note-toolbar {
+        background: var(--color-paper);
+        border-bottom: 1px solid var(--color-line);
+    }
+    .note-editor.note-frame .note-editing-area .note-editable {
         min-height: 280px;
         font-family: Roboto, system-ui, sans-serif;
         font-size: 0.9375rem;
         line-height: 1.6;
         color: var(--color-ink-2);
+        background: var(--color-surface);
     }
-    .ck.ck-editor {
-        width: 100%;
-    }
-    .ck.ck-toolbar {
-        border-radius: 0.5rem 0.5rem 0 0;
-        border-color: var(--color-line) !important;
-        background: var(--color-paper) !important;
-    }
-    .ck.ck-editor__main > .ck-editor__editable {
-        border-radius: 0 0 0.5rem 0.5rem;
-        border-color: var(--color-line) !important;
-        background: var(--color-surface) !important;
-    }
-    .ck.ck-editor__editable:focus {
-        border-color: var(--color-clay-400) !important;
-        box-shadow: 0 0 0 2px var(--color-clay-100);
+    .note-editor.note-frame .note-editing-area .note-editable:focus {
+        outline: none;
     }
     .story-html-content h2,
     .story-html-content h3 {

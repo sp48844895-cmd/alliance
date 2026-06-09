@@ -19,7 +19,7 @@
 @php
     $types = [
         'admin'     => 'Admin',
-        'volunteer' => 'Individual Volunteer',
+        'guest' => 'Guest',
         'intern'    => 'Intern',
         'fellow'    => 'Fellow',
         'ngo'       => 'CSO / NGO / Firm / Organization',
@@ -100,7 +100,7 @@
                             <label class="label" for="type">Portal type <span class="text-[var(--color-flame)]">*</span></label>
                             <select id="type" name="type" required class="select">
                                 @foreach ($types as $key => $label)
-                                    <option value="{{ $key }}" @selected(old('type', 'volunteer') === $key)>{{ $label }}</option>
+                                    <option value="{{ $key }}" @selected(old('type', 'guest') === $key)>{{ $label }}</option>
                                 @endforeach
                             </select>
                             @error('type') <p class="err">{{ $message }}</p> @enderror

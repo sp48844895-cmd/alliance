@@ -18,6 +18,11 @@
 @section('content')
     <form method="POST" action="{{ route('admin.learning-corner.store') }}" enctype="multipart/form-data">
         @csrf
-        @include('admin.learning-corner._form', ['categories' => $categories])
+        @include('admin.learning-corner._form', [
+            'mainCategories' => $mainCategories,
+            'subcategories' => $subcategories,
+            'selectedMainId' => $selectedMainId,
+            'selectedCatId' => $selectedCatId,
+        ])
     </form>
 @endsection

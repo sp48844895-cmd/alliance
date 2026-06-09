@@ -19,7 +19,7 @@
 @php
     $types = [
         'admin'        => 'Admin',
-        'volunteer'    => 'Individual Volunteer',
+        'guest'    => 'Guest',
         'intern'       => 'Intern',
         'fellow'       => 'Fellow',
         'ngo'          => 'CSO / NGO / Firm / Organization',

@@ -20,7 +20,7 @@
     @php
         $sentAt = \Illuminate\Support\Carbon::parse($registration->created_at);
         $pill = match($registration->status) {
-            'accepted' => 'pill-leaf',
+            'approved', 'accepted' => 'pill-leaf',
             'rejected' => 'pill-mute',
             'reviewed' => 'pill-river',
             default => 'pill-clay',
@@ -53,14 +53,14 @@
                         <dt class="label mb-1">Phone</dt>
                         <dd class="text-[var(--color-ink-2)]">{{ $registration->phone }}</dd>
                     </div>
-                    @if(in_array($registration->type, ['intern', 'fellow', 'partner', 'volunteer'], true))
+                    @if(in_array($registration->type, ['intern', 'fellow', 'partner', 'guest'], true))
                     <div>
                         <dt class="label mb-1">
-                            @if($registration->type === 'intern')
+                            @if(in_array($registration->type, ['intern', 'fellow'], true))
                                 University / College
                             @elseif($registration->type === 'partner')
                                 Subject
-                            @elseif($registration->type === 'volunteer')
+                            @elseif($registration->type === 'guest')
                                 Subject
                             @else
                                 Organisation
@@ -69,13 +69,13 @@
                         <dd class="text-[var(--color-ink-2)]">{{ $registration->institution ?: '—' }}</dd>
                     </div>
                     @endif
-                    @if($registration->type === 'intern' && $registration->class_year)
+                    @if(in_array($registration->type, ['intern', 'fellow'], true) && $registration->class_year)
                         <div>
                             <dt class="label mb-1">Class / Year</dt>
                             <dd class="text-[var(--color-ink-2)]">{{ $registration->class_year }}</dd>
                         </div>
                     @endif
-                    @if($registration->type === 'intern' && $registration->domain_area)
+                    @if(in_array($registration->type, ['intern', 'fellow'], true) && $registration->domain_area)
                         <div>
                             <dt class="label mb-1">Domain area</dt>
                             <dd class="text-[var(--color-ink-2)]">{{ $registration->domain_area }}</dd>
@@ -124,7 +124,7 @@
                             <span class="pill pill-clay">Login pending approval</span>
                         @endif
                     </div>
-                    <p class="text-xs text-[var(--color-mute)] mt-3">Accepting the application activates this account so the applicant can sign in.</p>
+                    <p class="text-xs text-[var(--color-mute)] mt-3">Approving the application activates this account and lists the profile on the public Members page.</p>
                 </div>
             @endif
 
@@ -134,8 +134,8 @@
                     <form method="POST" action="{{ route('admin.registrations.updateStatus', $registration->id) }}">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" name="status" value="accepted">
-                        <button type="submit" class="btn btn-primary w-full btn-sm" @disabled($registration->status === 'accepted')>
+                        <input type="hidden" name="status" value="approved">
+                        <button type="submit" class="btn btn-primary w-full btn-sm" @disabled(in_array($registration->status, ['approved', 'accepted'], true))>
                             <i class="bi bi-check-lg"></i>
                             Approve
                         </button>
@@ -158,9 +158,9 @@
                     @csrf
                     @method('PUT')
                     <select name="status" class="select w-full">
-                        <option value="new" @selected($registration->status === 'new')>New</option>
+                        <option value="pending" @selected(in_array($registration->status, ['pending', 'new'], true))>Pending</option>
                         <option value="reviewed" @selected($registration->status === 'reviewed')>Reviewed</option>
-                        <option value="accepted" @selected($registration->status === 'accepted')>Accepted</option>
+                        <option value="approved" @selected(in_array($registration->status, ['approved', 'accepted'], true))>Approved</option>
                         <option value="rejected" @selected($registration->status === 'rejected')>Rejected</option>
                     </select>
                     <button type="submit" class="btn btn-primary w-full btn-sm">Save status</button>

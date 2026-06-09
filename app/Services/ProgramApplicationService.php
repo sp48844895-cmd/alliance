@@ -35,7 +35,7 @@ class ProgramApplicationService
 
                 $openRegistration = DB::table('program_registrations')
                     ->where('user_id', $existingUser->id)
-                    ->whereIn('status', ['new', 'reviewed'])
+                    ->whereIn('status', ['pending', 'new', 'reviewed'])
                     ->exists();
 
                 if ($openRegistration) {
@@ -81,10 +81,10 @@ class ProgramApplicationService
 
     private function insertRegistration(string $registrationType, int $userId, array $data): int
     {
-        if ($registrationType === 'intern') {
+        if (in_array($registrationType, ['intern', 'fellow'], true)) {
             return (int) DB::table('program_registrations')->insertGetId([
                 'user_id' => $userId,
-                'type' => 'intern',
+                'type' => $registrationType,
                 'full_name' => trim($data['full_name']),
                 'email' => strtolower(trim($data['email'])),
                 'phone' => trim($data['phone']),
@@ -94,30 +94,13 @@ class ProgramApplicationService
                 'domain_areas' => null,
                 'years_experience' => null,
                 'motivation' => trim($data['motivation']),
-                'status' => 'new',
+                'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
 
-        $domains = array_values(array_unique($data['domain_areas']));
-
-        return (int) DB::table('program_registrations')->insertGetId([
-            'user_id' => $userId,
-            'type' => 'fellow',
-            'full_name' => trim($data['full_name']),
-            'email' => strtolower(trim($data['email'])),
-            'phone' => trim($data['phone']),
-            'institution' => trim($data['organization'] ?? ''),
-            'class_year' => null,
-            'domain_area' => null,
-            'domain_areas' => json_encode($domains),
-            'years_experience' => trim($data['years_experience']),
-            'motivation' => trim($data['motivation']),
-            'status' => 'new',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        return 0;
     }
 
     public function splitName(string $fullName): array
@@ -141,7 +124,7 @@ class ProgramApplicationService
         string $subject = '',
         string $message = ''
     ): int {
-        $userType = $pathway === 'partner' ? 'ngo' : 'volunteer';
+        $userType = $pathway === 'partner' ? 'ngo' : 'guest';
         $email = strtolower(trim($email));
 
         return (int) DB::transaction(function () use ($pathway, $userType, $email, $fullName, $password, $phone, $subject, $message) {
@@ -204,7 +187,7 @@ class ProgramApplicationService
                 'domain_areas' => null,
                 'years_experience' => null,
                 'motivation' => trim($message),
-                'status' => 'new',
+                'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

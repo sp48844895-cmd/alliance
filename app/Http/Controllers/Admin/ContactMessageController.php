@@ -11,7 +11,7 @@ class ContactMessageController extends Controller
     public static function pathwayLabels(): array
     {
         return [
-            'volunteer' => 'Volunteer',
+            'guest' => 'Guest',
             'partner'   => 'NGO / Partner',
             'intern'    => 'Intern',
             'fellow'    => 'Fellowship',

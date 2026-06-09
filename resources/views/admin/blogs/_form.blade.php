@@ -10,10 +10,9 @@
     $currentImage = $isEdit ? $blog->image : '';
     $currentImageRel = null;
     if ($isEdit && $currentImage) {
-        if (file_exists(public_path('storage/story/' . $currentImage))) {
-            $currentImageRel = 'storage/story/' . $currentImage;
-        } elseif (file_exists(public_path('uploads/blogs/' . $currentImage))) {
-            $currentImageRel = 'uploads/blogs/' . $currentImage;
+        $storyImageUrl = \App\Support\MediaUrl::tryResolve('story', $currentImage);
+        if ($storyImageUrl !== null) {
+            $currentImageRel = ltrim($storyImageUrl, '/');
         }
     }
 @endphp

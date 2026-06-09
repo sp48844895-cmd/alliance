@@ -113,13 +113,6 @@ class PageContentSeeder extends Seeder
                             'icon' => 'mail',
                         ],
                         [
-                            'label' => 'Call us',
-                            'value' => '+91 90984 98822',
-                            'href' => 'tel:+919098498822',
-                            'note' => 'Reach the team for quick coordination and event support.',
-                            'icon' => 'phone',
-                        ],
-                        [
                             'label' => 'Visit base',
                             'value' => 'Raipur, Chhattisgarh',
                             'href' => 'https://www.google.com/maps/search/?api=1&query=Raipur%2C%20Chhattisgarh',
@@ -131,7 +124,7 @@ class PageContentSeeder extends Seeder
                 $this->section('contact_form', 'contact_form', [
                     'chapter' => '01',
                     'title' => 'Send a message to the alliance.',
-                    'description' => 'Your email address will not be published. Share a few details and the team will respond on email or phone.',
+                    'description' => 'Your email address will not be published. Share a few details and the team will respond by email.',
                 ]),
                 $this->section('contact_map', 'contact_map', [
                     'chapter' => '03',

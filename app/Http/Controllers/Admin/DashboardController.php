@@ -33,7 +33,7 @@ class DashboardController extends Controller
             $newApplications = 0;
             try {
                 $newApplications = (int) DB::table('program_registrations')
-                    ->where('status', 'new')
+                    ->whereIn('status', ['pending', 'new'])
                     ->count();
             } catch (\Exception $e) {
             }
@@ -42,7 +42,7 @@ class DashboardController extends Controller
                 'blogs_total'       => (int) DB::table('blog')->count(),
                 'blogs_published'   => (int) DB::table('blog')->where('status', 1)->count(),
                 'events_total'      => (int) DB::table('event')->count(),
-                'memberships_total' => (int) DB::table('membership')->count(),
+                'memberships_total' => (int) DB::table('program_registrations')->whereIn('status', ['approved', 'accepted'])->count(),
                 'unread_contacts'   => (int) DB::table('mails')->where('status', 0)->count(),
                 'new_contact_msgs'  => $contactMsgs,
                 'new_applications'  => $newApplications,

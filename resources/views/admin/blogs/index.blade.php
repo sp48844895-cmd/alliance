@@ -74,7 +74,7 @@
                         <td>
                             <x-admin-image
                                 :filename="$b->image"
-                                folder="storage/story"
+                                folder="uploads/story"
                                 class="w-10 h-10 rounded-lg object-cover border border-[var(--color-line)]"
                                 icon="bi-journal-richtext" />
                         </td>

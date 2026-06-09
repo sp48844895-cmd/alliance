@@ -1,3 +1,6 @@
+@php
+use App\Support\PageRoute;
+@endphp
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>@yield('title', 'ChhattisgarhABC · Alliance for Behaviour Change Chhattisgarh')</title>
   <meta name="description" content="@yield('meta_description', 'ChhattisgarhABC is a community platform where youth, professionals, civil society and government come together to share experiences and advance Social and Behaviour Change Communication (SBC) across Chhattisgarh.')" />
+  <x-social-meta :meta="$socialMeta" />
   <meta name="keywords" content="Chhattisgarh abc, Alliance for behaviour change, sbc, sbc, behaviour change, behaviour" />
   <meta name="author" content="ChhattisgarhABC" />
   <meta name="theme-color" content="#faf8ff" />
@@ -18,49 +22,50 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-  <link rel="stylesheet" href="{{ asset('assets/css/tokens.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/css/base.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}" />
-  @if (request()->routeIs('home'))
+  <link rel="stylesheet" href="{{ asset('assets/css/tokens.css') }}?v={{ filemtime(public_path('assets/css/tokens.css')) }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/base.css') }}?v={{ filemtime(public_path('assets/css/base.css')) }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}?v={{ filemtime(public_path('assets/css/components.css')) }}" />
+  @if (PageRoute::is('home'))
   <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}?v={{ filemtime(public_path('assets/css/home.css')) }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/investcg-slider.css') }}?v={{ filemtime(public_path('assets/css/investcg-slider.css')) }}" />
   @endif
-  @if (request()->routeIs('login', 'login.*'))
+  @if (PageRoute::is('login', 'login.*'))
   <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}" />
   @endif
-  @if (request()->routeIs('about'))
+  @if (PageRoute::is('about'))
   <link rel="stylesheet" href="{{ asset('assets/css/about.css') }}?v={{ filemtime(public_path('assets/css/about.css')) }}" />
   @endif
-  @if (request()->routeIs('campaigns'))
+  @if (PageRoute::is('campaigns'))
   <link rel="stylesheet" href="{{ asset('assets/css/campaigns.css') }}?v={{ filemtime(public_path('assets/css/campaigns.css')) }}" />
   @endif
-  @if (request()->routeIs('stories*'))
+  @if (PageRoute::is('stories*'))
   <link rel="stylesheet" href="{{ asset('assets/css/stories.css') }}?v={{ filemtime(public_path('assets/css/stories.css')) }}" />
   @endif
-  @if (request()->routeIs('events'))
+  @if (PageRoute::is('events'))
   <link rel="stylesheet" href="{{ asset('assets/css/events.css') }}?v={{ filemtime(public_path('assets/css/events.css')) }}" />
   @endif
-  @if (request()->routeIs('programs'))
+  @if (PageRoute::is('programs'))
   <link rel="stylesheet" href="{{ asset('assets/css/home.css') }}?v={{ filemtime(public_path('assets/css/home.css')) }}" />
   @endif
-  @if (request()->routeIs('get-involved'))
+  @if (PageRoute::is('get-involved'))
   <link rel="stylesheet" href="{{ asset('assets/css/get-involved.css') }}?v={{ filemtime(public_path('assets/css/get-involved.css')) }}" />
   @endif
-  @if (request()->routeIs('members'))
+  @if (PageRoute::is('members'))
   <link rel="stylesheet" href="{{ asset('assets/css/members.css') }}?v={{ filemtime(public_path('assets/css/members.css')) }}" />
   @endif
-  @if (request()->routeIs('resources'))
+  @if (PageRoute::is('resources'))
   <link rel="stylesheet" href="{{ asset('assets/css/resources.css') }}?v={{ filemtime(public_path('assets/css/resources.css')) }}" />
   @endif
-  @if (request()->routeIs('learning-corner'))
+  @if (PageRoute::is('learning-corner', 'learning-corner.main', 'learning-corner.sub'))
   <link rel="stylesheet" href="{{ asset('assets/css/learning-corner.css') }}?v={{ filemtime(public_path('assets/css/learning-corner.css')) }}" />
   @endif
-  @if (request()->routeIs('reports'))
+  @if (PageRoute::is('reports'))
   <link rel="stylesheet" href="{{ asset('assets/css/reports.css') }}?v={{ filemtime(public_path('assets/css/reports.css')) }}" />
   @endif
-  @if (request()->routeIs('contact'))
+  @if (PageRoute::is('contact'))
   <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}?v={{ filemtime(public_path('assets/css/contact.css')) }}" />
   @endif
-  @if (request()->routeIs('register.*'))
+  @if (PageRoute::is('register.*'))
   <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}?v={{ filemtime(public_path('assets/css/contact.css')) }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/register.css') }}?v={{ filemtime(public_path('assets/css/register.css')) }}" />
   @endif
@@ -74,11 +79,7 @@
 <div class="announce">
   <div class="container-x announce-row">
     <div class="announce-contact">
-      <span>{{ $settings['contact_city'] ?? 'Raipur, Chhattisgarh' }}</span>
-      <span class="announce-contact__sep" aria-hidden="true">·</span>
       <a href="mailto:{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}">{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}</a>
-      <span class="announce-contact__sep" aria-hidden="true">·</span>
-      <a href="tel:{{ $settings['contact_phone_raw'] ?? '+919098498822' }}">{{ $settings['contact_phone'] ?? '+91 90984 98822' }}</a>
     </div>
     <nav class="announce-links social-icons" aria-label="Social links">
       @include('partials.social-icon-links', ['layout' => 'announce'])
@@ -88,21 +89,21 @@
 
 <header class="nav" role="banner">
   <div class="container-x nav-row">
-    <a class="brand" href="{{ route('home') }}" aria-label="ChhattisgarhABC — Alliance for Behaviour Change, home">
+    <a class="brand" href="{{ route(PageRoute::named('home')) }}" aria-label="ChhattisgarhABC — Alliance for Behaviour Change, home">
       <img class="brand-logo" src="{{ asset('assets/img/site-logo.png') }}" alt="ChhattisgarhABC — Alliance for Behaviour Change" />
     </a>
 
     <nav aria-label="Primary">
       <ul class="nav-menu" id="primary-menu">
-        <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'is-active' : '' }}">Home</a></li>
-        <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'is-active' : '' }}">About</a></li>
+        <li><a href="{{ route(PageRoute::named('home')) }}" class="{{ PageRoute::is('home') ? 'is-active' : '' }}">Home</a></li>
+        <li><a href="{{ route(PageRoute::named('about')) }}" class="{{ PageRoute::is('about') ? 'is-active' : '' }}">About</a></li>
         {{--
-        <li><a href="{{ route('campaigns') }}" class="{{ request()->routeIs('campaigns') ? 'is-active' : '' }}">Campaigns</a></li>
+        <li><a href="{{ route(PageRoute::named('campaigns')) }}" class="{{ PageRoute::is('campaigns') ? 'is-active' : '' }}">Campaigns</a></li>
         --}}
-        <li><a href="{{ route('events') }}" class="{{ request()->routeIs('events*') ? 'is-active' : '' }}">Events</a></li>
-        <li><a href="{{ route('stories') }}" class="{{ request()->routeIs('stories*') ? 'is-active' : '' }}">Stories</a></li>
+        <li><a href="{{ route(PageRoute::named('events')) }}" class="{{ PageRoute::is('events*') ? 'is-active' : '' }}">Events</a></li>
+        <li><a href="{{ route(PageRoute::named('stories')) }}" class="{{ PageRoute::is('stories*') ? 'is-active' : '' }}">Stories</a></li>
         <li class="nav-dropdown">
-          <details class="nav-dropdown__details {{ request()->routeIs('learning-corner', 'reports', 'resources', 'programs') ? 'nav-dropdown--active' : '' }}">
+          <details class="nav-dropdown__details {{ PageRoute::is('learning-corner', 'learning-corner.main', 'learning-corner.sub', 'reports', 'resources', 'programs') ? 'nav-dropdown--active' : '' }}">
             <summary class="nav-dropdown__trigger" aria-haspopup="menu">
               <span class="nav-dropdown__label">Knowledge Hub</span>
               <svg class="nav-dropdown__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -110,26 +111,26 @@
               </svg>
             </summary>
             <div class="nav-dropdown__panel" role="menu">
-              <a class="nav-dropdown__item" href="{{ route('learning-corner') }}" role="menuitem">
+              <a class="nav-dropdown__item" href="{{ route(PageRoute::named('learning-corner')) }}" role="menuitem">
                 Learning Corner
               </a>
-              <a class="nav-dropdown__item" href="{{ route('resources') }}" role="menuitem">
+              <a class="nav-dropdown__item" href="{{ route(PageRoute::named('resources')) }}" role="menuitem">
                 SBC Resource Pool
               </a>
-              <a class="nav-dropdown__item" href="{{ route('programs') }}" role="menuitem">
+              <a class="nav-dropdown__item" href="{{ route(PageRoute::named('programs')) }}" role="menuitem">
                 Programs and Initiatives
               </a>
-              <a class="nav-dropdown__item" href="{{ route('reports') }}" role="menuitem">
+              <a class="nav-dropdown__item" href="{{ route(PageRoute::named('reports')) }}" role="menuitem">
                 Reports and Insights
               </a>
             </div>
           </details>
         </li>
-        <li><a href="{{ route('get-involved') }}" class="{{ request()->routeIs('get-involved') ? 'is-active' : '' }}">Get Involved</a></li>
-        <li><a href="{{ route('members') }}" class="{{ request()->routeIs('members') ? 'is-active' : '' }}">Our Members</a></li>
+        <li><a href="{{ route(PageRoute::named('get-involved')) }}" class="{{ PageRoute::is('get-involved') ? 'is-active' : '' }}">Get Involved</a></li>
+        <li><a href="{{ route(PageRoute::named('members')) }}" class="{{ PageRoute::is('members') ? 'is-active' : '' }}">Our Members</a></li>
 
         <li class="nav-login">
-          <details class="nav-login__details {{ request()->routeIs('login', 'login.show', 'login.attempt') ? 'nav-login--active' : '' }}">
+          <details class="nav-login__details {{ PageRoute::is('login', 'login.show', 'login.attempt') ? 'nav-login--active' : '' }}">
             <summary class="nav-login__trigger" aria-haspopup="menu">
               Log in
               <svg class="nav-login__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -152,7 +153,7 @@
     </nav>
 
     <div class="nav-cta">
-      <a class="btn btn-primary" href="{{ route('contact') }}">
+      <a class="btn btn-primary" href="{{ route(PageRoute::named('contact')) }}">
         Contact us
         <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
       </a>
@@ -163,7 +164,7 @@
   </div>
 </header>
 
-@unless (request()->routeIs('home', 'events.show', 'stories.show'))
+@unless (PageRoute::is('home', 'events.show', 'stories.show', 'get-involved', 'learning-corner', 'learning-corner.main', 'learning-corner.sub'))
   @include('partials.page-jumbotron')
 @endunless
 
@@ -174,7 +175,7 @@
     <div class="footer-grid">
       <div>
         <p class="footer-tag">A community <em>platform</em><br>for behaviour <em>change.</em></p>
-        <form class="newsletter" aria-label="Subscribe to ChhattisgarhABC updates" action="{{ route('newsletter.subscribe') }}" method="POST">
+        <form class="newsletter" aria-label="Subscribe to ChhattisgarhABC updates" action="{{ route(PageRoute::named('newsletter.subscribe')) }}" method="POST">
           @csrf
           <input type="email" name="email" required placeholder="your@email · monthly digest" aria-label="Email address" />
           <button type="submit">Subscribe</button>
@@ -185,22 +186,22 @@
       <div>
         <h5>Explore</h5>
         <ul>
-          <li><a href="{{ route('about') }}">About</a></li>
-          <li><a href="{{ route('campaigns') }}">Campaigns</a></li>
-          <li><a href="{{ route('events') }}">Events</a></li>
-          <li><a href="{{ route('stories') }}">Stories</a></li>
-          <li><a href="{{ route('get-involved') }}">Get Involved</a></li>
-          <li><a href="{{ route('members') }}">Members</a></li>
+          <li><a href="{{ route(PageRoute::named('about')) }}">About</a></li>
+          <li><a href="{{ route(PageRoute::named('campaigns')) }}">Campaigns</a></li>
+          <li><a href="{{ route(PageRoute::named('events')) }}">Events</a></li>
+          <li><a href="{{ route(PageRoute::named('stories')) }}">Stories</a></li>
+          <li><a href="{{ route(PageRoute::named('get-involved')) }}">Get Involved</a></li>
+          <li><a href="{{ route(PageRoute::named('members')) }}">Members</a></li>
         </ul>
       </div>
 
       <div>
         <h5>Knowledge Hub</h5>
         <ul>
-          <li><a href="{{ route('learning-corner') }}">Learning Corner</a></li>
-          <li><a href="{{ route('resources') }}">SBC Resource Pool</a></li>
-          <li><a href="{{ route('programs') }}">Programs and Initiatives</a></li>
-          <li><a href="{{ route('reports') }}">Reports and Insights</a></li>
+          <li><a href="{{ route(PageRoute::named('learning-corner')) }}">Learning Corner</a></li>
+          <li><a href="{{ route(PageRoute::named('resources')) }}">SBC Resource Pool</a></li>
+          <li><a href="{{ route(PageRoute::named('programs')) }}">Programs and Initiatives</a></li>
+          <li><a href="{{ route(PageRoute::named('reports')) }}">Reports and Insights</a></li>
         </ul>
       </div>
 
@@ -209,7 +210,6 @@
         <ul>
           <li>{{ $settings['contact_city'] ?? 'Raipur · Chhattisgarh' }}</li>
           <li><a href="mailto:{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}">{{ $settings['contact_email'] ?? 'info@chhttisgarhabc.org' }}</a></li>
-          <li><a href="tel:{{ $settings['contact_phone_raw'] ?? '+919098498822' }}">{{ $settings['contact_phone'] ?? '+91 90984 98822' }}</a></li>
         </ul>
         <h5 class="footer-follow-heading">Follow</h5>
         @include('partials.social-icon-links', ['layout' => 'footer'])
@@ -228,28 +228,27 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
-@if (request()->routeIs('home', 'programs'))
+@if (PageRoute::is('home', 'programs'))
 <script src="{{ asset('assets/js/home.js') }}?v={{ filemtime(public_path('assets/js/home.js')) }}"></script>
 @endif
-@if (request()->routeIs('campaigns'))
+@if (PageRoute::is('campaigns'))
 <script src="{{ asset('assets/js/campaigns.js') }}?v={{ filemtime(public_path('assets/js/campaigns.js')) }}"></script>
 @endif
-@if (request()->routeIs('stories*'))
+@if (PageRoute::is('stories*'))
 <script src="{{ asset('assets/js/stories.js') }}?v={{ filemtime(public_path('assets/js/stories.js')) }}"></script>
 @endif
-@if (request()->routeIs('events'))
+@if (PageRoute::is('events'))
 <script src="{{ asset('assets/js/events.js') }}?v={{ filemtime(public_path('assets/js/events.js')) }}"></script>
 @endif
-@if (request()->routeIs('get-involved'))
+@if (PageRoute::is('get-involved'))
 <script src="{{ asset('assets/js/get-involved.js') }}?v={{ filemtime(public_path('assets/js/get-involved.js')) }}"></script>
 @endif
-@if (request()->routeIs('members'))
+@if (PageRoute::is('members'))
 <script src="{{ asset('assets/js/members.js') }}?v={{ filemtime(public_path('assets/js/members.js')) }}"></script>
 @endif
-@if (request()->routeIs('learning-corner'))
+@if (PageRoute::is('learning-corner', 'learning-corner.main', 'learning-corner.sub'))
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="{{ asset('assets/js/lucide-icons.js') }}?v={{ filemtime(public_path('assets/js/lucide-icons.js')) }}"></script>
-<script src="{{ asset('assets/js/learning-corner.js') }}?v={{ filemtime(public_path('assets/js/learning-corner.js')) }}"></script>
 @endif
 
 @stack('scripts')

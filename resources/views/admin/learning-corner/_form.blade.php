@@ -6,6 +6,8 @@
     $types           = ['book', 'posters', 'mobile kunji', 'video'];
     $currentStatus   = old('status', $isEdit ? $resource->status : 1);
     $currentDate     = old('date', $isEdit ? $resource->date : now()->toDateString());
+    $selectedMainId  = $selectedMainId ?? old('main_id');
+    $selectedCatId   = $selectedCatId ?? old('cat_id', $isEdit ? $resource->cat_id : '');
 @endphp
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -44,16 +46,24 @@
     <div class="space-y-5">
 
         <div class="card p-5">
-            <label class="label" for="cat_id">Category</label>
-            <select name="cat_id" id="cat_id" class="select" required>
-                <option value="">Select category</option>
-                @foreach ($categories as $c)
-                    <option value="{{ $c->id }}"
-                        {{ (string) old('cat_id', $isEdit ? $resource->cat_id : '') === (string) $c->id ? 'selected' : '' }}>
-                        {{ $c->cat_name }}
+            <label class="label" for="lc_main_id">Main category</label>
+            <select id="lc_main_id" class="select" required>
+                <option value="">Select main category</option>
+                @foreach ($mainCategories as $main)
+                    <option value="{{ $main->id }}" {{ (string) $selectedMainId === (string) $main->id ? 'selected' : '' }}>
+                        {{ $main->cat_name }}
                     </option>
                 @endforeach
             </select>
+            <p class="help">Choose the main topic first.</p>
+        </div>
+
+        <div class="card p-5">
+            <label class="label" for="cat_id">Subcategory</label>
+            <select name="cat_id" id="cat_id" class="select" required disabled>
+                <option value="">Select main category first</option>
+            </select>
+            <p class="help">Then pick the subcategory for this resource.</p>
             @error('cat_id') <p class="err">{{ $message }}</p> @enderror
         </div>
 
@@ -123,3 +133,44 @@
         <span>{{ $isEdit ? 'Update resource' : 'Save resource' }}</span>
     </button>
 </div>
+
+@push('scripts')
+<script>
+(function () {
+  var mainSelect = document.getElementById('lc_main_id');
+  var subSelect = document.getElementById('cat_id');
+  if (!mainSelect || !subSelect) return;
+
+  var subs = @json($subcategories->map(fn ($s) => ['id' => $s->id, 'name' => $s->cat_name, 'main_id' => (int) $s->main_id])->values());
+  var selectedMain = @json($selectedMainId ? (int) $selectedMainId : null);
+  var selectedSub = @json($selectedCatId ? (int) $selectedCatId : null);
+
+  function fillSubs(mainId, keepSubId) {
+    var options = '<option value="">Select subcategory</option>';
+    var list = mainId ? subs.filter(function (s) { return s.main_id === mainId; }) : [];
+
+    list.forEach(function (s) {
+      var sel = keepSubId && keepSubId === s.id ? ' selected' : '';
+      options += '<option value="' + s.id + '"' + sel + '>' + s.name + '</option>';
+    });
+
+    subSelect.innerHTML = options;
+    subSelect.disabled = !mainId || list.length === 0;
+
+    if (mainId && list.length === 0) {
+      subSelect.innerHTML = '<option value="">No subcategories for this main category</option>';
+    }
+  }
+
+  mainSelect.addEventListener('change', function () {
+    var mainId = parseInt(mainSelect.value, 10) || null;
+    fillSubs(mainId, null);
+  });
+
+  if (selectedMain) {
+    mainSelect.value = String(selectedMain);
+    fillSubs(selectedMain, selectedSub);
+  }
+})();
+</script>
+@endpush

@@ -6,7 +6,7 @@ class LoginPortals
 {
     public static function order(): array
     {
-        return ['volunteer', 'intern', 'fellow', 'ngo', 'admin'];
+        return ['guest', 'intern', 'fellow', 'ngo', 'admin'];
     }
 
     public static function slugs(): array
@@ -17,15 +17,15 @@ class LoginPortals
     public static function types(): array
     {
         return [
-            'volunteer' => [
-                'label'      => 'Individual Volunteer',
-                'switcher_label' => 'Volunteer',
-                'headline'   => 'Welcome back, volunteer.',
+            'guest' => [
+                'label'      => 'Guest',
+                'switcher_label' => 'Guest',
+                'headline'   => 'Welcome back, guest.',
                 'lede'       => 'Sign in to submit stories for review and share your field work with the community.',
                 'identifier' => 'email',
                 'idLabel'    => 'Email',
                 'idType'     => 'email',
-                'chapter'    => 'Individual Volunteer access',
+                'chapter'    => 'Guest access',
                 'redirect'   => 'author.dashboard',
                 'icon'       => 'bi-person-heart',
                 'nav_subtitle' => 'Stories & field activities',

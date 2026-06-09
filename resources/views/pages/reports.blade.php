@@ -11,7 +11,7 @@
         @foreach ($reports as $report)
           @php
             $hasFlipbook = ! empty($report['has_flipbook']);
-            $previewTarget = $hasFlipbook ? '_blank' : '_self';
+            $previewTarget = '_self';
           @endphp
           <article class="report-card" data-aos="fade-up">
             <div class="report-card__header">
@@ -32,7 +32,7 @@
               @if ($hasFlipbook)
                 <span class="report-card__cover-flag">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5a2 2 0 0 1 2-2h6v18H4a2 2 0 0 1-2-2Z"/><path d="M22 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2Z"/></svg>
-                  Flipbook · {{ $report['flipbook_pages'] }} pages
+                  Flipbook · {{ $report['flipbook_pages'] ?? 0 }} pages
                 </span>
               @endif
             </a>

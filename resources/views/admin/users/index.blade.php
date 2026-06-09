@@ -19,7 +19,7 @@
 @php
     $typeMap = [
         'admin'     => ['label' => 'Admin',     'pill' => 'pill-clay'],
-        'volunteer' => ['label' => 'Individual Volunteer', 'pill' => 'pill-leaf'],
+        'guest' => ['label' => 'Guest', 'pill' => 'pill-leaf'],
         'intern'    => ['label' => 'Intern',    'pill' => 'pill-amber'],
         'fellow'    => ['label' => 'Fellow',    'pill' => 'pill-river'],
         'ngo'       => ['label' => 'CSO / NGO', 'pill' => 'pill-mute'],

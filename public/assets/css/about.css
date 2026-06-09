@@ -249,7 +249,7 @@
 
 /* ── 02 · Nature & Mission ───────────────────────────────── */
 .ab-vm {
-  padding: var(--s-9) var(--s-5);
+  padding-block: var(--s-9);
 }
 .ab-vm-head {
   text-align: center;
@@ -1367,6 +1367,23 @@
 }
 .st-marquee:hover .st-marquee-track,
 .st-marquee:focus-within .st-marquee-track { animation-play-state: paused; }
+
+.st-marquee-track:has(> :only-child) {
+  animation: none;
+  width: 100%;
+  justify-content: center;
+  transform: none;
+}
+
+.st-marquee:has(.st-marquee-track > :only-child) {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.st-marquee-track:has(> :only-child) .st-quote-card {
+  flex: 1 1 auto;
+  max-width: min(42rem, 100%);
+}
 
 @keyframes st-marquee {
   0%   { transform: translateX(0); }

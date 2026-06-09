@@ -23,7 +23,7 @@ class EnsureUserIsAuthor
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login.show', 'volunteer')
+            return redirect()->route('login.show', 'guest')
                 ->withErrors(['email' => 'Your account has been suspended.']);
         }
 
@@ -48,6 +48,6 @@ class EnsureUserIsAuthor
     {
         $request->session()->put('url.intended', $request->fullUrl());
 
-        return redirect()->guest(route('login.show', 'volunteer'));
+        return redirect()->guest(route('login.show', 'guest'));
     }
 }

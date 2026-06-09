@@ -107,6 +107,7 @@
   --s-11: 160px;
 
   /* — Layout — */
+  --page-gutter: var(--s-5);
   --container: 1240px;
   --container-narrow: 880px;
   --radius-sm: 6px;
@@ -134,6 +135,12 @@
   --z-overlay: 90;
   --z-modal: 100;
   --z-toast: 120;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-gutter: var(--s-7);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

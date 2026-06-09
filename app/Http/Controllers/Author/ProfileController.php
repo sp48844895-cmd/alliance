@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Author;
 
+use App\Http\Controllers\Concerns\HandlesUploadedMedia;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
+    use HandlesUploadedMedia;
+
     public function edit()
     {
         $user = DB::table('users')->where('id', (int) auth()->id())->first();
@@ -49,34 +51,20 @@ class ProfileController extends Controller
         }
 
         $imageName = $user->image ?? '';
+
         if ($request->boolean('delete_image') && $imageName !== '') {
-            $this->deleteUserImage($imageName);
+            $this->deleteUploadedFile('user', $imageName);
             $imageName = '';
         }
+
         if ($request->hasFile('image')) {
-            if ($imageName !== '') {
-                $this->deleteUserImage($imageName);
-            }
-            $file = $request->file('image');
-            $imageName = Str::random(20) . '.' . $file->getClientOriginalExtension();
-            $dir = public_path('uploads/users');
-            if (! is_dir($dir)) {
-                mkdir($dir, 0755, true);
-            }
-            $file->move($dir, $imageName);
+            $imageName = $this->replaceUploadedFile('user', $request->file('image'), $imageName);
         }
+
         $update['image'] = $imageName;
 
         DB::table('users')->where('id', $userId)->update($update);
 
         return redirect()->route('author.profile.edit')->with('success', 'Profile updated.');
-    }
-
-    private function deleteUserImage(string $filename): void
-    {
-        $path = public_path('uploads/users/' . $filename);
-        if (is_file($path)) {
-            unlink($path);
-        }
     }
 }

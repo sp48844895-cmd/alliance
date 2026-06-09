@@ -65,14 +65,14 @@
                         };
                         $submitterName = trim(($s->fname ?? '') . ' ' . ($s->lname ?? ''));
                         $roleLabels = [
-                            'volunteer' => 'Individual Volunteer',
+                            'guest' => 'Guest',
                             'intern'    => 'Intern',
                             'ngo'       => 'CSO / NGO / Firm / Organization',
                             'admin'     => 'Admin',
                             'fellow'    => 'Fellow',
                         ];
                         $rolePills = [
-                            'volunteer' => 'pill-leaf',
+                            'guest' => 'pill-leaf',
                             'intern'    => 'pill-amber',
                             'ngo'       => 'pill-clay',
                             'admin'     => 'pill-mute',

@@ -84,11 +84,14 @@
             @endif
           </div>
         <div class="st-card-body">
+          @if (!empty($card['where']))
+            <div class="st-card-where">{{ $card['where'] }}</div>
+          @endif
           <h3 class="st-card-title">{!! $card['title'] !!}</h3>
+          <p class="st-card-lede">{{ $card['lede'] }}</p>
           @if (!empty($card['author']))
             <p class="st-card-authored">{{ $card['authored_by'] ?? 'Authored by '.$card['author'] }}</p>
           @endif
-          <p class="st-card-lede">{{ $card['lede'] }}</p>
         </div>
         </a>
         <div class="st-card-foot">

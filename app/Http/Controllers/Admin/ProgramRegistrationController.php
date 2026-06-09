@@ -3,25 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProgramRegistration;
+use App\Services\MembershipPageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProgramRegistrationController extends Controller
 {
+    public function __construct(private MembershipPageService $membershipPageService) {}
+
     public static function typeLabels(): array
     {
-        return [
-            'intern'    => 'Intern',
-            'fellow'    => 'Fellowship',
-            'partner'   => 'Organisation partnership',
-            'volunteer' => 'Volunteer registration',
-        ];
+        return ProgramRegistration::typeLabels();
     }
 
     public static function statusOptions(): array
     {
-        return ['new', 'reviewed', 'accepted', 'rejected'];
+        return ProgramRegistration::statusOptions();
     }
 
     public function index(Request $request)
@@ -39,10 +37,10 @@ class ProgramRegistrationController extends Controller
 
         if ($q !== '') {
             $query->where(function ($w) use ($q) {
-                $w->where('program_registrations.full_name', 'like', '%' . $q . '%')
-                    ->orWhere('program_registrations.email', 'like', '%' . $q . '%')
-                    ->orWhere('program_registrations.phone', 'like', '%' . $q . '%')
-                    ->orWhere('program_registrations.institution', 'like', '%' . $q . '%');
+                $w->where('program_registrations.full_name', 'like', '%'.$q.'%')
+                    ->orWhere('program_registrations.email', 'like', '%'.$q.'%')
+                    ->orWhere('program_registrations.phone', 'like', '%'.$q.'%')
+                    ->orWhere('program_registrations.institution', 'like', '%'.$q.'%');
             });
         }
 
@@ -60,21 +58,22 @@ class ProgramRegistrationController extends Controller
             ->get();
 
         $stats = [
-            'total'     => (int) DB::table('program_registrations')->count(),
-            'new'       => (int) DB::table('program_registrations')->where('status', 'new')->count(),
-            'intern'    => (int) DB::table('program_registrations')->where('type', 'intern')->count(),
-            'fellow'    => (int) DB::table('program_registrations')->where('type', 'fellow')->count(),
-            'partner'   => (int) DB::table('program_registrations')->where('type', 'partner')->count(),
-            'volunteer' => (int) DB::table('program_registrations')->where('type', 'volunteer')->count(),
+            'total' => (int) DB::table('program_registrations')->count(),
+            'pending' => (int) DB::table('program_registrations')->whereIn('status', ProgramRegistration::pendingStatuses())->count(),
+            'approved' => (int) DB::table('program_registrations')->whereIn('status', ProgramRegistration::approvedStatuses())->count(),
+            'intern' => (int) DB::table('program_registrations')->where('type', 'intern')->count(),
+            'fellow' => (int) DB::table('program_registrations')->where('type', 'fellow')->count(),
+            'partner' => (int) DB::table('program_registrations')->where('type', 'partner')->count(),
+            'guest' => (int) DB::table('program_registrations')->where('type', 'guest')->count(),
         ];
 
         return view('admin.registrations.index', [
             'registrations' => $registrations,
-            'stats'         => $stats,
-            'typeLabels'    => self::typeLabels(),
-            'filters'       => [
-                'q'      => $q,
-                'type'   => $type,
+            'stats' => $stats,
+            'typeLabels' => self::typeLabels(),
+            'filters' => [
+                'q' => $q,
+                'type' => $type,
                 'status' => $status,
             ],
         ]);
@@ -85,12 +84,12 @@ class ProgramRegistrationController extends Controller
         $registration = DB::table('program_registrations')->where('id', $id)->first();
         abort_unless($registration, 404);
 
-        if ($registration->status === 'new') {
+        if (in_array($registration->status, ProgramRegistration::pendingStatuses(), true)) {
             DB::table('program_registrations')->where('id', $id)->update([
-                'status'     => 'reviewed',
+                'status' => ProgramRegistration::STATUS_REVIEWED,
                 'updated_at' => now(),
             ]);
-            $registration->status = 'reviewed';
+            $registration->status = ProgramRegistration::STATUS_REVIEWED;
         }
 
         $user = null;
@@ -112,9 +111,9 @@ class ProgramRegistrationController extends Controller
 
         return view('admin.registrations.show', [
             'registration' => $registration,
-            'user'         => $user,
-            'typeLabels'   => self::typeLabels(),
-            'domains'      => $domains,
+            'user' => $user,
+            'typeLabels' => self::typeLabels(),
+            'domains' => $domains,
         ]);
     }
 
@@ -124,25 +123,23 @@ class ProgramRegistrationController extends Controller
         abort_unless($registration, 404);
 
         $data = $request->validate([
-            'status' => 'required|in:new,reviewed,accepted,rejected',
+            'status' => 'required|in:'.implode(',', self::statusOptions()),
         ]);
 
         DB::table('program_registrations')->where('id', $id)->update([
-            'status'     => $data['status'],
+            'status' => $data['status'],
             'updated_at' => now(),
         ]);
 
         if ($registration->user_id) {
-            $isActive = $data['status'] === 'accepted';
+            $isActive = in_array($data['status'], ProgramRegistration::approvedStatuses(), true);
             DB::table('users')->where('id', $registration->user_id)->update([
-                'is_active'  => $isActive,
+                'is_active' => $isActive,
                 'updated_at' => now(),
             ]);
         }
 
-        if ($data['status'] === 'accepted' && in_array($registration->type, ['partner', 'volunteer'], true)) {
-            $this->createMembershipFromRegistration($registration);
-        }
+        $this->membershipPageService->clearCache();
 
         return redirect()
             ->route('admin.registrations.show', $id)
@@ -154,52 +151,10 @@ class ProgramRegistrationController extends Controller
         $deleted = DB::table('program_registrations')->where('id', $id)->delete();
         abort_unless($deleted, 404);
 
+        $this->membershipPageService->clearCache();
+
         return redirect()
             ->route('admin.registrations.index')
             ->with('success', 'Application deleted.');
-    }
-
-    private function createMembershipFromRegistration(object $registration): void
-    {
-        $email = strtolower(trim((string) $registration->email));
-
-        if ($email === '' || DB::table('membership')->where('email', $email)->exists()) {
-            return;
-        }
-
-        $membershipType = $registration->type === 'partner' ? 'CSO/NGO' : 'Volunteer';
-
-        DB::table('membership')->insert([
-            'name'             => $registration->full_name,
-            'mobile'           => $registration->phone ?? '',
-            'email'            => $registration->email,
-            'type'             => $membershipType,
-            'district'         => '',
-            'block'            => '',
-            'address'          => '',
-            'area'             => '',
-            'fb'               => '',
-            'insta'            => '',
-            'twitter'          => '',
-            'youtube'          => '',
-            'website'          => '',
-            'ngo_organization' => $registration->type === 'partner' ? $registration->full_name : '',
-            'org_intro'        => $registration->motivation ?? '',
-            'img'              => '',
-            'code'             => $this->generateMemberCode(),
-            'date'             => now(),
-        ]);
-
-        Cache::forget('membership.filters');
-    }
-
-    private function generateMemberCode(): string
-    {
-        do {
-            $code = 'ABC-'.random_int(1000, 9999);
-            $exists = DB::table('membership')->where('code', $code)->exists();
-        } while ($exists);
-
-        return $code;
     }
 }

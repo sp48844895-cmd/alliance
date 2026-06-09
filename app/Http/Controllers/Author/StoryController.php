@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Author;
 
+use App\Http\Controllers\Concerns\HandlesUploadedMedia;
 use App\Http\Controllers\Controller;
+use App\Support\MediaUrl;
 use App\Support\StoryContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +12,7 @@ use Illuminate\Support\Str;
 
 class StoryController extends Controller
 {
+    use HandlesUploadedMedia;
     public function index(Request $request)
     {
         $userId = (int) auth()->id();
@@ -145,6 +148,24 @@ class StoryController extends Controller
             ->with('success', 'Story updated and sent for admin approval again.');
     }
 
+    public function uploadEditorImage(Request $request)
+    {
+        $data = $request->validate([
+            'upload' => 'required|image|max:5120',
+        ]);
+
+        $filename = $this->storeUploadedFile('story-content', $data['upload']);
+        $url = asset(ltrim(MediaUrl::publicRelativePath('uploads/stories/content', $filename), '/'));
+
+        return response()->json([
+            'url' => $url,
+            'default' => $url,
+            'data' => [
+                'url' => $url,
+            ],
+        ]);
+    }
+
     private function findOwnStory($id): object
     {
         $story = DB::table('stories')
@@ -208,16 +229,9 @@ class StoryController extends Controller
             return '';
         }
 
-        $dir = public_path('uploads/stories');
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
+        $filename = $this->storeUploadedFile('story-draft', $request->file('image'));
 
-        $file = $request->file('image');
-        $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
-        $file->move($dir, $filename);
-
-        return 'uploads/stories/' . $filename;
+        return 'uploads/stories/'.$filename;
     }
 
     private function deleteThumbnail(string $path): void
@@ -226,9 +240,6 @@ class StoryController extends Controller
             return;
         }
 
-        $full = public_path(ltrim($path, '/'));
-        if (is_file($full)) {
-            unlink($full);
-        }
+        $this->deleteUploadedFile('story-draft', basename($path));
     }
 }

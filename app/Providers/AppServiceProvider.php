@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Http\View\Composers\AppSettingsComposer;
+use App\Http\View\Composers\SocialMetaComposer;
+use App\Support\SocialMetaResolver;
 use App\Support\LoginPortals;
 use App\Services\BlogStoryService;
 use App\Services\EventPageService;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SbcResourcePoolService::class);
         $this->app->singleton(KnowledgeHubPageService::class);
         $this->app->singleton(ReportsPageService::class);
+        $this->app->singleton(SocialMetaResolver::class);
     }
 
     public function boot(): void
@@ -46,13 +49,30 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultSimpleView('pagination.admin');
 
         View::composer('layouts.app', AppSettingsComposer::class);
+        View::composer('layouts.app', SocialMetaComposer::class);
 
         View::composer('layouts.app', function ($view) {
             $view->with('loginPortals', LoginPortals::forNav());
         });
 
-        View::composer(['layouts.app', 'pages.*', 'partials.page-jumbotron'], function ($view) {
-            $routeName = request()->route()?->getName();
+        View::composer([
+            'layouts.app',
+            'partials.page-jumbotron',
+            'home.*',
+            'about.*',
+            'campaigns.*',
+            'contact.*',
+            'events.*',
+            'get-involved.*',
+            'stories.*',
+            'programs.*',
+            'members.*',
+            'resources.*',
+            'learning-corner.*',
+            'reports.*',
+            'registrations.*',
+        ], function ($view) {
+            $routeName = \App\Support\PageRoute::logicalName();
             $pageContent = app(PageContentService::class)->forRoute($routeName);
 
             $view->with([

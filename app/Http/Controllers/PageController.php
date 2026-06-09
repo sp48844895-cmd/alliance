@@ -21,17 +21,23 @@ class PageController extends Controller
 
     public function home(BlogStoryService $blogStories, EventPageService $eventPage)
     {
-        $homePrograms = $this->cachedHomePrograms();
+        extract($this->preparePrograms($this->pageSection('home', 'programs')));
+
         $homeInsights = $this->cachedHomeInsights();
         $homeBanners = $this->cachedHomeBanners();
+        $homeRecentStories = $blogStories->recentForHome(6);
+        $homeRecentEvents = $eventPage->recentForHome(5);
 
-        return $this->pageView('pages.home', [
-            'homeRecentStories' => $blogStories->recentForHome(6),
-            'homeRecentEvents'  => $eventPage->recentForHome(5),
-            'homePrograms'      => $homePrograms,
-            'homeInsights'      => $homeInsights,
-            'homeBanners'       => $homeBanners,
-        ]);
+        return $this->pageView('pages.home')->with(compact(
+            'homeRecentStories',
+            'homeRecentEvents',
+            'programsUseSlider',
+            'programsHeader',
+            'programsCards',
+            'programsDetailsUrl',
+            'homeInsights',
+            'homeBanners',
+        ));
     }
 
     public function about()
@@ -46,10 +52,10 @@ class PageController extends Controller
 
     public function stories(BlogStoryService $blogStories)
     {
-        return $this->pageView('pages.stories', [
-            'storyPaginator' => $blogStories->paginatedListing(20),
-            'storyFilters' => $blogStories->filters(),
-        ]);
+        $storyPaginator = $blogStories->paginatedListing(20);
+        $storyFilters = $blogStories->filters();
+
+        return $this->pageView('pages.stories')->with(compact('storyPaginator', 'storyFilters'));
     }
 
     public function story(string $slug, BlogStoryService $blogStories)
@@ -58,9 +64,21 @@ class PageController extends Controller
 
         abort_unless($story, 404);
 
-        return view('pages.story-details', [
-            'story' => $story,
-        ]);
+        $storyUrl = route('stories.show', $story['slug']);
+        $relatedStories = $blogStories->relatedStoriesForCurrentStory($story, 2);
+        $excludeUrls = array_merge(
+            [$storyUrl],
+            array_map(fn (array $item) => route('stories.show', $item['slug']), $relatedStories)
+        );
+
+        $recentStories = array_values(array_filter(
+            $blogStories->recentForStorySidebar((int) ($story['id'] ?? 0), 12),
+            fn (array $item) => ! in_array($item['url'] ?? '', $excludeUrls, true)
+        ));
+
+        $recentStories = array_slice($recentStories, 0, 5);
+
+        return view('pages.story-details')->with(compact('story', 'recentStories', 'relatedStories'));
     }
 
     public function events(EventPageService $eventPage)
@@ -81,26 +99,33 @@ class PageController extends Controller
             } catch (\Throwable) {}
         }
 
-        return $this->pageView('pages.events', [
-            'eventsBoard' => array_merge($this->pageSection('events', 'board'), $eventPage->boardData()),
-            'eventsUpcomingCard' => $eventPage->upcomingCard(),
-            'eventsPastCards' => $eventPage->pastCards(),
-            'eventsGalleryTiles' => $galleryTiles,
-            'eventsGalleryTotal' => count($galleryTiles),
-            'latestEventMonth' => $latestEventMonth ?? now()->format('Y-m'),
-        ]);
+        $eventsBoard = array_merge($this->pageSection('events', 'board'), $eventPage->boardData());
+        $eventsUpcomingCard = $eventPage->upcomingCard();
+        $eventsPastCards = $eventPage->pastCards();
+        $eventsGalleryTiles = $galleryTiles;
+        $eventsGalleryTotal = count($galleryTiles);
+        $latestEventMonth = $latestEventMonth ?? now()->format('Y-m');
+
+        return $this->pageView('pages.events')->with(compact(
+            'eventsBoard',
+            'eventsUpcomingCard',
+            'eventsPastCards',
+            'eventsGalleryTiles',
+            'eventsGalleryTotal',
+            'latestEventMonth',
+        ));
     }
 
     public function event(string $slug, EventPageService $eventPage)
     {
-        $event = $eventPage->findPublishedBySlug($slug);
+        $eventRecord = $eventPage->findPublishedBySlug($slug);
 
-        abort_unless($event, 404);
+        abort_unless($eventRecord, 404);
 
-        return view('pages.event-details', [
-            'event' => $eventPage->formatForDetail($event),
-            'relatedEvents' => $eventPage->relatedEvents((int) $event->id),
-        ]);
+        $event = $eventPage->formatForDetail($eventRecord);
+        $relatedEvents = $eventPage->relatedEvents((int) $eventRecord->id);
+
+        return view('pages.event-details')->with(compact('event', 'relatedEvents'));
     }
 
     public function calendarData(Request $request, EventPageService $eventPage)
@@ -112,9 +137,14 @@ class PageController extends Controller
 
     public function programsAndInitiatives()
     {
-        return $this->pageView('pages.programs-and-initiatives', [
-            'homePrograms' => $this->cachedHomePrograms(),
-        ]);
+        extract($this->preparePrograms($this->pageSection('programs', 'programs')));
+
+        return $this->pageView('pages.programs-and-initiatives')->with(compact(
+            'programsUseSlider',
+            'programsHeader',
+            'programsCards',
+            'programsDetailsUrl',
+        ));
     }
 
     public function getInvolved()
@@ -130,18 +160,21 @@ class PageController extends Controller
             'search' => $request->string('search')->toString(),
         ];
 
-        return $this->pageView('pages.members', [
-            'membersPageFilters' => $membershipPage->filters(),
-            'memberPaginator' => $membershipPage->paginatedListing(20, $activeMemberFilters),
-            'activeMemberFilters' => $activeMemberFilters,
-        ]);
+        $membersPageFilters = $membershipPage->filters();
+        $memberPaginator = $membershipPage->paginatedListing(20, $activeMemberFilters);
+
+        return $this->pageView('pages.members')->with(compact(
+            'membersPageFilters',
+            'memberPaginator',
+            'activeMemberFilters',
+        ));
     }
 
     public function resources(SbcResourcePoolService $sbcPool)
     {
-        return $this->pageView('pages.resources', [
-            'resourcePeople' => $sbcPool->listingFromDatabase(),
-        ]);
+        $resourcePeople = $sbcPool->listingFromDatabase();
+
+        return $this->pageView('pages.resources')->with(compact('resourcePeople'));
     }
 
     public function contact()
@@ -158,30 +191,102 @@ class PageController extends Controller
             ->get();
 
         $counts = DB::table('learning_corner')
+            ->where('status', 1)
             ->selectRaw('cat_id, count(*) as total')
             ->groupBy('cat_id')
             ->pluck('total', 'cat_id');
 
-        $categoryTree = $this->buildLcTree($allCats, $counts);
+        $mainCategories = $this->buildLcTree($allCats, $counts);
 
-        return $this->pageView('pages.learning-corner', [
-            'categoryTree' => $categoryTree,
-        ]);
+        $cms = $this->pageSection('learning-corner', 'jumbotron');
+        $lcEyebrow = $cms['eyebrow'] ?? 'Learning space';
+        $lcTitle = $cms['title'] ?? 'Learning <em>Corner</em>';
+        $lcLede = $cms['lede'] ?? 'Explore short modules, videos, posters, flipbooks and training material for strengthening SBC practice.';
+        $lcStats = [
+            ['value' => count($mainCategories), 'label' => 'Topics'],
+            ['value' => collect($mainCategories)->sum(fn ($main) => count($main->children)), 'label' => 'Subtopics'],
+            ['value' => array_sum($counts->all()), 'label' => 'Resources'],
+        ];
+
+        return $this->pageView('pages.learning-corner.index')->with(compact(
+            'mainCategories',
+            'lcEyebrow',
+            'lcTitle',
+            'lcLede',
+            'lcStats',
+        ));
     }
 
-    public function learningCornerCategoryAjax($id)
+    public function learningCornerMain(int $main)
     {
-        $cat = DB::table('learning_cat')->where('id', $id)->where('status', 1)->first();
+        $mainCat = DB::table('learning_cat')
+            ->where('id', $main)
+            ->whereNull('parent_id')
+            ->where('status', 1)
+            ->first();
 
-        if (! $cat) {
-            return response()->json(['error' => 'Not found'], 404);
+        if (! $mainCat) {
+            abort(404);
         }
 
-        $allCatIds = $this->getLcDescendantIds((int) $id);
+        $resourceCounts = DB::table('learning_corner')
+            ->where('status', 1)
+            ->selectRaw('cat_id, count(*) as total')
+            ->groupBy('cat_id')
+            ->pluck('total', 'cat_id');
+
+        $subcategories = DB::table('learning_cat')
+            ->where('parent_id', $main)
+            ->where('status', 1)
+            ->orderBy('sort_order')
+            ->orderBy('cat_name')
+            ->get()
+            ->map(function ($sub) use ($resourceCounts) {
+                $sub->resource_count = (int) ($resourceCounts[$sub->id] ?? 0);
+
+                return $sub;
+            });
+
+        $main = $mainCat;
+        $lcEyebrow = 'Learning space';
+        $lcTitle = e($main->cat_name);
+        $lcLede = trim((string) ($main->description ?? '')) ?: 'Choose a subtopic to browse learning resources.';
+        $lcStats = [
+            ['value' => $subcategories->count(), 'label' => 'Subtopics'],
+            ['value' => $subcategories->sum('resource_count'), 'label' => 'Resources'],
+        ];
+
+        return $this->pageView('pages.learning-corner.subcategories')->with(compact(
+            'main',
+            'subcategories',
+            'lcEyebrow',
+            'lcTitle',
+            'lcLede',
+            'lcStats',
+        ));
+    }
+
+    public function learningCornerSub(int $main, int $sub)
+    {
+        $mainCat = DB::table('learning_cat')
+            ->where('id', $main)
+            ->whereNull('parent_id')
+            ->where('status', 1)
+            ->first();
+
+        $subCat = DB::table('learning_cat')
+            ->where('id', $sub)
+            ->where('parent_id', $main)
+            ->where('status', 1)
+            ->first();
+
+        if (! $mainCat || ! $subCat) {
+            abort(404);
+        }
 
         $resources = DB::table('learning_corner')
             ->join('learning_cat', 'learning_corner.cat_id', '=', 'learning_cat.id')
-            ->whereIn('learning_corner.cat_id', $allCatIds)
+            ->where('learning_corner.cat_id', $sub)
             ->where('learning_cat.status', 1)
             ->where('learning_corner.status', 1)
             ->orderByDesc('learning_corner.date')
@@ -200,77 +305,71 @@ class PageController extends Controller
             ]);
 
         $resources = $resources->map(function ($row) {
-            $row->image_url = \App\Support\MediaUrl::tryResolve('learning', (string) ($row->image ?? '')) ?? '';
+            $row->image_url = MediaUrl::tryResolve('learning', (string) ($row->image ?? '')) ?? '';
+
             return $row;
         });
 
-        return response()->json([
-            'category' => [
-                'id'          => $cat->id,
-                'name'        => $cat->cat_name,
-                'icon'        => $cat->cat_icon,
-                'description' => $cat->description ?? '',
-            ],
-            'breadcrumb' => $this->getLcBreadcrumb((int) $id),
-            'resources'  => $resources->values(),
-            'total'      => $resources->count(),
-        ]);
+        $main = $mainCat;
+        $sub = $subCat;
+
+        $lcEyebrow = $main->cat_name;
+        $lcTitle = e($sub->cat_name);
+        $lcLede = trim((string) ($sub->description ?? '')) ?: 'Learning resources for '.$sub->cat_name.'.';
+        $lcStats = [
+            ['value' => $resources->count(), 'label' => 'Resources'],
+        ];
+
+        return $this->pageView('pages.learning-corner.resources')->with(compact(
+            'main',
+            'sub',
+            'resources',
+            'lcEyebrow',
+            'lcTitle',
+            'lcLede',
+            'lcStats',
+        ));
     }
 
-    private function buildLcTree($allCats, $counts, $parentId = null): array
+    private function buildLcTree($allCats, $counts): array
     {
         return $allCats
-            ->where('parent_id', $parentId)
+            ->whereNull('parent_id')
             ->values()
-            ->map(function ($cat) use ($allCats, $counts) {
-                $children = $this->buildLcTree($allCats, $counts, $cat->id);
-                $directCount = (int) ($counts[$cat->id] ?? 0);
-                $totalCount = $directCount + collect($children)->sum('total_count');
+            ->map(function ($main) use ($allCats, $counts) {
+                $children = $allCats
+                    ->where('parent_id', $main->id)
+                    ->values()
+                    ->map(function ($sub) use ($counts) {
+                        $subCount = (int) ($counts[$sub->id] ?? 0);
+
+                        return (object) [
+                            'id' => $sub->id,
+                            'cat_name' => $sub->cat_name,
+                            'cat_icon' => $sub->cat_icon ?? 'icon-folder',
+                            'description' => $sub->description ?? '',
+                            'children' => [],
+                            'count' => $subCount,
+                            'total_count' => $subCount,
+                            'depth' => 1,
+                        ];
+                    })
+                    ->all();
+
+                $totalCount = collect($children)->sum('total_count');
 
                 return (object) [
-                    'id'          => $cat->id,
-                    'cat_name'    => $cat->cat_name,
-                    'cat_icon'    => $cat->cat_icon ?? 'icon-folder',
-                    'description' => $cat->description ?? '',
-                    'children'    => $children,
-                    'count'       => $directCount,
+                    'id' => $main->id,
+                    'cat_name' => $main->cat_name,
+                    'cat_icon' => $main->cat_icon ?? 'icon-folder',
+                    'description' => $main->description ?? '',
+                    'children' => $children,
+                    'count' => 0,
                     'total_count' => $totalCount,
-                    'depth'       => 0,
+                    'depth' => 0,
                 ];
             })
             ->all();
-    }
-
-    private function getLcDescendantIds(int $parentId): array
-    {
-        $ids = [$parentId];
-        $children = DB::table('learning_cat')
-            ->where('parent_id', $parentId)
-            ->where('status', 1)
-            ->pluck('id');
-
-        foreach ($children as $childId) {
-            $ids = array_merge($ids, $this->getLcDescendantIds((int) $childId));
-        }
-
-        return $ids;
-    }
-
-    private function getLcBreadcrumb(int $catId): array
-    {
-        $crumbs = [];
-        $currentId = $catId;
-
-        for ($i = 0; $i < 10 && $currentId; $i++) {
-            $cat = DB::table('learning_cat')->where('id', $currentId)->first();
-            if (! $cat) {
-                break;
-            }
-            array_unshift($crumbs, ['id' => $cat->id, 'name' => $cat->cat_name]);
-            $currentId = (int) ($cat->parent_id ?? 0);
-        }
-
-        return $crumbs;
     }
 
     public function reports(ReportsPageService $reportsPage)
@@ -309,11 +408,29 @@ class PageController extends Controller
                 ->all();
         }
 
-        return $this->pageView('pages.reports', [
-            'pageTitle' => $header['pageTitle'],
-            'pageLede'  => $header['pageLede'],
-            'reports'   => $reports,
-        ]);
+        $pageTitle = $header['pageTitle'];
+        $pageLede = $header['pageLede'];
+
+        return $this->pageView('pages.reports')->with(compact('pageTitle', 'pageLede', 'reports'));
+    }
+
+    public function reportPreview(int $report)
+    {
+        $row = DB::table('reports')
+            ->where('id', $report)
+            ->where('status', 1)
+            ->first();
+
+        abort_unless($row, 404);
+
+        $preview = ltrim((string) $row->preview_path, '/');
+        abort_unless($preview !== '' && file_exists(public_path($preview)), 404);
+
+        $reportTitle = $row->title;
+        $reportType = $row->type ?: 'Report';
+        $previewSrc = asset($preview);
+
+        return view('pages.report-preview')->with(compact('reportTitle', 'reportType', 'previewSrc'));
     }
 
     public function magazine(string $slug)
@@ -343,15 +460,21 @@ class PageController extends Controller
 
         abort_if($pages === [], 404);
 
-        return view('pages.magazine-viewer', [
-            'magazineTitle' => $report->title,
-            'magazineType' => $report->type ?: 'Report',
-            'magazineSlug' => $slug,
-            'magazinePages' => $pages,
-            'magazineDownload' => $report->download_path && file_exists(public_path(ltrim($report->download_path, '/')))
-                ? asset(ltrim($report->download_path, '/'))
-                : null,
-        ]);
+        $magazineTitle = $report->title;
+        $magazineType = $report->type ?: 'Report';
+        $magazineSlug = $slug;
+        $magazinePages = $pages;
+        $magazineDownload = $report->download_path && file_exists(public_path(ltrim($report->download_path, '/')))
+            ? asset(ltrim($report->download_path, '/'))
+            : null;
+
+        return view('pages.magazine-viewer')->with(compact(
+            'magazineTitle',
+            'magazineType',
+            'magazineSlug',
+            'magazinePages',
+            'magazineDownload',
+        ));
     }
 
     public function newsletterSubscribe(Request $request)
@@ -384,19 +507,118 @@ class PageController extends Controller
         return $redirect->with('status', $message);
     }
 
-    private function cachedHomePrograms()
+    /** Programs section — database, CMS, ya default cards tayyar karo */
+    private function preparePrograms(array $cms = []): array
     {
+        $programsUseSlider = false;
+        $programsCards = [];
+        $programsHeader = $this->programsHeader($cms);
+        $programsDetailsUrl = route('programs');
+
+        $accents = ['grad', 'orange', 'black'];
+        $placeholders = [
+            'https://www.chhattisgarhabc.org//public/uploads/programs/bapi-na-uwat.jpg',
+            'https://www.chhattisgarhabc.org//public/uploads/programs/dhar-bhasha-kendra.jpg',
+            'https://www.chhattisgarhabc.org//public/uploads/programs/shilp-khadi-kendra.jpg',
+            'https://www.chhattisgarhabc.org//public/uploads/programs/yuvak-kendras.jpg',
+            'https://www.chhattisgarhabc.org//public/uploads/programs/vikas-mitra.jpg',
+        ];
+
         $rows = Cache::remember('home.programs', 3600, fn () => DB::table('programs')
             ->where('status', 1)
             ->orderBy('sort_order')
             ->orderBy('id')
-            ->get(['id', 'title', 'tag', 'short_desc', 'full_desc', 'card_style', 'image']));
+            ->get(['id', 'title', 'short_desc', 'full_desc', 'image']));
 
-        return $rows->map(function ($row) {
-            $row->image_url = MediaUrl::tryResolve('program', (string) ($row->image ?? '')) ?? '';
+        if ($rows->count() > 0) {
+            $programsUseSlider = true;
 
-            return $row;
-        });
+            foreach ($rows as $index => $program) {
+                $short = trim((string) ($program->short_desc ?? ''));
+                $full = trim((string) ($program->full_desc ?? ''));
+                $description = $short;
+
+                if ($full !== '' && $full !== $short) {
+                    $description = $short !== '' ? $short.' '.$full : $full;
+                }
+
+                $imageUrl = MediaUrl::tryResolve('program', (string) ($program->image ?? '')) ?? '';
+                if ($imageUrl === '') {
+                    $imageUrl = $this->programPlaceholderImage($placeholders, $index);
+                }
+
+                $programsCards[] = [
+                    'title' => $program->title ?? '',
+                    'description' => $description,
+                    'image_url' => $imageUrl,
+                    'accent' => $accents[$index % 3],
+                    'is_active' => $index === 0,
+                    'delay' => 0,
+                ];
+            }
+        } 
+        // elseif (! empty($cms['cards'])) {
+        //     $programsUseSlider = true;
+
+        //     foreach ($cms['cards'] as $index => $card) {
+        //         $description = trim((string) ($card['lede'] ?? ''));
+
+        //         if (! empty($card['paragraphs'])) {
+        //             $extra = trim(implode(' ', array_map('trim', $card['paragraphs'])));
+        //             $description = $description !== '' ? $description.' '.$extra : $extra;
+        //         }
+
+        //         $programsCards[] = [
+        //             'title' => $card['title'] ?? '',
+        //             'description' => $description,
+        //             'image_url' => $card['image_url'] ?? $this->programPlaceholderImage($placeholders, $index),
+        //             'accent' => $accents[$index % 3],
+        //             'is_active' => $index === 0,
+        //             'delay' => (int) ($card['aos_delay'] ?? $index * 80),
+        //         ];
+        //     }
+        // } else {
+        //     foreach (config('media.home_programs.defaults', []) as $index => $item) {
+        //         $imgIndex = (int) ($item['placeholder_index'] ?? $index);
+
+        //         $programsCards[] = [
+        //             'title' => $item['title'] ?? '',
+        //             'description' => $item['description'] ?? '',
+        //             'image_url' => $this->programPlaceholderImage($placeholders, $imgIndex),
+        //             'accent' => $item['accent'] ?? $accents[$index % 3],
+        //             'is_active' => false,
+        //             'delay' => $index * 80,
+        //         ];
+        //     }
+        // }
+
+        return compact('programsUseSlider', 'programsHeader', 'programsCards', 'programsDetailsUrl');
+    }
+
+    /** Placeholder image — empty array pe crash na ho */
+    private function programPlaceholderImage(array $placeholders, int $index): string
+    {
+        $total = count($placeholders);
+        if ($total === 0) {
+            return '';
+        }
+
+        return $placeholders[$index % $total] ?? '';
+    }
+
+    /** Programs section ke liye common header values */
+    private function programsHeader(array $cms = []): array
+    {
+        $defaultLede = 'A focused view of flagship SBC initiatives across Chhattisgarh — from youth volunteer networks to local learning resources and community led campaigns.';
+
+        return [
+            'chapter_num' => $cms['chapter_num'] ?? '03',
+            'chapter_label' => $cms['chapter_label'] ?? 'Programs & Initiatives',
+            'heading_html' => $cms['heading_html'] ?? 'Programs &amp; Initiatives',
+            'lede_text' => strip_tags($cms['lede_html'] ?? $defaultLede),
+            'explore_url' => $cms['explore_url'] ?? route('programs'),
+            'explore_label' => $cms['explore_label'] ?? 'Explore More',
+        ];
     }
 
     private function cachedHomeInsights()

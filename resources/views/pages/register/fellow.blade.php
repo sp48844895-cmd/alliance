@@ -13,7 +13,7 @@
             </a>
             <span class="chapter"><b>10</b> · Fellowship</span>
             <h2 id="reg-fellow-h">Fellowship <em>registration</em></h2>
-            <p>Tell us about your background, areas of work and why you want to join the fellowship programme.</p>
+            <p>Share your academic details, preferred domain and a short note on why you want to join the fellowship programme.</p>
 
             <form id="register-form" class="contact-form reg-form" action="{{ route('register.fellow.submit') }}" method="POST" data-tone="terracotta">
                 @csrf
@@ -43,31 +43,23 @@
                 </div>
 
                 <div class="contact-field-group contact-field-group--wide">
-                    <label for="fellow-org">Organization / university <span class="reg-optional">(if any)</span></label>
-                    <input id="fellow-org" name="organization" type="text" placeholder="Current employer or institution" maxlength="255" value="{{ old('organization') }}">
+                    <label for="fellow-university">University / college name</label>
+                    <input id="fellow-university" name="university" type="text" placeholder="Institution name" maxlength="255" value="{{ old('university') }}" required>
                 </div>
 
                 <div class="contact-field-group">
-                    <label for="fellow-experience">Years of experience</label>
-                    <input id="fellow-experience" name="years_experience" type="text" placeholder="e.g. 3 years" maxlength="50" value="{{ old('years_experience') }}" required>
+                    <label for="fellow-class">Current class / year</label>
+                    <input id="fellow-class" name="class_year" type="text" placeholder="e.g. 2nd year BA, Final year MSc" maxlength="100" value="{{ old('class_year') }}" required>
                 </div>
 
-                <div class="contact-field-group contact-field-group--wide reg-domain-field">
-                    <fieldset>
-                        <legend>Domain area <span class="reg-domain-hint">(select all that apply)</span></legend>
-                        @php $oldDomains = old('domain_areas', []); @endphp
-                        <div class="reg-domain-grid">
-                            @foreach ($domainAreas as $area)
-                                <label class="reg-domain-check">
-                                    <input type="checkbox" name="domain_areas[]" value="{{ $area }}" @checked(in_array($area, $oldDomains, true))>
-                                    <span class="reg-domain-mark" aria-hidden="true">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                                    </span>
-                                    <span>{{ $area }}</span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </fieldset>
+                <div class="contact-field-group">
+                    <label for="fellow-domain">Domain area</label>
+                    <select id="fellow-domain" name="domain_area" required>
+                        <option value="" disabled {{ old('domain_area') ? '' : 'selected' }}>Select one domain</option>
+                        @foreach ($domainAreas as $area)
+                            <option value="{{ $area }}" @selected(old('domain_area') === $area)>{{ $area }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="contact-field-group contact-field-group--wide">
@@ -89,11 +81,11 @@
             <h3>What happens next</h3>
             <p>Fellowship applications are reviewed for fit with ongoing programmes and district priorities.</p>
             <ul>
-                <li>Select every domain where you have meaningful experience.</li>
+                <li>Use an email you check regularly.</li>
                 <li>Choose a password now — you will use it to sign in after we approve your application.</li>
                 <li>After approval, sign in at <a href="{{ route('login.show', 'fellow') }}">fellowship login</a>.</li>
-                <li>Organization / university is optional if you are applying independently.</li>
-                <li>We respond within 3 working days when your profile matches an open cohort.</li>
+                <li>Pick the domain that best matches your skills and interest.</li>
+                <li>Keep your motivation note specific and under 500 words.</li>
             </ul>
             <p style="margin-top: var(--s-4);">Questions? <a href="{{ route('contact') }}">Contact the alliance</a>.</p>
         </aside>

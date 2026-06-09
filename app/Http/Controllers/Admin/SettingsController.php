@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesUploadedMedia;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class SettingsController extends Controller
 {
+    use HandlesUploadedMedia;
+
     public function edit()
     {
         $site = DB::table('site')->where('id', 1)->first();
@@ -30,15 +32,7 @@ class SettingsController extends Controller
         $logoName = $site->logo ?? '';
 
         if ($request->hasFile('logo')) {
-            if ($logoName) {
-                $old = public_path('uploads/site/' . $logoName);
-                if (is_file($old)) {
-                    @unlink($old);
-                }
-            }
-            $file = $request->file('logo');
-            $logoName = Str::random(20) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/site'), $logoName);
+            $logoName = $this->replaceUploadedFile('site', $request->file('logo'), $logoName);
         }
 
         DB::table('site')->updateOrInsert(['id' => 1], [

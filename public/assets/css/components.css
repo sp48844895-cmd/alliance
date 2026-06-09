@@ -42,7 +42,6 @@
 .announce-links { display: flex; gap: var(--s-5); align-items: center; }
 .announce-links a { color: var(--paper); opacity: 0.85; text-decoration: none; }
 .announce-links a:hover { opacity: 1; color: var(--ochre); }
-@media (max-width: 720px) { .announce-links { display: none; } }
 
 .social-icons { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
 .social-icons__link {
@@ -367,26 +366,46 @@
 
 @media (max-width: 767px) {
   .announce {
-    padding: 12px 0;
-  }
-  .announce-links,
-  .announce-links.social-icons {
-    display: none;
+    padding: 10px 0;
   }
   .announce-row {
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
     gap: var(--s-2);
   }
   .announce-contact {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--s-2);
-    line-height: 1.6;
-    word-break: break-word;
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: center;
+    line-height: 1.4;
+  }
+  .announce-contact a {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.02em;
   }
   .announce-contact__sep {
     display: none;
+  }
+  .announce-links.social-icons {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.25rem;
+  }
+  .announce-links.social-icons .social-icons__link {
+    width: 1.9rem;
+    height: 1.9rem;
+    color: var(--paper);
+    opacity: 0.95;
+  }
+  .announce-links.social-icons .social-icons__svg {
+    width: 1.05rem;
+    height: 1.05rem;
   }
   .nav-row {
     gap: var(--s-3);
@@ -437,6 +456,13 @@
   top: calc(100% + 12px);
   right: 0;
   min-width: 300px;
+  max-height: min(70vh, 22rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(93, 44, 181, 0.45) transparent;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
@@ -447,6 +473,15 @@
   gap: 2px;
   z-index: var(--z-overlay);
   animation: navLoginIn var(--dur-2) var(--ease-out);
+}
+
+.nav-login__panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nav-login__panel::-webkit-scrollbar-thumb {
+  background: rgba(93, 44, 181, 0.35);
+  border-radius: 999px;
 }
 @keyframes navLoginIn {
   from { opacity: 0; transform: translateY(-6px); }
@@ -498,22 +533,38 @@
 }
 
 @media (max-width: 1023px) {
-  .nav-login { width: 100%; padding-top: var(--s-3); }
-  .nav-login__details > summary { padding: var(--s-3) 0; border-top: 1px dashed var(--rule); }
+  .nav-login {
+    width: 100%;
+    padding-top: var(--s-3);
+  }
+
+  .nav-login__details > summary {
+    padding: var(--s-3) 0;
+    border-top: 1px dashed var(--rule);
+  }
+
   .nav-login__trigger {
     width: 100%;
     justify-content: space-between;
-    padding: var(--s-3) var(--s-4);
+    padding: var(--s-4) var(--s-5);
     font-size: var(--fs-body);
+    box-sizing: border-box;
   }
+
   .nav-login__panel {
     position: static;
     width: 100%;
     min-width: 0;
+    max-height: min(42vh, 16rem);
     margin-top: var(--s-3);
+    padding: var(--s-2) var(--s-3);
     box-shadow: none;
     background: var(--paper-soft);
     animation: none;
+  }
+
+  .nav-login__item {
+    padding: 12px var(--s-4);
   }
 }
 

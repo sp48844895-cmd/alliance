@@ -29,8 +29,20 @@
                 </div>
                 @if($registration->institution)
                     <div class="sm:col-span-2">
-                        <dt class="label mb-1">Organisation</dt>
+                        <dt class="label mb-1">University / college</dt>
                         <dd class="text-[var(--color-ink-2)]">{{ $registration->institution }}</dd>
+                    </div>
+                @endif
+                @if($registration->class_year)
+                    <div>
+                        <dt class="label mb-1">Class / year</dt>
+                        <dd class="text-[var(--color-ink-2)]">{{ $registration->class_year }}</dd>
+                    </div>
+                @endif
+                @if($registration->domain_area)
+                    <div>
+                        <dt class="label mb-1">Domain area</dt>
+                        <dd class="text-[var(--color-ink-2)]">{{ $registration->domain_area }}</dd>
                     </div>
                 @endif
                 @if($registration->years_experience)

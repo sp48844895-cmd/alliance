@@ -1,0 +1,22 @@
+.report-preview-body {
+  overflow: hidden;
+}
+
+.report-preview-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  background: #0b0820;
+}
+
+.report-preview-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+.magazine-bar__back {
+  cursor: pointer;
+  font-family: inherit;
+}

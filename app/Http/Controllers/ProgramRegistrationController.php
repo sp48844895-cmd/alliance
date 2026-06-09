@@ -70,10 +70,9 @@ class ProgramRegistrationController extends Controller
             'email' => 'required|email|max:150',
             'phone' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
-            'organization' => 'nullable|string|max:255',
-            'domain_areas' => 'required|array|min:1',
-            'domain_areas.*' => ['string', Rule::in(self::domainAreas())],
-            'years_experience' => 'required|string|max:50',
+            'university' => 'required|string|max:255',
+            'class_year' => 'required|string|max:100',
+            'domain_area' => ['required', 'string', Rule::in(self::domainAreas())],
             'motivation' => 'required|string|max:5000',
         ]);
 
@@ -88,12 +87,12 @@ class ProgramRegistrationController extends Controller
             ]);
     }
 
-    public function volunteerForm()
+    public function guestForm()
     {
-        return view('pages.register.volunteer');
+        return view('pages.register.guest');
     }
 
-    public function volunteerStore(Request $request)
+    public function guestStore(Request $request)
     {
         $data = $request->validate([
             'full_name' => 'required|string|max:120',
@@ -104,21 +103,21 @@ class ProgramRegistrationController extends Controller
         ]);
 
         $this->applications->createPathwayAccount(
-            'volunteer',
+            'guest',
             $data['full_name'],
             $data['email'],
             $data['password'],
             $data['phone'],
-            'Volunteer registration — ChhattisgarhABC',
+            'Guest registration — ChhattisgarhABC',
             $data['motivation']
         );
 
         return redirect()
-            ->route('register.volunteer')
+            ->route('register.guest')
             ->with('register_toast', [
                 'type' => 'success',
                 'title' => 'Registration received',
-                'message' => 'Thank you for registering. We will review your application and activate your volunteer login within a few working days.',
+                'message' => 'Thank you for registering. We will review your application and activate your guest login within a few working days.',
             ]);
     }
 }

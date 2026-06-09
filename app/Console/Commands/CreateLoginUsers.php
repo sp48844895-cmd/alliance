@@ -12,7 +12,7 @@ class CreateLoginUsers extends Command
                             {--password=abc@1234 : Password for all portal accounts}
                             {--force : Update password if the account already exists}';
 
-    protected $description = 'Create or update all portal login users (Volunteer, Intern, Fellow, NGO, Admin).';
+    protected $description = 'Create or update all portal login users (Guest, Intern, Fellow, NGO, Admin).';
 
     private const ACCOUNTS = [
         [
@@ -25,12 +25,12 @@ class CreateLoginUsers extends Command
             'role'     => 1,
         ],
         [
-            'type'     => 'volunteer',
+            'type'     => 'guest',
             'fname'    => 'Asha',
-            'lname'    => 'Volunteer',
-            'username' => 'asha.v',
-            'email'    => 'volunteer@abc.in',
-            'bio'      => 'Field volunteer, Raipur',
+            'lname'    => 'Guest',
+            'username' => 'asha.g',
+            'email'    => 'guest@abc.in',
+            'bio'      => 'Guest contributor, Raipur',
             'role'     => 2,
         ],
         [

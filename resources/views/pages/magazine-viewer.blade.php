@@ -17,12 +17,12 @@
 <body class="magazine-body">
 
 <header class="magazine-bar" role="banner">
-  <a href="{{ route('reports') }}" class="magazine-bar__back" aria-label="Back to Reports and Insights">
+  <button type="button" class="magazine-bar__back js-report-viewer-back" data-fallback="{{ route('reports') }}" aria-label="Back to Reports and Insights">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M15 18l-6-6 6-6"/>
     </svg>
     <span>Reports</span>
-  </a>
+  </button>
 
   <div class="magazine-bar__title">
     <span class="magazine-bar__type">{{ $magazineType }}</span>
@@ -103,6 +103,7 @@
   window.MAGAZINE_TOTAL = {{ count($magazinePages) }};
 </script>
 <script src="{{ asset('assets/js/magazine.js') }}?v={{ filemtime(public_path('assets/js/magazine.js')) }}"></script>
+<script src="{{ asset('assets/js/report-viewer.js') }}?v={{ filemtime(public_path('assets/js/report-viewer.js')) }}"></script>
 
 </body>
 </html>

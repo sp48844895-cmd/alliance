@@ -8,8 +8,11 @@ use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DistrictController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\HomeSliderController;
 use App\Http\Controllers\Admin\LearningCategoryController;
 use App\Http\Controllers\Admin\LearningCornerController;
+use App\Http\Controllers\Admin\LearningMainCategoryController;
+use App\Http\Controllers\Admin\LearningSubCategoryController;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\ProgramController;
@@ -23,10 +26,12 @@ use App\Http\Controllers\Author\ProfileController as AuthorProfileController;
 use App\Http\Controllers\Author\StoryController as AuthorStoryController;
 use Illuminate\Support\Facades\Route;
 
+// Author portal (guest contributors)
 Route::middleware(['auth', 'author'])->prefix('author')->name('author.')->group(function () {
     Route::get('/', [AuthorDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [AuthorProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [AuthorProfileController::class, 'update'])->name('profile.update');
+    Route::post('/stories/editor-image', [AuthorStoryController::class, 'uploadEditorImage'])->name('stories.editor-image');
     Route::get('/stories', [AuthorStoryController::class, 'index'])->name('stories.index');
     Route::get('/stories/create', [AuthorStoryController::class, 'create'])->name('stories.create');
     Route::post('/stories', [AuthorStoryController::class, 'store'])->name('stories.store');
@@ -34,9 +39,11 @@ Route::middleware(['auth', 'author'])->prefix('author')->name('author.')->group(
     Route::put('/stories/{id}', [AuthorStoryController::class, 'update'])->name('stories.update');
 });
 
+// Admin CMS
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Content: blogs & stories
     Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
     Route::get('/blogs/create', [BlogController::class, 'create'])->name('blogs.create');
     Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
@@ -52,6 +59,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/stories/{id}/reject', [AdminStoryController::class, 'reject'])->name('stories.reject');
     Route::delete('/stories/{id}', [AdminStoryController::class, 'destroy'])->name('stories.destroy');
 
+    // Taxonomy
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
@@ -59,6 +67,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/categories/{id}/toggle', [CategoryController::class, 'toggleStatus'])->name('categories.toggle');
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
+    // Events & banners
     Route::get('/events', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
@@ -73,6 +82,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
     Route::get('/banners/{id}/edit', [BannerController::class, 'edit'])->name('banners.edit');
     Route::put('/banners/{id}', [BannerController::class, 'update'])->name('banners.update');
+    Route::post('/banners/{id}/toggle', [BannerController::class, 'toggleStatus'])->name('banners.toggle');
     Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
 
     Route::get('/sbc-pool', [SbcPoolMemberController::class, 'index'])->name('sbc-pool.index');
@@ -83,12 +93,27 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/sbc-pool/{id}/toggle', [SbcPoolMemberController::class, 'toggleStatus'])->name('sbc-pool.toggle');
     Route::delete('/sbc-pool/{id}', [SbcPoolMemberController::class, 'destroy'])->name('sbc-pool.destroy');
 
+    // Learning corner hierarchy
     Route::get('/learning-cats', [LearningCategoryController::class, 'index'])->name('learning-cats.index');
     Route::post('/learning-cats', [LearningCategoryController::class, 'store'])->name('learning-cats.store');
     Route::get('/learning-cats/{id}/edit', [LearningCategoryController::class, 'edit'])->name('learning-cats.edit');
     Route::put('/learning-cats/{id}', [LearningCategoryController::class, 'update'])->name('learning-cats.update');
     Route::post('/learning-cats/{id}/toggle', [LearningCategoryController::class, 'toggleStatus'])->name('learning-cats.toggle');
     Route::delete('/learning-cats/{id}', [LearningCategoryController::class, 'destroy'])->name('learning-cats.destroy');
+
+    Route::get('/learning-main-cats', [LearningMainCategoryController::class, 'index'])->name('learning-main-cats.index');
+    Route::post('/learning-main-cats', [LearningMainCategoryController::class, 'store'])->name('learning-main-cats.store');
+    Route::get('/learning-main-cats/{id}/edit', [LearningMainCategoryController::class, 'edit'])->name('learning-main-cats.edit');
+    Route::put('/learning-main-cats/{id}', [LearningMainCategoryController::class, 'update'])->name('learning-main-cats.update');
+    Route::post('/learning-main-cats/{id}/toggle', [LearningMainCategoryController::class, 'toggleStatus'])->name('learning-main-cats.toggle');
+    Route::delete('/learning-main-cats/{id}', [LearningMainCategoryController::class, 'destroy'])->name('learning-main-cats.destroy');
+
+    Route::get('/learning-sub-cats', [LearningSubCategoryController::class, 'index'])->name('learning-sub-cats.index');
+    Route::post('/learning-sub-cats', [LearningSubCategoryController::class, 'store'])->name('learning-sub-cats.store');
+    Route::get('/learning-sub-cats/{id}/edit', [LearningSubCategoryController::class, 'edit'])->name('learning-sub-cats.edit');
+    Route::put('/learning-sub-cats/{id}', [LearningSubCategoryController::class, 'update'])->name('learning-sub-cats.update');
+    Route::post('/learning-sub-cats/{id}/toggle', [LearningSubCategoryController::class, 'toggleStatus'])->name('learning-sub-cats.toggle');
+    Route::delete('/learning-sub-cats/{id}', [LearningSubCategoryController::class, 'destroy'])->name('learning-sub-cats.destroy');
 
     Route::get('/learning-corner', [LearningCornerController::class, 'index'])->name('learning-corner.index');
     Route::get('/learning-corner/create', [LearningCornerController::class, 'create'])->name('learning-corner.create');
@@ -97,20 +122,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/learning-corner/{id}', [LearningCornerController::class, 'update'])->name('learning-corner.update');
     Route::delete('/learning-corner/{id}', [LearningCornerController::class, 'destroy'])->name('learning-corner.destroy');
 
+    // Approved members (read-only) & join applications
     Route::get('/memberships', [MembershipController::class, 'index'])->name('memberships.index');
     Route::get('/memberships/export', [MembershipController::class, 'export'])->name('memberships.export');
-    Route::get('/memberships/create', [MembershipController::class, 'create'])->name('memberships.create');
-    Route::post('/memberships', [MembershipController::class, 'store'])->name('memberships.store');
     Route::get('/memberships/{id}', [MembershipController::class, 'show'])->name('memberships.show');
-    Route::get('/memberships/{id}/edit', [MembershipController::class, 'edit'])->name('memberships.edit');
-    Route::put('/memberships/{id}', [MembershipController::class, 'update'])->name('memberships.update');
-    Route::delete('/memberships/{id}', [MembershipController::class, 'destroy'])->name('memberships.destroy');
 
     Route::get('/registrations', [ProgramRegistrationController::class, 'index'])->name('registrations.index');
     Route::get('/registrations/{id}', [ProgramRegistrationController::class, 'show'])->name('registrations.show');
     Route::put('/registrations/{id}/status', [ProgramRegistrationController::class, 'updateStatus'])->name('registrations.updateStatus');
     Route::delete('/registrations/{id}', [ProgramRegistrationController::class, 'destroy'])->name('registrations.destroy');
 
+    // Inbound messages
     Route::get('/contact-messages', [ContactMessageController::class, 'index'])->name('contact-messages.index');
     Route::get('/contact-messages/{id}', [ContactMessageController::class, 'show'])->name('contact-messages.show');
     Route::post('/contact-messages/{id}/mark-read', [ContactMessageController::class, 'markRead'])->name('contact-messages.markRead');
@@ -125,6 +147,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/mails/{id}/replies/{replyId}', [MailController::class, 'destroyReply'])->name('mails.replies.destroy');
     Route::delete('/mails/{id}', [MailController::class, 'destroy'])->name('mails.destroy');
 
+    // Geography lookups
     Route::get('/districts', [DistrictController::class, 'index'])->name('districts.index');
     Route::post('/districts', [DistrictController::class, 'store'])->name('districts.store');
     Route::get('/districts/{id}/edit', [DistrictController::class, 'edit'])->name('districts.edit');
@@ -139,6 +162,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/blocks/{id}/toggle', [BlockController::class, 'toggleStatus'])->name('blocks.toggle');
     Route::delete('/blocks/{id}', [BlockController::class, 'destroy'])->name('blocks.destroy');
 
+    // Site programs & settings
     Route::get('/programs', [ProgramController::class, 'index'])->name('programs.index');
     Route::get('/programs/create', [ProgramController::class, 'create'])->name('programs.create');
     Route::post('/programs', [ProgramController::class, 'store'])->name('programs.store');
@@ -146,6 +170,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/programs/{id}', [ProgramController::class, 'update'])->name('programs.update');
     Route::post('/programs/{id}/toggle', [ProgramController::class, 'toggleStatus'])->name('programs.toggle');
     Route::delete('/programs/{id}', [ProgramController::class, 'destroy'])->name('programs.destroy');
+
+    Route::get('/home-slider', [HomeSliderController::class, 'index'])->name('home-slider.index');
+    Route::get('/home-slider/create', [HomeSliderController::class, 'create'])->name('home-slider.create');
+    Route::post('/home-slider', [HomeSliderController::class, 'store'])->name('home-slider.store');
+    Route::get('/home-slider/{id}/edit', [HomeSliderController::class, 'edit'])->name('home-slider.edit');
+    Route::put('/home-slider/{id}', [HomeSliderController::class, 'update'])->name('home-slider.update');
+    Route::post('/home-slider/{id}/toggle', [HomeSliderController::class, 'toggleStatus'])->name('home-slider.toggle');
+    Route::delete('/home-slider/{id}', [HomeSliderController::class, 'destroy'])->name('home-slider.destroy');
 
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');

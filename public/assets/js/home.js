@@ -96,11 +96,118 @@
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const hasNav = total > 1;
+    const hero = el.closest('.hero');
+    const prevEl = hero?.querySelector('.hero-banner-prev');
+    const nextEl = hero?.querySelector('.hero-banner-next');
+    const paginationEl = hero?.querySelector('.hero-banner-pagination');
+    const titleEl = document.getElementById('hero-banner-title');
+    const ledeEl = document.getElementById('hero-banner-lede');
+    const chapterEl = document.getElementById('hero-banner-chapter');
+    const cardWrapEl = document.getElementById('hero-banner-card-wrap');
+    const cardImageEl = document.getElementById('hero-banner-card-image');
+    const copyWrap = document.getElementById('hero-banner-copy');
+    const mediaWrap = document.getElementById('hero-banner-media');
+    const syncTargets = [copyWrap, mediaWrap].filter(Boolean);
+    const canSyncContent = !!(titleEl && ledeEl && cardImageEl);
+
+    const readSlideData = (slideEl) => ({
+      title: slideEl?.dataset.title || '',
+      description: slideEl?.dataset.description || '',
+      smallTitle: slideEl?.dataset.smallTitle || '',
+      cardImage: slideEl?.dataset.cardImage || '',
+      cardUrl: slideEl?.dataset.cardUrl || '',
+      cardExternal: slideEl?.dataset.cardExternal === '1',
+    });
+
+    const syncCardLink = (data) => {
+      if (!cardWrapEl || !cardImageEl) return;
+
+      const existingLink = cardWrapEl.querySelector('#hero-banner-card-link');
+      const url = data.cardUrl || '';
+
+      if (!url) {
+        if (existingLink) {
+          existingLink.replaceWith(cardImageEl);
+        }
+        return;
+      }
+
+      if (existingLink) {
+        existingLink.href = url;
+        if (data.cardExternal) {
+          existingLink.target = '_blank';
+          existingLink.rel = 'noopener noreferrer';
+        } else {
+          existingLink.removeAttribute('target');
+          existingLink.removeAttribute('rel');
+        }
+        if (!existingLink.contains(cardImageEl)) {
+          existingLink.appendChild(cardImageEl);
+        }
+        return;
+      }
+
+      const link = document.createElement('a');
+      link.id = 'hero-banner-card-link';
+      link.className = 'hero-impact-banner__link';
+      link.href = url;
+      if (data.cardExternal) {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      }
+      cardWrapEl.insertBefore(link, cardImageEl);
+      link.appendChild(cardImageEl);
+    };
+
+    const applyContent = (data) => {
+      if (!canSyncContent) return;
+      if (data.title) titleEl.textContent = data.title;
+      if (data.description) ledeEl.textContent = data.description;
+      if (chapterEl) {
+        if (data.smallTitle) {
+          chapterEl.textContent = data.smallTitle;
+          chapterEl.hidden = false;
+        } else {
+          chapterEl.hidden = true;
+        }
+      }
+      if (data.cardImage) {
+        cardImageEl.src = data.cardImage;
+        cardImageEl.alt = data.title;
+      }
+      syncCardLink(data);
+    };
+
+    const syncHeroContent = (swiper) => {
+      if (!canSyncContent) return;
+      const slideEl = swiper.slides[swiper.activeIndex];
+      const data = readSlideData(slideEl);
+      if (!data.title && !data.description && !data.cardImage && !data.smallTitle) return;
+
+      if (reduceMotion) {
+        applyContent(data);
+        return;
+      }
+
+      syncTargets.forEach((node) => node.classList.add('hero-banner-sync--out'));
+
+      window.setTimeout(() => {
+        applyContent(data);
+        syncTargets.forEach((node) => {
+          node.classList.remove('hero-banner-sync--out');
+          node.classList.add('hero-banner-sync--in');
+        });
+        window.setTimeout(() => {
+          syncTargets.forEach((node) => node.classList.remove('hero-banner-sync--in'));
+        }, 380);
+      }, 220);
+    };
 
     new Swiper(el, {
       slidesPerView: 1,
       spaceBetween: 0,
-      loop: hasNav,
+      loop: total > 2,
+      rewind: total === 2,
       grabCursor: hasNav,
       watchOverflow: true,
       speed: 600,
@@ -109,17 +216,26 @@
         disableOnInteraction: false,
         pauseOnMouseEnter: true,
       },
-      pagination: hasNav ? {
-        el: document.querySelector('.hero-banner-controls .hero-banner-pagination'),
+      pagination: hasNav && paginationEl ? {
+        el: paginationEl,
         clickable: true,
+        type: 'bullets',
       } : false,
-      navigation: hasNav ? {
-        prevEl: document.querySelector('.hero-banner-controls .hero-banner-prev'),
-        nextEl: document.querySelector('.hero-banner-controls .hero-banner-next'),
+      navigation: hasNav && prevEl && nextEl ? {
+        prevEl,
+        nextEl,
       } : false,
       keyboard: {
         enabled: hasNav,
         onlyInViewport: true,
+      },
+      on: {
+        init(swiper) {
+          swiper.pagination?.update?.();
+        },
+        slideChangeTransitionStart(swiper) {
+          syncHeroContent(swiper);
+        },
       },
     });
   };

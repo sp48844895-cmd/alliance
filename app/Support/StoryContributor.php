@@ -4,7 +4,7 @@ namespace App\Support;
 
 class StoryContributor
 {
-    public const TYPES = ['volunteer', 'intern', 'ngo'];
+    public const TYPES = ['guest', 'intern', 'ngo'];
 
     public static function types(): array
     {
@@ -19,7 +19,7 @@ class StoryContributor
     public static function portalLabel(?string $type): string
     {
         return match ($type) {
-            'volunteer' => 'Individual Volunteer',
+            'guest' => 'Guest',
             'intern'    => 'Intern',
             'ngo'       => 'CSO / NGO / Firm / Organization',
             default     => 'Story portal',

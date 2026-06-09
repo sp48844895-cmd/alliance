@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('login.show', 'admin');
             }
             if ($request->is('author', 'author/*')) {
-                return route('login.show', 'volunteer');
+                return route('login.show', 'guest');
             }
             if ($request->is('intern', 'intern/*')) {
                 return route('login.show', 'intern');

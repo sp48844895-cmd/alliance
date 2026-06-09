@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Support\MediaUrl;
+use App\Support\PageRoute;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -218,7 +219,7 @@ class BlogStoryService
     {
         $related = [];
 
-        foreach ($slugs as $slug) {
+        foreach (array_unique(array_filter($slugs)) as $slug) {
             $story = $this->findStoryForPage($slug);
 
             if ($story) {
@@ -226,7 +227,34 @@ class BlogStoryService
             }
         }
 
-        return $related;
+        return $this->uniqueStoriesBySlug($related);
+    }
+
+    public function relatedStoriesForCurrentStory(array $story, int $limit = 2): array
+    {
+        $currentSlug = (string) ($story['slug'] ?? '');
+        $slugs = array_values(array_filter((array) ($story['related_slugs'] ?? [])));
+
+        if ($slugs !== []) {
+            $fromSlugs = $this->uniqueStoriesBySlug(array_values(array_filter(
+                $this->relatedStoriesForPage($slugs),
+                fn (array $item) => (string) ($item['slug'] ?? '') !== $currentSlug
+            )));
+
+            if ($fromSlugs !== []) {
+                return array_slice($fromSlugs, 0, $limit);
+            }
+        }
+
+        $exceptId = (int) ($story['id'] ?? 0);
+        $category = trim((string) ($story['category'] ?? ''));
+        $related = $this->fetchRelatedStoryRows($exceptId, $category, $limit);
+
+        if ($related !== [] || $category === '') {
+            return $related;
+        }
+
+        return $this->fetchRelatedStoryRows($exceptId, '', $limit);
     }
 
     public function recentForStorySidebar(int $exceptId = 0, int $limit = 5): array
@@ -314,8 +342,9 @@ class BlogStoryService
 
     private function formatCard(object $row, int $index): array
     {
-        $content = trim(strip_tags(html_entity_decode((string) $row->content, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
-        $lede = Str::limit($content !== '' ? $content : $row->title, 140);
+        $bodyHtml = StoryContent::sanitize((string) $row->content);
+        $plainText = $this->cleanStoryText($bodyHtml !== '' ? strip_tags($bodyHtml) : (string) $row->content);
+        $lede = Str::limit($plainText !== '' ? $plainText : $row->title, 140);
         $date = Carbon::parse($row->date_created);
         $author = $this->authorName($row);
         $tags = $this->tagList((string) $row->tag);
@@ -329,6 +358,7 @@ class BlogStoryService
             'theme' => $themeSlug,
             'district' => $location !== '' ? Str::slug($location) : 'all',
             'date' => $date->format('Y-m-d'),
+            'where' => $date->format('j F Y'),
             'image' => $this->imageUrl((string) $row->image),
             'cat_label' => $this->categoryLabel($row->category_name),
             'location' => $location,
@@ -336,7 +366,7 @@ class BlogStoryService
             'authored_by' => 'Authored by '.$author,
             'title' => e($row->title),
             'lede' => $lede,
-            'url' => route('stories.show', $this->slugForRow($row)),
+            'url' => route(PageRoute::named('stories.show'), $this->slugForRow($row)),
         ], $this->sharePayload($row, $tags));
     }
 
@@ -347,13 +377,52 @@ class BlogStoryService
 
         return [
             'title' => $row->title,
-            'url' => route('stories.show', $this->slugForRow($row)),
+            'url' => route(PageRoute::named('stories.show'), $this->slugForRow($row)),
             'author' => $author,
             'category' => $row->category_name,
             'day' => $date->format('d'),
             'month' => Str::upper($date->format('M')),
+            'date_label' => $date->format('d M Y'),
             'date_iso' => $date->toDateString(),
         ];
+    }
+
+    private function fetchRelatedStoryRows(int $exceptId, string $category, int $limit): array
+    {
+        $query = $this->publishedQuery();
+
+        if ($exceptId > 0) {
+            $query->where('blog.id', '!=', $exceptId);
+        }
+
+        if ($category !== '') {
+            $query->where('categories.category_name', $category);
+        }
+
+        return $this->uniqueStoriesBySlug($query
+            ->limit($limit)
+            ->get()
+            ->map(fn ($row) => $this->formatStoryForDetail($row))
+            ->all());
+    }
+
+    private function uniqueStoriesBySlug(array $stories): array
+    {
+        $seen = [];
+        $unique = [];
+
+        foreach ($stories as $story) {
+            $slug = (string) ($story['slug'] ?? '');
+
+            if ($slug === '' || isset($seen[$slug])) {
+                continue;
+            }
+
+            $seen[$slug] = true;
+            $unique[] = $story;
+        }
+
+        return $unique;
     }
 
     private function formatHomeChampion(object $row, int $index): array
@@ -375,7 +444,7 @@ class BlogStoryService
             'authored_by' => 'Authored by '.$author,
             'title' => $row->title,
             'blurb' => $blurb,
-            'url' => route('stories.show', $this->slugForRow($row)),
+            'url' => route(PageRoute::named('stories.show'), $this->slugForRow($row)),
         ], $this->sharePayload($row, $tags));
     }
 
@@ -530,7 +599,7 @@ class BlogStoryService
             'body_html' => $bodyHtml,
             'content' => $bodyHtml,
             'related_slugs' => [],
-            'share_url' => route('stories.show', $story->slug),
+            'share_url' => route(PageRoute::named('stories.show'), $story->slug),
             'share_title' => (string) $story->title,
             'share_hashtags' => $this->shareHashtags($tags),
         ]);
@@ -598,7 +667,7 @@ class BlogStoryService
         $slug = $this->slugForRow($row);
 
         return [
-            'share_url' => route('stories.show', $slug),
+            'share_url' => route(PageRoute::named('stories.show'), $slug),
             'share_title' => (string) $row->title,
             'share_hashtags' => $this->shareHashtags($tags),
         ];

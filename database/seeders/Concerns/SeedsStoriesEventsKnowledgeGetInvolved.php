@@ -398,7 +398,7 @@ trait SeedsStoriesEventsKnowledgeGetInvolved
                 'cta_primary' => ['label' => 'Find your fit', 'href' => '#gi-join'],
                 'cta_secondary' => ['label' => 'Contact us', 'href' => 'contact', 'route' => true],
                 'pathways' => [
-                    ['num' => '01', 'label' => 'Volunteer', 'hint' => 'Field support', 'anchor' => 'gi-volunteer'],
+                    ['num' => '01', 'label' => 'Guest', 'hint' => 'Field support', 'anchor' => 'gi-guest'],
                     ['num' => '02', 'label' => 'Intern', 'hint' => 'Learn on the job', 'anchor' => 'gi-intern'],
                     ['num' => '03', 'label' => 'Fellowship', 'hint' => 'Structured programme', 'anchor' => 'gi-fellow'],
                     ['num' => '04', 'label' => 'Organisation', 'hint' => 'CSO / NGO / firm', 'anchor' => 'gi-partner'],
@@ -413,13 +413,14 @@ trait SeedsStoriesEventsKnowledgeGetInvolved
                 ],
                 'options' => [
                     [
-                        'slug' => 'volunteer',
+                        'slug' => 'guest',
                         'prefix' => 'Engage with us as',
-                        'title' => 'an Individual Volunteer',
+                        'title' => 'a Guest',
                         'description' => 'Support field outreach, local events and community learning across districts.',
                         'cta_label' => 'Register',
-                        'pathway' => 'volunteer',
-                        'icon' => 'volunteer',
+                        'cta_url' => '/get-involved/register/guest',
+                        'pathway' => 'guest',
+                        'icon' => 'guest',
                         'tone' => 'ochre',
                     ],
                     [

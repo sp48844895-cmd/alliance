@@ -69,6 +69,30 @@
     el.textContent = new Date().getFullYear();
   });
 
+  document.querySelectorAll('[data-st-share-copy]').forEach(btn => {
+    const defaultLabel = btn.getAttribute('aria-label') || 'Copy link to share on Instagram';
+
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      const url = btn.dataset.shareUrl || window.location.href;
+      const text = btn.dataset.shareText || '';
+      const payload = text !== '' ? `${text}\n${url}` : url;
+
+      try {
+        await navigator.clipboard.writeText(payload);
+        btn.setAttribute('aria-label', 'Link copied');
+        btn.classList.add('is-copied');
+        window.setTimeout(() => {
+          btn.setAttribute('aria-label', defaultLabel);
+          btn.classList.remove('is-copied');
+        }, 2000);
+      } catch (_) {
+        window.prompt('Copy this link to share on Instagram:', payload);
+      }
+    });
+  });
+
   document.querySelectorAll('[data-st-share]').forEach(btn => {
     const label = btn.querySelector('.st-share-btn__label');
     const defaultLabel = label ? label.textContent : 'Share';

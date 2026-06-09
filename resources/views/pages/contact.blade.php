@@ -5,14 +5,14 @@
 
 @php
     $pathwaySubjects = [
-        'volunteer' => 'Volunteer registration — ChhattisgarhABC',
+        'guest' => 'Guest registration — ChhattisgarhABC',
         'intern' => 'Intern application — ChhattisgarhABC',
         'fellow' => 'Fellowship application — ChhattisgarhABC',
         'partner' => 'Organisation partnership — ChhattisgarhABC',
     ];
     $activePathway = old('pathway', request('pathway'));
     $defaultSubject = $pathwaySubjects[$activePathway] ?? old('subject', '');
-    $requiresAccount = in_array($activePathway, ['volunteer', 'partner'], true);
+    $requiresAccount = in_array($activePathway, ['guest', 'partner'], true);
 @endphp
 
 @section('content')
@@ -61,8 +61,8 @@
         <div class="contact-form-card" data-aos="fade-up">
           <span class="chapter"><b>{{ $pageSections['contact_form']['chapter'] ?? '01' }}</b> · Message</span>
           <h2 id="contact-form-h">
-            @if($activePathway === 'volunteer')
-              Volunteer <em>registration</em>
+            @if($activePathway === 'guest')
+              Guest <em>registration</em>
             @elseif($activePathway === 'partner')
               Organisation <em>partnership</em>
             @else
@@ -73,7 +73,7 @@
             @if($requiresAccount)
               Create your account and send your application in one step. Choose a password (at least 8 characters) to sign in after the team approves your registration.
             @else
-              {{ $pageSections['contact_form']['description'] ?? 'Your email address will not be published. Share a few details and the team will respond on email or phone.' }}
+              {{ $pageSections['contact_form']['description'] ?? 'Your email address will not be published. Share a few details and the team will respond by email.' }}
             @endif
           </p>
 
@@ -128,6 +128,9 @@
 
         <aside class="contact-aside" data-aos="fade-up" data-aos-delay="120" aria-label="Contact details">
           @foreach ($pageSections['contact_cards']['cards'] ?? [] as $card)
+            @if (($card['icon'] ?? '') === 'phone')
+              @continue
+            @endif
             <article class="contact-card">
               <span class="contact-card-icon" aria-hidden="true">
                 @if ($card['icon'] === 'mail')

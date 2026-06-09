@@ -180,7 +180,7 @@ class LoginController extends Controller
             return 'These credentials do not match our records.';
         }
 
-        if (in_array($registration->status, ['new', 'reviewed'], true)) {
+        if (in_array($registration->status, ['pending', 'reviewed', 'new'], true)) {
             return 'Your application is under review.';
         }
 

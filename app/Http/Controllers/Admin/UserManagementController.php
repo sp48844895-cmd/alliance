@@ -30,7 +30,7 @@ class UserManagementController extends Controller
             });
         }
 
-        $allowedTypes = ['admin', 'volunteer', 'intern', 'fellow', 'ngo'];
+        $allowedTypes = ['admin', 'guest', 'intern', 'fellow', 'ngo'];
         if ($type !== null && $type !== '' && in_array($type, $allowedTypes, true)) {
             $query->where('type', $type);
         }
@@ -67,7 +67,7 @@ class UserManagementController extends Controller
             'username' => 'required|string|max:50|unique:users,username',
             'email'    => 'required|email|max:100|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'type'     => 'required|in:admin,volunteer,intern,fellow,ngo',
+            'type'     => 'required|in:admin,guest,intern,fellow,ngo',
             'role'     => 'required|in:1,2',
             'bio'      => 'nullable|string|max:2000',
             'image'    => 'nullable|image',
@@ -119,7 +119,7 @@ class UserManagementController extends Controller
             'username'     => 'required|string|max:50|unique:users,username,' . $id,
             'email'        => 'required|email|max:100|unique:users,email,' . $id,
             'password'     => 'nullable|string|min:8|confirmed',
-            'type'         => 'required|in:admin,volunteer,intern,fellow,ngo',
+            'type'         => 'required|in:admin,guest,intern,fellow,ngo',
             'role'         => 'required|in:1,2',
             'bio'          => 'nullable|string|max:2000',
             'image'        => 'nullable|image',

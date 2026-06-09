@@ -13,6 +13,7 @@ class ReportsPageService
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get([
+                'id',
                 'title',
                 'type',
                 'cover_path',
@@ -55,10 +56,13 @@ class ReportsPageService
             $previewUrl = route('magazine', ['slug' => $flipbookSlug]);
             $previewExists = true;
         } else {
-            $previewUrl = $previewExists ? asset($preview) : '#reports-title';
+            $previewUrl = $previewExists
+                ? route('reports.preview', ['report' => $row->id])
+                : '#reports-title';
         }
 
         return [
+            'id' => (int) $row->id,
             'title' => $row->title,
             'type' => $row->type ?: 'Report',
             'cover' => $cover,

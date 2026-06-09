@@ -43,7 +43,7 @@
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(0,0,0,0.12);
     transform: translateY(0);
-    transition: box-shadow 350ms ease;
+    transition: transform 500ms ease, box-shadow 350ms ease;
   }
   .card img {
     width: 100%;
@@ -53,14 +53,14 @@
   }
   .swiper-slide-prev .card,
   .swiper-slide-next .card {
-    transform: translateY(56px);
+    transform: translateY(0);
     box-shadow: 0 20px 50px rgba(0,0,0,0.12);
   }
   .swiper-slide-prev .card {
-    transform: translateX(-58px) translateY(56px) rotate(-20deg);
+    transform: translateY(0);
   }
   .swiper-slide-next .card {
-    transform: translateX(58px) translateY(56px) rotate(20deg);
+    transform: translateY(0);
   }
 
   .info {
@@ -115,13 +115,13 @@
     }
     .swiper-slide-prev .card,
     .swiper-slide-next .card {
-      transform: translateY(34px);
+      transform: translateY(0);
     }
     .swiper-slide-prev .card {
-      transform: translateX(-24px) translateY(34px) rotate(-14deg);
+      transform: translateY(0);
     }
     .swiper-slide-next .card {
-      transform: translateX(24px) translateY(34px) rotate(14deg);
+      transform: translateY(0);
     }
     .info {
       margin-top: 18px;

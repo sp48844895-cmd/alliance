@@ -7,9 +7,9 @@ use Illuminate\Contracts\View\View;
 
 trait LoadsPageContent
 {
-    protected function pageView(string $view, array $data = []): View
+    protected function pageView(string $view): View
     {
-        return view($view, $data);
+        return view($view);
     }
 
     protected function pageSection(string $routeName, string $key, array $default = []): array

@@ -98,6 +98,8 @@ class StoryContent
     {
         return Str::contains(strtolower($path), [
             'uploads/story',
+            'uploads/stories',
+            'uploads/blogs',
             'storage/story',
             'stories/uploads/story',
         ]);

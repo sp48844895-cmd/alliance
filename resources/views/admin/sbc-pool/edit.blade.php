@@ -43,7 +43,7 @@
             <div class="flex items-end gap-3">
                 <x-admin-image
                     :filename="$member->photo"
-                    folder="storage/sbc-pool"
+                    folder="uploads/sbc-pool"
                     class="w-16 h-16 rounded-full object-contain border border-[var(--color-line)]"
                     icon="bi-person" />
                 <span class="text-xs text-[var(--color-mute)]">{{ $member->photo ?: 'No photo' }}</span>

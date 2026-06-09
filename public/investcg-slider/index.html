@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles_optimized.css" />
+    <title>Card Slider</title>
+  </head>
+  <body>
+    <section class="card-slider-section">
+      <div class="card-slider-content">
+        <div class="card-slider-header">
+          <h2 class="card-slider-title">A nation powered by progress</h2>
+          <p class="card-slider-description">
+            Where Estonia leads, the world follows
+          </p>
+        </div>
+
+        <div class="card-slider-container">
+          <div class="card-slider-drag-handle"></div>
+          <div class="card-slider-circle">
+            <!-- 16 Cards positioned around circle -->
+            <div class="card-slider-card" style="transform: rotate(0deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_1.jpg" alt="Card 1" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(22.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image.jpg" alt="Card 2" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(45deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_2.jpg" alt="Card 3" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(67.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_8.jpg" alt="Card 4" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(90deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_9.jpg" alt="Card 5" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(112.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_4.png" alt="Card 6" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(135deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_1.jpg" alt="Card 7" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(157.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image.jpg" alt="Card 8" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(180deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_2.jpg" alt="Card 9" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(202.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_8.jpg" alt="Card 10" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(225deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_9.jpg" alt="Card 11" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(247.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_4.png" alt="Card 12" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(270deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_1.jpg" alt="Card 13" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(292.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image.jpg" alt="Card 14" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(315deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_2.jpg" alt="Card 15" class="card-image" />
+              </div>
+            </div>
+            <div class="card-slider-card" style="transform: rotate(337.5deg); opacity: 1">
+              <div class="card-content">
+                <img src="images/image_8.jpg" alt="Card 16" class="card-image" />
+              </div>
+            </div>
+          </div>
+
+          <footer class="card-slider-footer">
+            <div class="active-card-content">
+              <h3 class="active-card-title">#1 for startups and unicorns</h3>
+              <p class="active-card-description">
+                We're #1 in Europe for startups per capita and #1 globally for
+                unicorns per capita
+              </p>
+            </div>
+            <nav class="card-slider-navigation">
+              <button class="nav-btn nav-prev" aria-label="Previous slide">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M14 17L9 12L14 7"></path>
+                </svg>
+              </button>
+              <button class="nav-btn nav-next" aria-label="Next slide">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M10 7L15 12L10 17"></path>
+                </svg>
+              </button>
+            </nav>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <script src="slider-optimized.js"></script>
+  </body>
+</html>

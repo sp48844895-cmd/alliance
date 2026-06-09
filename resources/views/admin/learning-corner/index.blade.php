@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Learning Corner')
+@section('title', 'Learning resources')
 @section('breadcrumb')
-    <span class="text-[var(--color-ink-2)]">Learning Corner</span>
+    <span class="text-[var(--color-ink-2)]">Learning resources</span>
 @endsection
-@section('page_title', 'Learning Corner')
+@section('page_title', 'Learning resources')
 
 @section('topbar_actions')
     <a href="{{ route('admin.learning-corner.create') }}" class="btn btn-primary btn-sm">
@@ -14,20 +14,33 @@
 @endsection
 
 @section('content')
+    <p class="text-sm text-[var(--color-mute)] mb-5">Step 3: Add learning materials under a subcategory.</p>
+
     <form method="GET" action="{{ route('admin.learning-corner.index') }}" class="card p-4 mb-5">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-            <div class="md:col-span-5">
-                <label class="label" for="cat_id">Category</label>
-                <select id="cat_id" name="cat_id" class="select">
-                    <option value="">All categories</option>
-                    @foreach ($categories as $c)
-                        <option value="{{ $c->id }}" @selected((string) $filters['cat_id'] === (string) $c->id)>
-                            {{ $c->cat_name }}
+            <div class="md:col-span-3">
+                <label class="label" for="main_id">Main category</label>
+                <select id="main_id" name="main_id" class="select">
+                    <option value="">All main</option>
+                    @foreach ($mainCategories as $m)
+                        <option value="{{ $m->id }}" @selected((string) $filters['main_id'] === (string) $m->id)>
+                            {{ $m->cat_name }}
                         </option>
                     @endforeach
                 </select>
             </div>
-            <div class="md:col-span-4">
+            <div class="md:col-span-3">
+                <label class="label" for="cat_id">Subcategory</label>
+                <select id="cat_id" name="cat_id" class="select">
+                    <option value="">All subcategories</option>
+                    @foreach ($subcategories as $c)
+                        <option value="{{ $c->id }}" @selected((string) $filters['cat_id'] === (string) $c->id)>
+                            {{ $c->main_name }} › {{ $c->cat_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="md:col-span-3">
                 <label class="label" for="m_type">Resource type</label>
                 <select id="m_type" name="m_type" class="select">
                     <option value="">All types</option>
@@ -41,9 +54,9 @@
             <div class="md:col-span-3 flex gap-2">
                 <button type="submit" class="btn btn-primary btn-sm flex-1">
                     <i class="bi bi-funnel"></i>
-                    <span>Apply filters</span>
+                    <span>Apply</span>
                 </button>
-                @if ($filters['cat_id'] || $filters['m_type'])
+                @if ($filters['main_id'] || $filters['cat_id'] || $filters['m_type'])
                     <a href="{{ route('admin.learning-corner.index') }}" class="btn btn-ghost btn-sm" title="Clear">
                         <i class="bi bi-x-lg"></i>
                     </a>
@@ -56,7 +69,7 @@
         :empty="$resources->isEmpty()"
         empty-icon="bi-inbox"
         empty-title="No resources yet"
-        empty-text="Add a learning resource for your community.">
+        empty-text="Add a learning resource under a subcategory.">
         <x-slot:emptyAction>
             <a href="{{ route('admin.learning-corner.create') }}" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-lg"></i>
@@ -92,11 +105,10 @@
                                     <span class="pill pill-mute text-xs">Draft</span>
                                 @endif
                             </div>
-                            @if ($r->content)
-                                <p class="text-xs text-[var(--color-mute)] mt-1 line-clamp-1">{{ $r->content }}</p>
-                            @endif
                         </td>
-                        <td class="text-sm text-[var(--color-mute)]">{{ $r->cat_name ?? '—' }}</td>
+                        <td class="text-sm text-[var(--color-mute)]">
+                            {{ $r->main_name }} › {{ $r->sub_name }}
+                        </td>
                         <td class="text-xs text-[var(--color-mute)] whitespace-nowrap">
                             {{ $r->date ? \Illuminate\Support\Carbon::parse($r->date)->format('d M Y') : '—' }}
                         </td>

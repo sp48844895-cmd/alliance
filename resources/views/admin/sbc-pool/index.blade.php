@@ -41,7 +41,7 @@
                         <td>
                             <x-admin-image
                                 :filename="$member->photo"
-                                folder="storage/sbc-pool"
+                                folder="uploads/sbc-pool"
                                 class="w-10 h-10 rounded-full object-contain border border-[var(--color-line)]"
                                 icon="bi-person" />
                         </td>

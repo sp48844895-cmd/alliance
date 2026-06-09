@@ -5,6 +5,9 @@
 
 @section('content')
 <main id="main">
-  @include('sections.home.programs')
+
+{{-- Section: programs (same markup as home page) --}}
+@include('pages.partials.programs-section')
+
 </main>
 @endsection

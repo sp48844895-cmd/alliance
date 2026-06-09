@@ -90,7 +90,7 @@
         </a>
         @endif
         @if(($stats['new_applications'] ?? 0) > 0)
-        <a href="{{ route('admin.registrations.index', ['status' => 'new']) }}" class="stat ring-2 ring-[var(--color-clay-200)] hover:ring-[var(--color-clay-400)] transition">
+        <a href="{{ route('admin.registrations.index', ['status' => 'pending']) }}" class="stat ring-2 ring-[var(--color-clay-200)] hover:ring-[var(--color-clay-400)] transition">
             <div class="stat-label">New applications</div>
             <div class="stat-num mt-2 text-[var(--color-clay-600)]">{{ number_format($stats['new_applications']) }}</div>
             <div class="text-xs text-[var(--color-mute)] mt-1">Intern and fellowship sign-ups</div>
@@ -173,7 +173,7 @@
                             $type = $m->type ?: 'Individual';
                             $typeClass = match(strtolower($type)) {
                                 'cso/ngo', 'ngo'                 => 'pill-river',
-                                'volunteer'                      => 'pill-leaf',
+                                'guest'                      => 'pill-leaf',
                                 'firm/organization', 'firm'      => 'pill-amber',
                                 default                          => 'pill-clay',
                             };

@@ -19,7 +19,7 @@
 <body class="grain min-h-screen">
 
 @php
-    $portalType = auth()->user()->type ?? 'volunteer';
+    $portalType = auth()->user()->type ?? 'guest';
     $portalLabel = \App\Support\StoryContributor::portalLabel($portalType);
     $sections = [
         ['heading' => 'Overview', 'links' => [

@@ -53,7 +53,7 @@
         request()->routeIs('events*') => 'calendar',
         request()->routeIs('programs') => 'target',
         request()->routeIs('resources') => 'book',
-        request()->routeIs('learning-corner') => 'book',
+        request()->routeIs('learning-corner', 'learning-corner.main', 'learning-corner.sub') => 'book',
         request()->routeIs('get-involved') => 'users',
         request()->routeIs('members') => 'users',
         request()->routeIs('contact') => 'mail',

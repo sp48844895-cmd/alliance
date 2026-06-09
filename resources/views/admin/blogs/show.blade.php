@@ -22,9 +22,10 @@
 @section('content')
     @php
         $content = html_entity_decode((string) ($blog->content ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $storyBase = asset(config('media.presets.story.upload_folder', 'uploads/story')).'/';
         $content = str_replace(
-            ['../uploads/story/', 'uploads/story/'],
-            [asset('storage/story').'/', asset('storage/story').'/'],
+            ['../uploads/story/', 'uploads/story/', '../storage/story/', 'storage/story/'],
+            [$storyBase, $storyBase, $storyBase, $storyBase],
             $content
         );
     @endphp
@@ -35,7 +36,7 @@
                 <div class="lg:col-span-3">
                     <x-admin-image
                         :filename="$blog->image"
-                        folder="storage/story"
+                        folder="uploads/story"
                         class="w-full max-w-[220px] aspect-square rounded-lg object-cover border border-[var(--color-line)]"
                         icon="bi-journal-richtext" />
                 </div>

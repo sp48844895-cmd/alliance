@@ -15,14 +15,14 @@
         $authorName = trim(($story->fname ?? '') . ' ' . ($story->lname ?? ''));
         $thumb = $story->thumbnail_path ?? '';
         $roleLabels = [
-            'volunteer' => 'Individual Volunteer',
+            'guest' => 'Guest',
             'intern' => 'Intern',
             'ngo' => 'CSO / NGO / Firm / Organization',
             'admin' => 'Admin',
             'fellow' => 'Fellow',
         ];
         $rolePills = [
-            'volunteer' => 'pill-leaf',
+            'guest' => 'pill-leaf',
             'intern' => 'pill-amber',
             'ngo' => 'pill-clay',
             'admin' => 'pill-mute',

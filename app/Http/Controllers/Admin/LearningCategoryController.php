@@ -2,112 +2,56 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Concerns\TogglesRecordStatus;
 use App\Http\Controllers\Controller;
-use App\Services\KnowledgeHubPageService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
 
 class LearningCategoryController extends Controller
 {
-    use TogglesRecordStatus;
-
-    public function index()
+    public function index(): RedirectResponse
     {
-        $categories = DB::table('learning_cat')
-            ->orderBy('id', 'desc')
-            ->get();
-
-        return view('admin.learning-cats.index', compact('categories'));
+        return redirect()->route('admin.learning-main-cats.index');
     }
 
-    public function store(Request $request)
+    public function store(): RedirectResponse
     {
-        $data = $request->validate([
-            'cat_name' => 'required|string|max:255',
-            'cat_icon' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-]+$/',
-            'status'   => 'required|in:0,1',
-        ]);
-
-        $user = auth()->user();
-        $adminName = trim(($user->fname ?? '') . ' ' . ($user->lname ?? ''));
-
-        DB::table('learning_cat')->insert([
-            'cat_name'   => $data['cat_name'],
-            'cat_icon'   => $data['cat_icon'],
-            'status'     => (int) $data['status'],
-            'admin_name' => $adminName !== '' ? $adminName : ($user->fname ?? 'Admin'),
-            'created_at' => now(),
-        ]);
-
-        $this->clearKnowledgeHubCache();
-
-        return redirect()->route('admin.learning-cats.index')->with('success', 'Category saved');
+        return redirect()->route('admin.learning-main-cats.index');
     }
 
-    public function edit($id)
+    public function edit($id): RedirectResponse
     {
-        $category = DB::table('learning_cat')->where('id', $id)->first();
-        if (!$category) {
+        $category = \Illuminate\Support\Facades\DB::table('learning_cat')->where('id', $id)->first();
+        if (! $category) {
             abort(404);
         }
 
-        return view('admin.learning-cats.edit', compact('category'));
+        if ($category->parent_id) {
+            return redirect()->route('admin.learning-sub-cats.edit', $id);
+        }
+
+        return redirect()->route('admin.learning-main-cats.edit', $id);
     }
 
-    public function update(Request $request, $id)
+    public function update(): RedirectResponse
     {
-        $category = DB::table('learning_cat')->where('id', $id)->first();
-        if (!$category) {
+        return redirect()->route('admin.learning-main-cats.index');
+    }
+
+    public function toggleStatus($id): RedirectResponse
+    {
+        $category = \Illuminate\Support\Facades\DB::table('learning_cat')->where('id', $id)->first();
+        if (! $category) {
             abort(404);
         }
 
-        $data = $request->validate([
-            'cat_name' => 'required|string|max:255',
-            'cat_icon' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-]+$/',
-            'status'   => 'required|in:0,1',
-        ]);
-
-        DB::table('learning_cat')->where('id', $id)->update([
-            'cat_name' => $data['cat_name'],
-            'cat_icon' => $data['cat_icon'],
-            'status'   => (int) $data['status'],
-        ]);
-
-        $this->clearKnowledgeHubCache();
-
-        return redirect()->route('admin.learning-cats.index')->with('success', 'Category saved');
-    }
-
-    public function toggleStatus($id)
-    {
-        $response = $this->toggleRecordStatus('learning_cat', $id, 'status', [], 'Category status updated');
-        $this->clearKnowledgeHubCache();
-
-        return $response;
-    }
-
-    public function destroy($id)
-    {
-        $category = DB::table('learning_cat')->where('id', $id)->first();
-        if (!$category) {
-            abort(404);
+        if ($category->parent_id) {
+            return redirect()->route('admin.learning-sub-cats.index');
         }
 
-        $inUse = (int) DB::table('learning_corner')->where('cat_id', $id)->count();
-        if ($inUse > 0) {
-            return redirect()->back()->with('error', 'Cannot delete: this category is used by ' . $inUse . ' resource(s).');
-        }
-
-        DB::table('learning_cat')->where('id', $id)->delete();
-
-        $this->clearKnowledgeHubCache();
-
-        return redirect()->route('admin.learning-cats.index')->with('success', 'Category deleted');
+        return redirect()->route('admin.learning-main-cats.index');
     }
 
-    private function clearKnowledgeHubCache(): void
+    public function destroy(): RedirectResponse
     {
-        app(KnowledgeHubPageService::class)->clearCache();
+        return redirect()->route('admin.learning-main-cats.index');
     }
 }

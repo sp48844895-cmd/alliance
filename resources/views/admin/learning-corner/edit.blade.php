@@ -19,6 +19,12 @@
     <form method="POST" action="{{ route('admin.learning-corner.update', $resource->id) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        @include('admin.learning-corner._form', ['categories' => $categories, 'resource' => $resource])
+        @include('admin.learning-corner._form', [
+            'resource' => $resource,
+            'mainCategories' => $mainCategories,
+            'subcategories' => $subcategories,
+            'selectedMainId' => $selectedMainId,
+            'selectedCatId' => $selectedCatId,
+        ])
     </form>
 @endsection

@@ -71,10 +71,10 @@ class SbcResourcePoolService
             return null;
         }
 
-        $dir = public_path('storage/sbc-pool');
-
-        if (is_file($dir.'/'.$candidate)) {
-            return $candidate;
+        foreach ($this->poolFolders() as $folder) {
+            if (is_file(public_path($folder.'/'.$candidate))) {
+                return $candidate;
+            }
         }
 
         foreach ($this->poolImages() as $file) {
@@ -93,27 +93,35 @@ class SbcResourcePoolService
         }
 
         $this->cachedPoolImages = [];
-        $dir = public_path('storage/sbc-pool');
 
-        if (! is_dir($dir)) {
-            return $this->cachedPoolImages;
-        }
+        foreach ($this->poolFolders() as $folder) {
+            $dir = public_path($folder);
 
-        foreach (scandir($dir) ?: [] as $file) {
-            if ($file === '.' || $file === '..' || ! is_file($dir.'/'.$file)) {
+            if (! is_dir($dir)) {
                 continue;
             }
 
-            if (! preg_match('/\.(png|jpe?g|gif|webp|svg)$/i', $file)) {
-                continue;
-            }
+            foreach (scandir($dir) ?: [] as $file) {
+                if ($file === '.' || $file === '..' || ! is_file($dir.'/'.$file)) {
+                    continue;
+                }
 
-            $this->cachedPoolImages[] = $file;
+                if (! preg_match('/\.(png|jpe?g|gif|webp|svg)$/i', $file)) {
+                    continue;
+                }
+
+                $this->cachedPoolImages[] = $file;
+            }
         }
 
         sort($this->cachedPoolImages);
 
         return $this->cachedPoolImages;
+    }
+
+    private function poolFolders(): array
+    {
+        return (array) (config('media.presets.sbc-pool.folders') ?? ['uploads/sbc-pool', 'storage/sbc-pool']);
     }
 
     private function normalizeName(string $name): string

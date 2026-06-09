@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Support\MediaUrl;
+use App\Support\PageRoute;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -55,7 +56,7 @@ class EventPageService
                 'tag_type' => $this->eventTagType($event),
                 'title' => $event->event_name,
                 'description' => Str::limit($event->summary, 220),
-                'link' => route('events.show', $this->slugForRow($event)),
+                'link' => route(PageRoute::named('events.show'), $this->slugForRow($event)),
                 'link_text' => $status === 'upcoming' ? 'Register →' : 'View event →',
                 'featured' => false,
             ];
@@ -112,7 +113,7 @@ class EventPageService
             'mode' => $this->eventMode($event),
             'tag' => $this->eventTag($event),
             'tag_type' => $tagType,
-            'url' => route('events.show', $this->slugForRow($event)),
+            'url' => route(PageRoute::named('events.show'), $this->slugForRow($event)),
             'link_text' => ($date->isFuture() || $date->isToday()) ? 'Register →' : 'View event →',
         ];
     }
@@ -232,7 +233,7 @@ class EventPageService
                 'day' => $parsed->day,
                 'title' => $event->event_name,
                 'type' => $this->eventTagType($event),
-                'url' => route('events.show', $this->slugForRow($event)),
+                'url' => route(PageRoute::named('events.show'), $this->slugForRow($event)),
             ];
         }
 
@@ -252,7 +253,7 @@ class EventPageService
         $date = $event->parsed_date;
         $image = $this->imageUrl((string) $event->event_image);
         $isUpcoming = $date->isFuture() || $date->isToday();
-        $link = ! empty($event->googlemap) ? $event->googlemap : route('contact');
+        $link = ! empty($event->googlemap) ? $event->googlemap : route(PageRoute::named('contact'));
 
         return [
             'id' => $event->id,
@@ -317,7 +318,7 @@ class EventPageService
             'tag' => $this->eventTag($event),
             'title' => $event->event_name,
             'description' => Str::limit($event->summary, $this->homeTileDescriptionLimit($index)),
-            'url' => route('events.show', $this->slugForRow($event)),
+            'url' => route(PageRoute::named('events.show'), $this->slugForRow($event)),
         ];
     }
 

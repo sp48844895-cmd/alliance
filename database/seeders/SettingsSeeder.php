@@ -12,8 +12,6 @@ class SettingsSeeder extends Seeder
         $settings = [
             ['key' => 'contact_city',        'value' => 'Raipur, Chhattisgarh'],
             ['key' => 'contact_email',        'value' => 'info@chhttisgarhabc.org'],
-            ['key' => 'contact_phone',        'value' => '+91 90984 98822'],
-            ['key' => 'contact_phone_raw',    'value' => '+919098498822'],
             ['key' => 'footer_copyright',     'value' => 'ChhattisgarhABC · Alliance for Behaviour Change'],
             ['key' => 'footer_developer',     'value' => 'Ingenious Insights'],
             ['key' => 'social_facebook',      'value' => 'https://www.facebook.com/ChhattisgarhABC/'],

@@ -2,25 +2,30 @@
 
 namespace App\Services;
 
+use App\Models\ProgramRegistration;
 use App\Support\MediaUrl;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class MembershipPageService
 {
-    private ?array $cachedLogoFiles = null;
-
     public function filters(): array
     {
         return Cache::remember('membership.filters', 3600, function () {
-            $districts = DB::table('membership')
-                ->join('district', 'district.id', '=', 'membership.district')
-                ->select('district.id', 'district.district_name')
-                ->distinct()
-                ->orderBy('district.district_name')
-                ->get();
+            $districts = collect();
+
+            if (Schema::hasColumn('program_registrations', 'district_id')) {
+                $districts = DB::table('program_registrations')
+                    ->join('district', 'district.id', '=', 'program_registrations.district_id')
+                    ->whereIn('program_registrations.status', ProgramRegistration::approvedStatuses())
+                    ->select('district.id', 'district.district_name')
+                    ->distinct()
+                    ->orderBy('district.district_name')
+                    ->get();
+            }
 
             $districtOptions = [['value' => 'all', 'label' => 'All districts']];
 
@@ -31,26 +36,27 @@ class MembershipPageService
                 ];
             }
 
-            $types = DB::table('membership')
+            $types = DB::table('program_registrations')
+                ->whereIn('status', ProgramRegistration::approvedStatuses())
                 ->select('type')
-                ->whereNotNull('type')
-                ->where('type', '!=', '')
                 ->distinct()
                 ->orderBy('type')
                 ->pluck('type');
 
             $typeOptions = [['value' => 'all', 'label' => 'All member types']];
+            $memberTypes = ['all' => 'All member types'];
 
             foreach ($types as $type) {
-                $typeOptions[] = [
-                    'value' => $this->typeValue($type),
-                    'label' => $type,
-                ];
+                $label = ProgramRegistration::publicTypeLabel((string) $type);
+                $value = $this->typeValue((string) $type);
+                $typeOptions[] = ['value' => $value, 'label' => $label];
+                $memberTypes[$value] = $label;
             }
 
             return [
                 'districts' => $districtOptions,
                 'member_types' => $typeOptions,
+                'member_type_map' => $memberTypes,
                 'count' => $this->memberCount(),
             ];
         });
@@ -65,37 +71,56 @@ class MembershipPageService
         );
     }
 
+    public function memberCount(): int
+    {
+        return Cache::remember('membership.count', 3600, fn () => (int) DB::table('program_registrations')
+            ->whereIn('status', ProgramRegistration::approvedStatuses())
+            ->count());
+    }
+
+    public function clearCache(): void
+    {
+        Cache::forget('membership.filters');
+        Cache::forget('membership.count');
+    }
+
     private function membersQuery(array $filters = [])
     {
-        $query = DB::table('membership')
-            ->leftJoin('district', 'district.id', '=', 'membership.district')
-            ->orderBy('membership.name')
-            ->select([
-                'membership.id',
-                'membership.name',
-                'membership.mobile',
-                'membership.email',
-                'membership.type',
-                'membership.district',
-                'membership.fb',
-                'membership.insta',
-                'membership.twitter',
-                'membership.youtube',
-                'membership.website',
-                'membership.img',
+        $query = DB::table('program_registrations')
+            ->whereIn('program_registrations.status', ProgramRegistration::approvedStatuses())
+            ->orderBy('program_registrations.full_name');
+
+        $select = [
+            'program_registrations.id',
+            'program_registrations.full_name',
+            'program_registrations.phone',
+            'program_registrations.email',
+            'program_registrations.type',
+        ];
+
+        if (Schema::hasColumn('program_registrations', 'district_id')) {
+            $query->leftJoin('district', 'district.id', '=', 'program_registrations.district_id');
+            $select = array_merge($select, [
+                'program_registrations.district_id',
+                'program_registrations.profile_image',
+                'program_registrations.profile',
                 'district.district_name',
             ]);
+        }
+
+        $query->select($select);
 
         $district = (string) ($filters['district'] ?? 'all');
         $type = (string) ($filters['type'] ?? 'all');
         $search = trim((string) ($filters['search'] ?? ''));
 
-        if ($district !== 'all' && $district !== '') {
-            $query->where('membership.district', $district);
+        if ($district !== 'all' && $district !== '' && Schema::hasColumn('program_registrations', 'district_id')) {
+            $query->where('program_registrations.district_id', (int) $district);
         }
 
         if ($type !== 'all' && $type !== '') {
-            $matchingTypes = DB::table('membership')
+            $matchingTypes = DB::table('program_registrations')
+                ->whereIn('status', ProgramRegistration::approvedStatuses())
                 ->select('type')
                 ->distinct()
                 ->pluck('type')
@@ -106,60 +131,70 @@ class MembershipPageService
             if ($matchingTypes === []) {
                 $query->whereRaw('1 = 0');
             } else {
-                $query->whereIn('membership.type', $matchingTypes);
+                $query->whereIn('program_registrations.type', $matchingTypes);
             }
         }
 
         if ($search !== '') {
             $term = '%'.$search.'%';
             $query->where(function ($inner) use ($term) {
-                $inner->where('membership.name', 'like', $term)
-                    ->orWhere('district.district_name', 'like', $term);
+                $inner->where('program_registrations.full_name', 'like', $term);
+                if (Schema::hasColumn('program_registrations', 'district_id')) {
+                    $inner->orWhere('district.district_name', 'like', $term);
+                }
             });
         }
 
         return $query;
     }
 
-    public function memberCount(): int
-    {
-        return Cache::remember('membership.count', 3600, fn () => (int) DB::table('membership')->count());
-    }
-
     private function formatMember(object $row): array
     {
-        $name = trim((string) $row->name);
-        $mobile = preg_replace('/\D+/', '', (string) $row->mobile);
-        $typeLabel = trim((string) $row->type);
-
-        if ($typeLabel === '') {
-            $typeLabel = 'Member';
-        }
+        $name = trim((string) $row->full_name);
+        $mobile = preg_replace('/\D+/', '', (string) $row->phone);
+        $typeLabel = ProgramRegistration::publicTypeLabel((string) $row->type);
+        $profile = $this->decodeProfile($row->profile ?? null);
+        $profileImage = property_exists($row, 'profile_image') ? (string) ($row->profile_image ?? '') : '';
 
         return [
             'name' => $name,
             'initial' => Str::upper(Str::substr($name, 0, 1)),
-            'logo_url' => $this->memberLogoUrl($name, (string) ($row->img ?? '')),
-            'district' => strtoupper((string) ($row->district_name ?? 'Chhattisgarh')),
-            'district_value' => (string) ($row->district ?? 'all'),
+            'logo_url' => $this->resolveImageUrl($name, $profileImage),
+            'district' => strtoupper((string) ($row->district_name ?? 'CHHATTISGARH')),
+            'district_value' => property_exists($row, 'district_id') ? (string) ($row->district_id ?? 'all') : 'all',
             'type' => $this->typeValue((string) $row->type),
             'type_label' => $typeLabel,
             'phone' => $mobile,
             'phone_link' => $mobile,
             'email' => trim((string) $row->email),
-            'social' => $this->socialLinks($row),
+            'social' => $this->socialLinks($profile),
         ];
     }
 
-    private function socialLinks(object $row): array
+    private function decodeProfile(mixed $profile): array
+    {
+        if (is_array($profile)) {
+            return $profile;
+        }
+
+        if (is_string($profile) && $profile !== '') {
+            $decoded = json_decode($profile, true);
+
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return [];
+    }
+
+    private function socialLinks(array $profile): array
     {
         $links = [];
         $platforms = [
-            'facebook' => (string) ($row->fb ?? ''),
-            'instagram' => (string) ($row->insta ?? ''),
-            'twitter' => (string) ($row->twitter ?? ''),
-            'youtube' => (string) ($row->youtube ?? ''),
-            'website' => (string) ($row->website ?? ''),
+            'facebook' => (string) ($profile['fb'] ?? ''),
+            'instagram' => (string) ($profile['insta'] ?? ''),
+            'twitter' => (string) ($profile['twitter'] ?? ''),
+            'youtube' => (string) ($profile['youtube'] ?? ''),
+            'website' => (string) ($profile['website'] ?? ''),
         ];
 
         foreach ($platforms as $platform => $value) {
@@ -208,13 +243,7 @@ class MembershipPageService
             return 'member';
         }
 
-        return match ($type) {
-            'individual' => 'individual',
-            'volunteer' => 'volunteer',
-            'cso/ngo', 'ngo/cso' => 'ngo-cso',
-            'firm/organization', 'firm/organisation' => 'firm-organization',
-            default => Str::slug($type),
-        };
+        return Str::slug($type);
     }
 
     public function resolveImageUrl(string $name, string $img): ?string
@@ -225,116 +254,6 @@ class MembershipPageService
             return null;
         }
 
-        $direct = MediaUrl::tryResolve('membership', $img);
-
-        if ($direct !== null) {
-            return $direct;
-        }
-
-        return $this->memberLogoUrl($name, $img);
-    }
-
-    private function memberLogoUrl(string $name, string $img): ?string
-    {
-        $dir = public_path('storage/logos');
-
-        if (! is_dir($dir)) {
-            return null;
-        }
-
-        foreach ($this->imgCandidates($img) as $candidate) {
-            $url = $this->resolveLogoFile($candidate, $dir);
-
-            if ($url !== null) {
-                return $url;
-            }
-        }
-
-        $prefix = strtoupper(trim($name)).'_';
-        $matches = array_values(array_filter(
-            $this->logoFiles(),
-            fn (string $file) => str_starts_with(strtoupper($file), $prefix)
-        ));
-
-        if ($matches !== []) {
-            usort($matches, fn (string $a, string $b) => $this->logoTimestamp($b) <=> $this->logoTimestamp($a));
-
-            return asset('storage/logos/'.$matches[0]);
-        }
-
-        return $this->resolveLogoFile('No_Image_Available.jpg', $dir);
-    }
-
-    private function imgCandidates(string $img): array
-    {
-        $img = trim($img);
-
-        if ($img === '') {
-            return [];
-        }
-
-        if (preg_match_all('/\S+\.(?:png|jpe?g|gif|webp|svg)\b/i', $img, $matches) && count($matches[0]) > 1) {
-            return array_values(array_unique($matches[0]));
-        }
-
-        return [$img];
-    }
-
-    private function resolveLogoFile(string $candidate, string $dir): ?string
-    {
-        $candidate = trim($candidate);
-
-        if ($candidate === '') {
-            return null;
-        }
-
-        if (is_file($dir.'/'.$candidate)) {
-            return asset('storage/logos/'.$candidate);
-        }
-
-        foreach ($this->logoFiles() as $file) {
-            if (strcasecmp($file, $candidate) === 0) {
-                return asset('storage/logos/'.$file);
-            }
-
-            if (! str_contains($candidate, '.') && str_starts_with(strtoupper($file), strtoupper($candidate))) {
-                return asset('storage/logos/'.$file);
-            }
-        }
-
-        return null;
-    }
-
-    private function logoFiles(): array
-    {
-        if ($this->cachedLogoFiles !== null) {
-            return $this->cachedLogoFiles;
-        }
-
-        $dir = public_path('storage/logos');
-        $this->cachedLogoFiles = [];
-
-        if (! is_dir($dir)) {
-            return $this->cachedLogoFiles;
-        }
-
-        foreach (scandir($dir) ?: [] as $file) {
-            if ($file === '.' || $file === '..' || ! is_file($dir.'/'.$file)) {
-                continue;
-            }
-
-            $this->cachedLogoFiles[] = $file;
-        }
-
-        return $this->cachedLogoFiles;
-    }
-
-    private function logoTimestamp(string $filename): int
-    {
-        if (preg_match('/_(\d{10})/', $filename, $matches)) {
-            return (int) $matches[1];
-        }
-
-        return 0;
+        return MediaUrl::tryResolve('membership', $img) ?? MediaUrl::tryResolve('membership', basename($img));
     }
 }
