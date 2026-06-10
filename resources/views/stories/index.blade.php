@@ -89,7 +89,7 @@
           </div>
         </a>
         <div class="st-card-foot">
-          <x-story-share :url="$card['share_url']" :title="$card['share_title']" :hashtags="$card['share_hashtags']" />
+          <x-story-share :story="$card" />
         </div>
       </article>
     @endforeach

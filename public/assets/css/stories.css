@@ -2935,6 +2935,25 @@
   border: 1px solid var(--rule);
 }
 
+.st-share-bar--compact {
+  margin: 0;
+  gap: var(--s-2);
+}
+
+.st-share-bar--compact .st-share-bar__links {
+  gap: 0.35rem;
+}
+
+.st-share-bar--compact .st-share-bar__btn {
+  width: 2rem;
+  height: 2rem;
+}
+
+.st-share-bar--compact .st-share-bar__icon {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
 .st-share-bar {
   display: flex;
   flex-wrap: wrap;

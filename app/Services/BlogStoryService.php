@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Support\MediaUrl;
 use App\Support\PageRoute;
+use App\Support\SocialMeta;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -367,7 +368,7 @@ class BlogStoryService
             'title' => e($row->title),
             'lede' => $lede,
             'url' => route(PageRoute::named('stories.show'), $this->slugForRow($row)),
-        ], $this->sharePayload($row, $tags));
+        ], $this->sharePayload($row, $tags, $lede));
     }
 
     private function formatRecent(object $row): array
@@ -599,8 +600,9 @@ class BlogStoryService
             'body_html' => $bodyHtml,
             'content' => $bodyHtml,
             'related_slugs' => [],
-            'share_url' => route(PageRoute::named('stories.show'), $story->slug),
+            'share_url' => SocialMeta::publicUrl(route(PageRoute::named('stories.show'), $story->slug)),
             'share_title' => (string) $story->title,
+            'share_description' => Str::limit($plainText !== '' ? $plainText : $story->title, 180),
             'share_hashtags' => $this->shareHashtags($tags),
         ]);
     }
@@ -662,13 +664,20 @@ class BlogStoryService
         return implode(' ', array_values(array_unique($hashtags)));
     }
 
-    private function sharePayload(object $row, array $tags): array
+    private function sharePayload(object $row, array $tags, ?string $description = null): array
     {
         $slug = $this->slugForRow($row);
 
+        if ($description === null) {
+            $bodyHtml = StoryContent::sanitize((string) $row->content);
+            $plainText = $this->cleanStoryText($bodyHtml !== '' ? strip_tags($bodyHtml) : (string) $row->content);
+            $description = $this->buildStoryExcerpt($plainText, (string) $row->title);
+        }
+
         return [
-            'share_url' => route(PageRoute::named('stories.show'), $slug),
+            'share_url' => SocialMeta::publicUrl(route(PageRoute::named('stories.show'), $slug)),
             'share_title' => (string) $row->title,
+            'share_description' => $description,
             'share_hashtags' => $this->shareHashtags($tags),
         ];
     }

@@ -1,0 +1,115 @@
+STORY SHARE FEATURE — SERVER UPLOAD GUIDE (FOLDER-WISE)
+========================================================
+
+Upload each group below into the same path on your server.
+Keep the folder structure exactly as shown.
+
+
+────────────────────────────────────────
+📁 app/Http/Controllers/
+────────────────────────────────────────
+   NEW     ShareImageController.php
+
+
+────────────────────────────────────────
+📁 app/Support/
+────────────────────────────────────────
+   NEW     ShareImage.php
+   NEW     StoryShareUrls.php
+   UPDATE  SocialMeta.php
+   UPDATE  SocialMetaResolver.php
+
+
+────────────────────────────────────────
+📁 app/Services/
+────────────────────────────────────────
+   UPDATE  BlogStoryService.php
+
+
+────────────────────────────────────────
+📁 routes/
+────────────────────────────────────────
+   UPDATE  public.php
+
+
+────────────────────────────────────────
+📁 resources/views/components/
+────────────────────────────────────────
+   UPDATE  story-share-links.blade.php
+   UPDATE  story-share.blade.php
+
+
+────────────────────────────────────────
+📁 resources/views/stories/
+────────────────────────────────────────
+   UPDATE  index.blade.php
+   UPDATE  show.blade.php
+
+
+────────────────────────────────────────
+📁 resources/views/pages/
+────────────────────────────────────────
+   UPDATE  stories.blade.php
+   UPDATE  story-details.blade.php
+
+
+────────────────────────────────────────
+📁 public/assets/css/
+────────────────────────────────────────
+   UPDATE  stories.css
+
+
+========================================================
+QUICK COPY PATHS (server root = your Laravel project)
+========================================================
+
+app/Http/Controllers/ShareImageController.php
+app/Support/ShareImage.php
+app/Support/StoryShareUrls.php
+app/Support/SocialMeta.php
+app/Support/SocialMetaResolver.php
+app/Services/BlogStoryService.php
+routes/public.php
+resources/views/components/story-share-links.blade.php
+resources/views/components/story-share.blade.php
+resources/views/stories/index.blade.php
+resources/views/stories/show.blade.php
+resources/views/pages/stories.blade.php
+resources/views/pages/story-details.blade.php
+public/assets/css/stories.css
+
+
+========================================================
+AFTER UPLOAD — RUN ON SERVER
+========================================================
+
+cd /path/to/your/laravel/project
+
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+php artisan config:clear
+
+chmod -R 775 storage
+
+
+========================================================
+.ENV CHECK
+========================================================
+
+APP_URL=https://www.chhattisgarhabc.org
+
+
+========================================================
+TEST
+========================================================
+
+1. Open any story page
+2. View page source → confirm og:image tag:
+   <meta property="og:image" content="https://your-domain.com/share/image/story/...">
+3. Share on WhatsApp → image preview should appear
+4. Open share image URL directly in browser:
+   https://your-domain.com/share/image/story/FILENAME.jpg
+
+Facebook OG cache refresh (optional):
+https://developers.facebook.com/tools/debug/

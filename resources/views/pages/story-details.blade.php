@@ -32,11 +32,7 @@
             </figure>
           @endif
 
-          <x-story-share-links
-            :url="$story['share_url'] ?? url()->current()"
-            :title="$story['share_title'] ?? $story['title']"
-            :hashtags="$story['share_hashtags'] ?? '#SBCMatters'"
-          />
+          <x-story-share-links :story="$story" />
 
           <div class="st-article-simple-body story-html-content">
             @if (!empty($story['body_html']))

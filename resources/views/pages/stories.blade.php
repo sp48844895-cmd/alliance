@@ -95,11 +95,7 @@
         </div>
         </a>
         <div class="st-card-foot">
-          <x-story-share
-            :url="$card['share_url'] ?? $card['url']"
-            :title="$card['share_title'] ?? strip_tags($card['title'])"
-            :hashtags="$card['share_hashtags'] ?? '#SBCMatters'"
-          />
+          <x-story-share :story="$card" />
         </div>
       </article>
     @endforeach

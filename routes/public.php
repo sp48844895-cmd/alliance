@@ -14,6 +14,7 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ResourcesController;
+use App\Http\Controllers\ShareImageController;
 use App\Http\Controllers\StoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,9 @@ Route::get('/campaigns', [CampaignsController::class, 'index'])->name('campaigns
 Route::get('/get-involved', [GetInvolvedController::class, 'index'])->name('get-involved');
 
 // ─── Stories ────────────────────────────────────────────────────────────────
+Route::get('/share/image/story/{filename}', [ShareImageController::class, 'story'])
+    ->name('share.image.story')
+    ->where('filename', '[a-zA-Z0-9._-]+');
 Route::get('/stories', [StoryController::class, 'index'])->name('stories');
 Route::get('/stories/{slug}', [StoryController::class, 'show'])->name('stories.show');
 

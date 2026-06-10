@@ -79,6 +79,25 @@ final class SocialMeta
         return self::canonicalizePublicUrl(self::appRootUrl().request()->getRequestUri());
     }
 
+    public static function publicUrl(?string $url = null): string
+    {
+        $resolved = self::absoluteUrl($url) ?? self::canonicalPageUrl();
+
+        if (self::isLocalHost($resolved) && ! self::isLocalHost(self::canonicalPageUrl())) {
+            $path = parse_url($resolved, PHP_URL_PATH) ?? '/';
+            $query = parse_url($resolved, PHP_URL_QUERY);
+            $public = rtrim((string) url('/'), '/').$path;
+
+            if (is_string($query) && $query !== '') {
+                $public .= '?'.$query;
+            }
+
+            return $public;
+        }
+
+        return $resolved;
+    }
+
     private static function appRootUrl(): string
     {
         $configured = rtrim((string) config('app.url'), '/');

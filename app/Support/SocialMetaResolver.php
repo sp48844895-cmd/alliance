@@ -39,8 +39,10 @@ class SocialMetaResolver
         return SocialMeta::make(
             title: $title !== '' ? $title.' · Stories · '.SocialMeta::SITE_NAME : null,
             description: $story['lede'] ?? $story['title'] ?? null,
-            image: $story['hero_image'] ?? null,
-            url: $story['share_url'] ?? (isset($story['slug']) ? route(PageRoute::named('stories.show'), $story['slug']) : null),
+            image: ShareImage::storyOgUrl($story['hero_image'] ?? null),
+            url: SocialMeta::publicUrl(
+                $story['share_url'] ?? (isset($story['slug']) ? route(PageRoute::named('stories.show'), $story['slug']) : null)
+            ),
             type: 'article',
         );
     }
